@@ -11,5 +11,5 @@ tornadofx-1.7.19.jar
 *.nb
 hipparchus-1.6-bin
 hipparchus-1.7-bin
-results/*
+results
 mind maps
