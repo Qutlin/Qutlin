@@ -3,4 +3,4 @@ out/*
 cm 3.6.1-bin
 *.zip
 *.log
-results
+_results_
