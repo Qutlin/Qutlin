@@ -393,7 +393,7 @@ fun completeSet_DonorDot(
                 if(saveData) {
                     val smooth = if(useSmoothPulse) "smooth(%.2e) ".format(τ) else ""
                     val shaped = if(useShapedPulse) "shaped " else ""
-                    val filename = "results/$saveName $variable ${smooth}${shaped}i$initial Ω%.2e s%.2e tc%.2e coll%.2e tf%.2e n$samples.csv"
+                    val filename = "_results_/$saveName $variable ${smooth}${shaped}i$initial Ω%.2e s%.2e tc%.2e coll%.2e tf%.2e n$samples.csv"
                         .format(Ω, σ, τ_c, Γ, tf)
                     saveSweep(filename, x, res)
                 }
@@ -514,7 +514,7 @@ fun completeSet_ConstantGap(
                     samples,
                 )
                 if(saveData) {
-                    val filename = "results/$saveName CG $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(gap, σ, γ, tf)
+                    val filename = "_results_/$saveName CG $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(gap, σ, γ, tf)
                     saveSweep(filename, x, res)
                 }
                 if(plotData)
@@ -594,7 +594,7 @@ fun completeSet_LandauZener(
                     samples,
                 )
                 if(saveData) {
-                    val filename = "results/$name $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(gap, σ, γ, tf)
+                    val filename = "_results_/$name $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(gap, σ, γ, tf)
                     saveSweep(filename, x, res)
                 }
                 if(plotData)

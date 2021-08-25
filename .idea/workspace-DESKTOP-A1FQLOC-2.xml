@@ -1,0 +1,559 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ArtifactsWorkspaceSettings">
+    <artifacts-to-build>
+      <artifact name="Kotlin BlochSolver:jar" />
+    </artifacts-to-build>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="f74bbbf8-d39c-4568-ba2f-e2c043fbfa15" name="Default Changelist" comment="changed to hipparchus, added density evolution solver, added ComplexMatrix (State), ComplexArray (Operator) classes">
+      <change afterPath="$PROJECT_DIR$/results/2020 08 12 G01 v5.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 12 Gamma annotaded v2.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 12 Gamma annotaded.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 12 Gamma.afdesign" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 12 Gamma.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 12 Gamma.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 26 gauss[corr1.0 var0.159] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 26 gauss[corr1.0 var0.159] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 26 gauss[corr1.0 var0.159] i0_n10 v5.0 tf1.0_40.0_n30 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 26 gauss[corr1.0 var0.159] i0_n10 v5.0 tf1.0_40.0_n30 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 26 gauss[corr1.0 var0.159] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 26 gauss[corr1.0 var0.159] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 26 gauss[corr1.0 var0.159] i1_n10 v5.0 tf1.0_40.0_n30 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 26 gauss[corr1.0 var0.159] i1_n10 v5.0 tf1.0_40.0_n30 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v0.0 tf1.0_40.0_n100 g0.0 lin.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v0.0 tf1.0_40.0_n100 g0.0 shd.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v0.1 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v0.1 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v0.5 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v0.5 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v1.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v1.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v10.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v10.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v2.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v2.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v3.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v3.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v4.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v4.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v6.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v6.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v7.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v7.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v8.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v8.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v9.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i0_n10 v9.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v0.0 tf1.0_40.0_n100 g0.0 lin.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v0.0 tf1.0_40.0_n100 g0.0 shd.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v0.1 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v0.1 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v0.5 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v0.5 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v1.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v1.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v10.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v10.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v2.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v2.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v3.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v3.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v4.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v4.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v6.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v6.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v7.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v7.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v8.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v8.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v9.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 29 gauss[corr1.0 var0.159] i1_n10 v9.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 31 Gamma 0.afdesign" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 31 Gamma 0.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 08 31 Gamma 0.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 Gamma 0.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 Tau.fig" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 Tau.pdf" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.01 var15.915] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.01 var15.915] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.01 var15.915] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.01 var15.915] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.02 var7.958] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.02 var7.958] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.02 var7.958] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.02 var7.958] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.03 var5.305] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.03 var5.305] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.03 var5.305] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.03 var5.305] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.04 var3.979] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.04 var3.979] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.04 var3.979] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.04 var3.979] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.05 var3.183] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.05 var3.183] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.05 var3.183] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.05 var3.183] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.06 var2.653] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.06 var2.653] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.06 var2.653] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.06 var2.653] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.07 var2.274] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.07 var2.274] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.07 var2.274] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.07 var2.274] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.08 var1.989] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.08 var1.989] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.08 var1.989] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.08 var1.989] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.09 var1.768] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.09 var1.768] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.09 var1.768] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.09 var1.768] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.1 var1.592] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.1 var1.592] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.1 var1.592] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.1 var1.592] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.2 var0.796] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.2 var0.796] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.2 var0.796] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.2 var0.796] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.3 var0.531] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.3 var0.531] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.3 var0.531] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.3 var0.531] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.4 var0.398] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.4 var0.398] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.4 var0.398] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.4 var0.398] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.5 var0.318] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.5 var0.318] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.5 var0.318] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.5 var0.318] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.6 var0.265] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.6 var0.265] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.6 var0.265] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.6 var0.265] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.7 var0.227] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.7 var0.227] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.7 var0.227] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.7 var0.227] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.8 var0.199] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.8 var0.199] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.8 var0.199] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.8 var0.199] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.9 var0.177] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.9 var0.177] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.9 var0.177] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr0.9 var0.177] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr1.0 var0.159] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr1.0 var0.159] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr1.0 var0.159] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr1.0 var0.159] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr10.0 var0.016] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr10.0 var0.016] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr10.0 var0.016] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr10.0 var0.016] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr100.0 var0.002] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr100.0 var0.002] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr100.0 var0.002] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr100.0 var0.002] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr1000.0 var0.000] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr1000.0 var0.000] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr1000.0 var0.000] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr1000.0 var0.000] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr5.0 var0.032] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr5.0 var0.032] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr5.0 var0.032] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr5.0 var0.032] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr50.0 var0.003] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr50.0 var0.003] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr50.0 var0.003] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr50.0 var0.003] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr500.0 var0.000] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr500.0 var0.000] i0_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr500.0 var0.000] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 lin smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/2020 09 01 gauss[corr500.0 var0.000] i1_n10 v5.0 tf1.0_40.0_n100 g0.0 shd smth.csv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/TauErrorPlot2.asv" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/results/TauErrorPlot2.m" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Experiments.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Experiments.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/NoiseType.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/NoiseType.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Qutlin/General.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Qutlin/General.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Qutlin/Noise.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Qutlin/Noise.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Qutlin/Qutlin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Qutlin/Qutlin.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Tools.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/Tools.kt" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+        <option value="Kotlin File" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="JupyterTrust" id="bb88651a-0386-4404-a4de-30a313e00df7" />
+  <component name="KotlinMultiplatform">
+    <executables />
+  </component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="hAYltEMf" />
+  </component>
+  <component name="ProjectId" id="1RblDBsiNbch4qbV7eC1rwcqV1Z" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="Downloaded.Files.Path.Enabled" value="true" />
+    <property name="Repository.Attach.Annotations" value="true" />
+    <property name="Repository.Attach.JavaDocs" value="true" />
+    <property name="Repository.Attach.Sources" value="false" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="ToolWindowMessages.ShowToolbar" value="false" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="android.sdk.path" value="$USER_HOME$/AppData/Local/Android/Sdk" />
+    <property name="aspect.path.notification.shown" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
+    <property name="nodejs_npm_path_reset_for_default_project" value="true" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.16351607" />
+    <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\fehse\OneDrive\CloudBox\Kotlin BlochSolver\src\Qutlin" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Kotlin.MainKt">
+    <configuration name="ComplexMatrixKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <module name="Kotlin BlochSolver" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" value="Qutlin.ComplexMatrixKt" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="MainKt" type="JetRunConfigurationType" singleton="false" temporary="true" nameIsGenerated="true">
+      <module name="Kotlin BlochSolver" />
+      <option name="VM_PARAMETERS" value="" />
+      <option name="PROGRAM_PARAMETERS" value="" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" value="MainKt" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NoiseKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <module name="Kotlin BlochSolver" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" value="Qutlin.NoiseKt" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="NoiseTypeKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <module name="Kotlin BlochSolver" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" value="NoiseTypeKt" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="QutlinKt" type="JetRunConfigurationType" temporary="true" nameIsGenerated="true">
+      <module name="Kotlin BlochSolver" />
+      <option name="VM_PARAMETERS" />
+      <option name="PROGRAM_PARAMETERS" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="false" />
+      <option name="ALTERNATIVE_JRE_PATH" />
+      <option name="PASS_PARENT_ENVS" value="true" />
+      <option name="MAIN_CLASS_NAME" value="Qutlin.QutlinKt" />
+      <option name="WORKING_DIRECTORY" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Kotlin.ComplexMatrixKt" />
+      <item itemvalue="Kotlin.MainKt" />
+      <item itemvalue="Kotlin.NoiseKt" />
+      <item itemvalue="Kotlin.QutlinKt" />
+      <item itemvalue="Kotlin.NoiseTypeKt" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Kotlin.MainKt" />
+        <item itemvalue="Kotlin.NoiseTypeKt" />
+        <item itemvalue="Kotlin.NoiseKt" />
+        <item itemvalue="Kotlin.QutlinKt" />
+        <item itemvalue="Kotlin.ComplexMatrixKt" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="project-level" UseSingleDictionary="true" transferred="true" />
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f74bbbf8-d39c-4568-ba2f-e2c043fbfa15" name="Default Changelist" comment="" />
+      <created>1569943554863</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1569943554863</updated>
+      <workItem from="1569943564016" duration="595000" />
+      <workItem from="1569944402619" duration="1812000" />
+      <workItem from="1570035137337" duration="815000" />
+      <workItem from="1571441046202" duration="4790000" />
+      <workItem from="1571447103882" duration="150000" />
+      <workItem from="1571447317703" duration="6369000" />
+      <workItem from="1571525939153" duration="15715000" />
+      <workItem from="1571695260965" duration="19682000" />
+      <workItem from="1571788304268" duration="334000" />
+      <workItem from="1571788970023" duration="1109000" />
+      <workItem from="1571834805043" duration="130000" />
+      <workItem from="1571835197589" duration="790000" />
+      <workItem from="1571856918907" duration="9491000" />
+      <workItem from="1572231574928" duration="125000" />
+      <workItem from="1573660747355" duration="1505000" />
+      <workItem from="1573662295324" duration="17301000" />
+      <workItem from="1576437671258" duration="153000" />
+      <workItem from="1576437867020" duration="2367000" />
+      <workItem from="1579568180467" duration="3889000" />
+      <workItem from="1580153438040" duration="955000" />
+      <workItem from="1580307867761" duration="842000" />
+      <workItem from="1580841506260" duration="1040000" />
+      <workItem from="1587252666213" duration="1070000" />
+      <workItem from="1587387797568" duration="2862000" />
+      <workItem from="1587402727342" duration="689000" />
+      <workItem from="1587403528943" duration="647000" />
+      <workItem from="1587404483180" duration="427000" />
+      <workItem from="1587404946144" duration="75000" />
+      <workItem from="1587405094575" duration="29536000" />
+      <workItem from="1587499242659" duration="24000" />
+      <workItem from="1587688563972" duration="34037000" />
+      <workItem from="1587775132248" duration="677000" />
+      <workItem from="1587775854722" duration="198000" />
+      <workItem from="1587785051255" duration="5068000" />
+      <workItem from="1587820277251" duration="21673000" />
+      <workItem from="1587855596280" duration="6874000" />
+      <workItem from="1587870501753" duration="11200000" />
+      <workItem from="1588000644409" duration="650000" />
+      <workItem from="1588286886824" duration="1800000" />
+      <workItem from="1588289100464" duration="4407000" />
+      <workItem from="1588365442288" duration="4330000" />
+      <workItem from="1588719853432" duration="3885000" />
+      <workItem from="1588808496507" duration="316000" />
+      <workItem from="1588808842269" duration="3768000" />
+      <workItem from="1589236953152" duration="72000" />
+      <workItem from="1589237056485" duration="7656000" />
+      <workItem from="1589286941291" duration="14473000" />
+      <workItem from="1589751730065" duration="998000" />
+      <workItem from="1589759138659" duration="4633000" />
+      <workItem from="1589892273058" duration="406000" />
+      <workItem from="1589895897109" duration="729000" />
+      <workItem from="1591288336550" duration="896000" />
+      <workItem from="1591662096883" duration="7300000" />
+      <workItem from="1593360198010" duration="694000" />
+      <workItem from="1593361675450" duration="5628000" />
+      <workItem from="1593368192253" duration="225000" />
+      <workItem from="1593368461425" duration="4318000" />
+      <workItem from="1593384550876" duration="12339000" />
+      <workItem from="1593523808588" duration="3692000" />
+      <workItem from="1593567777572" duration="4208000" />
+      <workItem from="1593695349584" duration="12336000" />
+      <workItem from="1593909233694" duration="4294000" />
+      <workItem from="1593999660688" duration="1702000" />
+      <workItem from="1594044588660" duration="298000" />
+      <workItem from="1594045866772" duration="4988000" />
+      <workItem from="1594066057309" duration="2977000" />
+      <workItem from="1594077418506" duration="74000" />
+      <workItem from="1594077544205" duration="16732000" />
+      <workItem from="1594222127331" duration="10395000" />
+      <workItem from="1594248870946" duration="5944000" />
+      <workItem from="1594261144412" duration="14554000" />
+      <workItem from="1595869636227" duration="12379000" />
+      <workItem from="1595951826063" duration="73000" />
+      <workItem from="1595951948731" duration="15373000" />
+      <workItem from="1596026584785" duration="1210000" />
+      <workItem from="1596030858281" duration="3237000" />
+      <workItem from="1596043947002" duration="32230000" />
+      <workItem from="1596508556927" duration="297000" />
+      <workItem from="1596509877315" duration="90000" />
+      <workItem from="1596558038934" duration="258000" />
+      <workItem from="1596559208170" duration="1606000" />
+      <workItem from="1596585357901" duration="37000" />
+      <workItem from="1596585422761" duration="20450000" />
+      <workItem from="1596996893511" duration="22000" />
+      <workItem from="1597257673515" duration="440000" />
+      <workItem from="1597258160613" duration="1476000" />
+      <workItem from="1597266598629" duration="648000" />
+      <workItem from="1598484287981" duration="1563000" />
+      <workItem from="1598487743585" duration="1178000" />
+      <workItem from="1598491282705" duration="65000" />
+      <workItem from="1598491375493" duration="3323000" />
+      <workItem from="1598537278629" duration="2453000" />
+      <workItem from="1598732444042" duration="1140000" />
+      <workItem from="1598733911120" duration="190000" />
+      <workItem from="1598734154458" duration="446000" />
+      <workItem from="1598734634345" duration="2170000" />
+      <workItem from="1598800524084" duration="305000" />
+      <workItem from="1598817446900" duration="1502000" />
+      <workItem from="1598819698050" duration="615000" />
+      <workItem from="1598825127071" duration="1207000" />
+      <workItem from="1598830472656" duration="8906000" />
+      <workItem from="1598877538991" duration="7327000" />
+      <workItem from="1598899427280" duration="2059000" />
+      <workItem from="1599064812277" duration="603000" />
+      <workItem from="1599180922232" duration="907000" />
+      <workItem from="1599503875406" duration="3197000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/../.." />
+    </ignored-roots>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="1469" y="661" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1596480846721">
+      <screen x="0" y="0" width="3840" height="2130" />
+    </state>
+    <state x="1469" y="661" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.3840.2130@0.0.3840.2130" timestamp="1596480846721" />
+    <state x="2475" y="605" key="#com.intellij.ide.util.MemberChooser" timestamp="1594049666261">
+      <screen x="0" y="0" width="3840" height="2130" />
+    </state>
+    <state x="2475" y="605" key="#com.intellij.ide.util.MemberChooser/0.0.3840.2130@0.0.3840.2130" timestamp="1594049666261" />
+    <state x="2036" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1594086613898">
+      <screen x="0" y="0" width="3840" height="2130" />
+    </state>
+    <state x="2036" y="0" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog/0.0.3840.2130@0.0.3840.2130" timestamp="1594086613898" />
+    <state x="794" y="90" width="2376" height="1937" key="DiffContextDialog" timestamp="1594124499203">
+      <screen x="0" y="0" width="3840" height="2130" />
+    </state>
+    <state x="794" y="90" width="2376" height="1937" key="DiffContextDialog/0.0.3840.2130@0.0.3840.2130" timestamp="1594124499203" />
+    <state x="652" y="430" key="FileChooserDialogImpl" timestamp="1599181227954">
+      <screen x="0" y="0" width="2000" height="1302" />
+    </state>
+    <state x="652" y="430" key="FileChooserDialogImpl/0.0.2000.1302@0.0.2000.1302" timestamp="1599181227954" />
+    <state x="1252" y="703" key="FileChooserDialogImpl/0.0.3840.2130@0.0.3840.2130" timestamp="1593460258704" />
+    <state width="498" height="871" key="GridCell.Tab.0.bottom" timestamp="1599070493376">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="610" height="694" key="GridCell.Tab.0.bottom/0.0.1920.1050@0.0.1920.1050" timestamp="1596317294756" />
+    <state width="498" height="871" key="GridCell.Tab.0.bottom/0.0.1920.1080@0.0.1920.1080" timestamp="1599070493376" />
+    <state width="610" height="694" key="GridCell.Tab.0.bottom/0.0.1920.1170@0.0.1920.1170" timestamp="1596324301023" />
+    <state width="591" height="754" key="GridCell.Tab.0.bottom/0.0.2000.1302@0.0.2000.1302" timestamp="1598894198044" />
+    <state width="865" height="691" key="GridCell.Tab.0.bottom/0.0.3840.2130@0.0.3840.2130" timestamp="1596742721196" />
+    <state width="498" height="871" key="GridCell.Tab.0.center" timestamp="1599070493376">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="610" height="694" key="GridCell.Tab.0.center/0.0.1920.1050@0.0.1920.1050" timestamp="1596317294756" />
+    <state width="498" height="871" key="GridCell.Tab.0.center/0.0.1920.1080@0.0.1920.1080" timestamp="1599070493376" />
+    <state width="610" height="694" key="GridCell.Tab.0.center/0.0.1920.1170@0.0.1920.1170" timestamp="1596324301023" />
+    <state width="591" height="754" key="GridCell.Tab.0.center/0.0.2000.1302@0.0.2000.1302" timestamp="1598894198043" />
+    <state width="865" height="691" key="GridCell.Tab.0.center/0.0.3840.2130@0.0.3840.2130" timestamp="1596742721196" />
+    <state width="498" height="871" key="GridCell.Tab.0.left" timestamp="1599070493375">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="610" height="694" key="GridCell.Tab.0.left/0.0.1920.1050@0.0.1920.1050" timestamp="1596317294756" />
+    <state width="498" height="871" key="GridCell.Tab.0.left/0.0.1920.1080@0.0.1920.1080" timestamp="1599070493375" />
+    <state width="610" height="694" key="GridCell.Tab.0.left/0.0.1920.1170@0.0.1920.1170" timestamp="1596324301023" />
+    <state width="591" height="754" key="GridCell.Tab.0.left/0.0.2000.1302@0.0.2000.1302" timestamp="1598894198043" />
+    <state width="865" height="691" key="GridCell.Tab.0.left/0.0.3840.2130@0.0.3840.2130" timestamp="1596742721196" />
+    <state width="498" height="871" key="GridCell.Tab.0.right" timestamp="1599070493376">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state width="610" height="694" key="GridCell.Tab.0.right/0.0.1920.1050@0.0.1920.1050" timestamp="1596317294756" />
+    <state width="498" height="871" key="GridCell.Tab.0.right/0.0.1920.1080@0.0.1920.1080" timestamp="1599070493376" />
+    <state width="610" height="694" key="GridCell.Tab.0.right/0.0.1920.1170@0.0.1920.1170" timestamp="1596324301023" />
+    <state width="591" height="754" key="GridCell.Tab.0.right/0.0.2000.1302@0.0.2000.1302" timestamp="1598894198044" />
+    <state width="865" height="691" key="GridCell.Tab.0.right/0.0.3840.2130@0.0.3840.2130" timestamp="1596742721196" />
+    <state x="502" y="301" width="1262" height="852" key="SettingsEditor" timestamp="1599180964323">
+      <screen x="0" y="0" width="2000" height="1302" />
+    </state>
+    <state x="502" y="301" width="1278" height="851" key="SettingsEditor/0.0.2000.1302@0.0.2000.1302" timestamp="1599180964323" />
+    <state x="1622" y="1091" width="1262" height="852" key="SettingsEditor/0.0.3840.2130@0.0.3840.2130" timestamp="1595954082394" />
+    <state x="2183" y="813" width="540" height="540" key="StructurePopup" timestamp="1595952681612">
+      <screen x="0" y="0" width="3840" height="2130" />
+    </state>
+    <state x="2183" y="813" width="540" height="540" key="StructurePopup/0.0.3840.2130@0.0.3840.2130" timestamp="1595952681612" />
+    <state width="957" height="730" key="SwitcherDM" timestamp="1595966048227">
+      <screen x="0" y="0" width="3840" height="2130" />
+    </state>
+    <state width="957" height="730" key="SwitcherDM/0.0.3840.2130@0.0.3840.2130" timestamp="1595966048227" />
+    <state x="780" y="496" key="cloudConfig.PluginsDialog" timestamp="1598733596522">
+      <screen x="0" y="0" width="2000" height="1302" />
+    </state>
+    <state x="780" y="496" key="cloudConfig.PluginsDialog/0.0.2000.1302@0.0.2000.1302" timestamp="1598733596522" />
+    <state x="1044" y="168" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser" timestamp="1591701743630">
+      <screen x="0" y="0" width="2000" height="1302" />
+    </state>
+    <state x="1044" y="168" key="com.intellij.openapi.editor.actions.MultiplePasteAction$ClipboardContentChooser/0.0.2000.1302/-3840.-175.3840.2130@0.0.2000.1302" timestamp="1591701743630" />
+    <state x="503" y="290" key="new project wizard" timestamp="1599181230748">
+      <screen x="0" y="0" width="2000" height="1302" />
+    </state>
+    <state x="503" y="290" key="new project wizard/0.0.2000.1302@0.0.2000.1302" timestamp="1599181230748" />
+    <state x="1273" y="476" width="1291" height="1085" key="search.everywhere.popup" timestamp="1595871895347">
+      <screen x="0" y="0" width="3840" height="2130" />
+    </state>
+    <state x="1273" y="476" width="1291" height="1085" key="search.everywhere.popup/0.0.3840.2130@0.0.3840.2130" timestamp="1595871895347" />
+  </component>
+</project>
