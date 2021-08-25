@@ -1,0 +1,33 @@
+package Qutlin
+
+import org.hipparchus.complex.Complex
+import org.hipparchus.special.Erf
+
+val I: Complex = Complex.I
+val R: Complex = Complex(1.0)
+
+fun Double.toComplex() = Complex(this)
+
+operator fun Complex.unaryMinus(): Complex = this.multiply(-1.0)
+
+operator fun Complex.plus(c: Complex): Complex = this.add(c)
+operator fun Complex.plus(c: Double): Complex = this.add(c)
+operator fun Double.plus(c: Complex): Complex = c.add(this)
+
+operator fun Complex.minus(c: Complex): Complex = this.subtract(c)
+operator fun Complex.minus(c: Double): Complex = this.subtract(c)
+operator fun Double.minus(c: Complex): Complex = c.subtract(this)
+
+operator fun Complex.times(c: Complex): Complex = this.multiply(c)
+operator fun Complex.times(c: Double): Complex = this.multiply(c)
+operator fun Double.times(c: Complex): Complex = c.multiply(this)
+
+operator fun Complex.div(c: Complex): Complex = this.divide(c)
+operator fun Double.div(c: Complex): Complex = c.divide(this)
+operator fun Complex.div(c: Double): Complex = this.divide(c)
+
+fun exp(c: Complex) = c.exp()!!
+
+
+fun Complex.absSquare() = this.real * this.real + this.imaginary * this.imaginary
+

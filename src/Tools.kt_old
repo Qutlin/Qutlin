@@ -1,0 +1,117 @@
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import org.hipparchus.special.Erf.erfInv
+import org.hipparchus.util.FastMath.*
+import java.io.File
+
+
+
+
+suspend fun <A, B> Iterable<A>.pmap(f: suspend (A) -> B): List<B> = coroutineScope {
+    map { async { f(it) } }.awaitAll()
+}
+
+suspend fun <A, B> Iterable<A>.pmapIndexed(f: suspend (Int, A) -> B): List<B> = coroutineScope {
+    mapIndexed { i,v -> async { f(i, v) } }.awaitAll()
+}
+
+
+
+fun <T> concatenate(vararg lists: List<T>) = listOf(*lists).flatten()
+
+
+
+fun save(path: String, data: DoubleArray, newline: Int) {
+    try {
+        File(path).bufferedWriter().use { out ->
+            data.forEachIndexed() {i, v ->
+                if(i%newline == 0) out.newLine()
+                out.write(v.toString())
+                if( (i+1)%newline != 0) out.write(", ")
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+fun save(path: String, data: List<List<Double>>) {
+    try {
+        File(path).bufferedWriter().use { out ->
+            data.forEachIndexed { i,d ->
+                if(i > 0) out.newLine()
+                d.forEachIndexed {ii, dd ->
+                    if(ii < d.lastIndex) out.write("$dd, ")
+                    else out.write(dd.toString())
+                }
+            }
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+}
+
+
+
+
+
+
+fun linsteps(min: Double, step: Double, max: Double): DoubleArray {
+    val res = mutableSetOf(min)
+    var x = min
+    while(x < max) {
+        x += step
+        res.add(x)
+    }
+    if (x != max) {res.add(max)}
+    return res.toDoubleArray()
+}
+
+fun linspace(min: Double, max: Double, subdivisions: Int, skipFirst: Boolean = false, skipLast: Boolean = false): DoubleArray {
+    val res = if(skipFirst) mutableListOf() else mutableSetOf(min)
+    var x = min
+    for(i in 0 until subdivisions-1) {
+        x += (max - min)/subdivisions.toDouble()
+        res.add(x)
+    }
+    if(!skipLast) res.add(max)
+    return res.toDoubleArray()
+}
+
+fun clamp(min: Double, x: Double, max: Double): Double {
+    if(x < min) return min
+    if(x > max) return max
+    return x
+}
+
+
+fun gaussian(x: Double, avg: Double = 0.0, stdDev: Double = 1.0)
+        = exp(-0.5 * pow((x-avg)/stdDev, 2.0))
+
+
+class Smooth(private val std: Double, private val subdivisions: Int = 1001) {
+    private var gx: List<Double>
+    private var gy: List<Double>
+    init{
+        gx = List(subdivisions){ i ->
+            val r = (i+1).toDouble() / (subdivisions.toDouble() + 1.0)
+            erfInv(2 * r - 1) * sqrt(2.0) * std
+        }
+        gy = gx.map { gaussian(it, 0.0, std) }
+        val sum = gy.sum()
+        gy = gy.map { it/sum }
+
+//        println("gaussian: ")
+//        println("    gx = $gx")
+//        println("    gy = $gy")
+//        Plot(Plot.DataSet(gx.zip(gy) { x, y -> listOf(x, y) }))
+    }
+
+    operator fun invoke(x: Double, f: (Double) -> Double): Double {
+//        var sum = 0.0
+//        for(i in gx.indices) sum += f(x+gx[i]) * gy[i]
+//        return sum
+        return gx.zip(gy) {ix,iy -> f(x+ix) * iy}.sum()
+    }
+}
