@@ -2,9 +2,13 @@
 out/*
 cm 3.6.1-bin/*
 cm 3.6.1-bin.zip
-openjfx-13_windows-x64_bin-sdk/*
 openjfx-13_windows-x64_bin-sdk.zip
-lib/*
 tornadofx-1.7.19.jar
 *.jar
 *.zip
+*.log
+*.jl
+*.nb
+hipparchus-1.6-bin/*
+hipparchus-1.7-bin/*
+results/*
