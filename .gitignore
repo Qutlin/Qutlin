@@ -1,15 +1,6 @@
 .idea
 out/*
-cm 3.6.1-bin/*
-cm 3.6.1-bin.zip
-openjfx-13_windows-x64_bin-sdk.zip
-tornadofx-1.7.19.jar
-*.jar
+cm 3.6.1-bin
 *.zip
 *.log
-*.jl
-*.nb
-hipparchus-1.6-bin
-hipparchus-1.7-bin
 results
-mind maps
