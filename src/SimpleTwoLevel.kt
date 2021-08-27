@@ -71,71 +71,13 @@ fun main() {
 
 //    val dateName = "2021 05 06 DonorDot"
 
-    completeSet_DonorDot(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
-        variable = "tf",
-        samples = 20,
-
-        tf = 16.6, // * does not matter here, will be overwritten
-        a = TAU * 100.0 *1e6 / _s,
-        Ω = 20.0 * _μeV / _ħ,
-
-        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
-        τ_c = 1.0 * _ns,
-
-        useShapedPulse = false,
-
-        useSmoothPulse = true,
-        saveData = true,
-        saveName = "2021 08 24 DonorDot",
-    )
-
-    completeSet_DonorDot(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
-        variable = "tf",
-        samples = 20,
-
-        tf = 16.6, // * does not matter here, will be overwritten
-        a = TAU * 100.0 *1e6 / _s,
-        Ω = 20.0 * _μeV / _ħ,
-
-        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
-        τ_c = 1.0 * _ns,
-
-        useShapedPulse = true,
-
-        useSmoothPulse = true,
-        saveData = true,
-        saveName = "2021 08 24 DonorDot",
-    )
-
-
 //    completeSet_DonorDot(
-//        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
-//        variable = "Γ",
+//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
+//        variable = "tf",
 //        samples = 20,
 //
-//        tf = 16.6,
-//        a = TAU * 100.0 * 1e6 / _s,
-//        Ω = 20.0 * _μeV / _ħ,
-//
-//        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
-//        τ_c = 1.0 * _ns,
-//
-//        useShapedPulse = true,
-//
-//        useSmoothPulse = true,
-//        saveData = true,
-//        saveName = "2021 06 09 DonorDot",
-//    )
-//
-//    completeSet_DonorDot(
-//        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
-//        variable = "Γ",
-//        samples = 20,
-//
-//        tf = 16.6,
-//        a = TAU * 100.0 * 1e6 / _s,
+//        tf = 16.6, // * does not matter here, will be overwritten
+//        a = TAU * 100.0 *1e6 / _s,
 //        Ω = 20.0 * _μeV / _ħ,
 //
 //        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
@@ -145,8 +87,66 @@ fun main() {
 //
 //        useSmoothPulse = true,
 //        saveData = true,
-//        saveName = "2021 06 09 DonorDot",
+//        saveName = "2021 08 24 DonorDot",
 //    )
+//
+//    completeSet_DonorDot(
+//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
+//        variable = "tf",
+//        samples = 20,
+//
+//        tf = 16.6, // * does not matter here, will be overwritten
+//        a = TAU * 100.0 *1e6 / _s,
+//        Ω = 20.0 * _μeV / _ħ,
+//
+//        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
+//        τ_c = 1.0 * _ns,
+//
+//        useShapedPulse = true,
+//
+//        useSmoothPulse = true,
+//        saveData = true,
+//        saveName = "2021 08 24 DonorDot",
+//    )
+
+
+    completeSet_DonorDot(
+        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
+        variable = "Γ",
+        samples = 20,
+
+        tf = 16.6,
+        a = TAU * 100.0 * 1e6 / _s,
+        Ω = 20.0 * _μeV / _ħ,
+
+        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
+        τ_c = 1.0 * _ns,
+
+        useShapedPulse = true,
+
+        useSmoothPulse = true,
+        saveData = true,
+        saveName = "2021 06 09 DonorDot",
+    )
+
+    completeSet_DonorDot(
+        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
+        variable = "Γ",
+        samples = 20,
+
+        tf = 16.6,
+        a = TAU * 100.0 * 1e6 / _s,
+        Ω = 20.0 * _μeV / _ħ,
+
+        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
+        τ_c = 1.0 * _ns,
+
+        useShapedPulse = false,
+
+        useSmoothPulse = true,
+        saveData = true,
+        saveName = "2021 06 09 DonorDot",
+    )
 
 
 
