@@ -112,6 +112,8 @@ fun gaussian(x: Double, x0: Double = 0.0, σ: Double = 1.0)
  * where ___δx___ is the standard deviation, ___N___ the number of subdivisions, and ___i=1..N___.
  * 
  * The values ___g(xᵢ)___ are finally normalized ___gᵢ=g(xᵢ)/∑ₙg(xₙ)∆ₙ___.
+ *
+ * `erf` is defined as ___erf(x) = 2/√π ∫₀ˣ exp(-t²) dt___
  */
 class Smooth(
     private val std: Double,
