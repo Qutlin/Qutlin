@@ -80,14 +80,18 @@ fun main() {
 //        a = TAU * 100.0 *1e6 / _s,
 //        Ω = 20.0 * _μeV / _ħ,
 //
-//        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
+//        σ = 1.0 * _μeV / _ħ,
 //        τ_c = 1.0 * _ns,
 //
+//        ε_max = 2000 * _μeV / _ħ, // ! use more realistic value
+//        ε_min = -200 * _μeV / _ħ, // ! use more realistic value
+//        τ = 4 * _ns, // ! to compensate for shifted minimum after fixing convolution bug
 //        useShapedPulse = false,
-//
 //        useSmoothPulse = true,
+//
 //        saveData = true,
-//        saveName = "2021 08 24 DonorDot",
+//
+//        saveName = "2021 09 26 DonorDot",
 //    )
 //
 //    completeSet_DonorDot(
@@ -99,14 +103,18 @@ fun main() {
 //        a = TAU * 100.0 *1e6 / _s,
 //        Ω = 20.0 * _μeV / _ħ,
 //
-//        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
+//        σ = 1.0 * _μeV / _ħ,
 //        τ_c = 1.0 * _ns,
+//
+//        ε_max = 2000 * _μeV / _ħ, // ! use more realistic value
+//        ε_min = -200 * _μeV / _ħ, // ! use more realistic value
+//        τ = 4 * _ns, // ! to compensate for shifted minimum after fixing convolution bug
 //
 //        useShapedPulse = true,
 //
 //        useSmoothPulse = true,
 //        saveData = true,
-//        saveName = "2021 08 24 DonorDot",
+//        saveName = "2021 09 26 DonorDot",
 //    )
 
 
@@ -115,18 +123,25 @@ fun main() {
         variable = "Γ",
         samples = 20,
 
-        tf = 16.6,
+//        tf = 16.6,
+//        tf = 17.4,
+        tf = 18.0 * _ns,
         a = TAU * 100.0 * 1e6 / _s,
         Ω = 20.0 * _μeV / _ħ,
 
         σ = 1.0 * _μeV / _ħ, // TODO correct values!?
         τ_c = 1.0 * _ns,
 
+        τ = 4.0 * _ns,
+        ε_max = 2000 * _μeV / _ħ, // ! using more realistic value
+        ε_min = -200 * _μeV / _ħ, // ! using more realistic value
+
         useShapedPulse = true,
 
         useSmoothPulse = true,
+
         saveData = true,
-        saveName = "2021 06 09 DonorDot",
+        saveName = "2021 09 28 DonorDot",
     )
 
     completeSet_DonorDot(
@@ -134,66 +149,86 @@ fun main() {
         variable = "Γ",
         samples = 20,
 
-        tf = 16.6,
+//        tf = 16.6,
+//        tf = 17.4,
+        tf = 18.0 * _ns,
         a = TAU * 100.0 * 1e6 / _s,
         Ω = 20.0 * _μeV / _ħ,
 
         σ = 1.0 * _μeV / _ħ, // TODO correct values!?
         τ_c = 1.0 * _ns,
+
+        τ = 4.0 * _ns,
+        ε_max = 2000 * _μeV / _ħ, // ! using more realistic value
+        ε_min = -200 * _μeV / _ħ, // ! using more realistic value
+
+        useShapedPulse = false,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = "2021 09 28 DonorDot",
+    )
+
+
+
+   completeSet_DonorDot(
+       x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+       variable = "τ_c",
+       samples = 20,
+
+//       tf = 16.6,
+//       tf = 17.4,
+       tf = 18.0 * _ns,
+       a = TAU * 100.0 *1e6 / _s,
+       Ω = 20.0 * _μeV / _ħ,
+
+       σ = 1.0 * _μeV / _ħ, // TODO correct values!?
+//        τ_c = 1.0 * _ns,
+
+       τ = 4.0 * _ns,
+       ε_max = 2000 * _μeV / _ħ, // ! using more realistic value
+       ε_min = -200 * _μeV / _ħ, // ! using more realistic value
+
+       useShapedPulse = true,
+
+       useSmoothPulse = true,
+       saveData = true,
+       saveName = "2021 09 28 DonorDot",
+   )
+    completeSet_DonorDot(
+        x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+        variable = "τ_c",
+        samples = 20,
+
+//        tf = 16.6,
+//        tf = 17.4,
+        tf = 18.0,
+        a = TAU * 100.0 *1e6 / _s,
+        Ω = 20.0 * _μeV / _ħ,
+
+        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
+ //        τ_c = 1.0 * _ns,
+
+        τ = 4.0 * _ns,
+        ε_max = 2000 * _μeV / _ħ, // ! using more realistic value
+        ε_min = -200 * _μeV / _ħ, // ! using more realistic value
 
         useShapedPulse = false,
 
         useSmoothPulse = true,
         saveData = true,
-        saveName = "2021 06 09 DonorDot",
+        saveName = "2021 09 28 DonorDot",
     )
 
 
 
-//   completeSet_DonorDot(
-//       x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) * _ns },
-//       variable = "τ_c",
-//       samples = 20,
-//
-//       tf = 16.6,
-//       a = TAU * 100.0 *1e6 / _s,
-//       Ω = 20.0 * _μeV / _ħ,
-//
-//       σ = 1.0 * _μeV / _ħ, // TODO correct values!?
-////        τ_c = 1.0 * _ns,
-//
-//       useShapedPulse = true,
-//
-//       useSmoothPulse = true,
-//       saveData = true,
-//       saveName = "2021 06 03 DonorDot",
-//   )
-//    completeSet_DonorDot(
-//        x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) * _ns },
-//        variable = "τ_c",
-//        samples = 20,
-//
-//        tf = 16.6,
-//        a = TAU * 100.0 *1e6 / _s,
-//        Ω = 20.0 * _μeV / _ħ,
-//
-//        σ = 1.0 * _μeV / _ħ, // TODO correct values!?
-// //        τ_c = 1.0 * _ns,
-//
-//        useShapedPulse = false,
-//
-//        useSmoothPulse = true,
-//        saveData = true,
-//        saveName = "2021 06 03 DonorDot",
-//    )
 
-
-
-//
 //    val smooth = concatenate(
 //        listOf(0.1, 0.25, 0.5, 0.75),
-//        linsteps(1.0, 1.0, 20.0).map { it * _ns }
+//        linsteps(1.0, 1.0, 10.0).map { it * _ns }
 //    )
+//
+//    val dateName = "2021 09 24v2 DonorDot"
 //
 //    smooth.forEach { smooth ->
 //        println("smooth = $smooth")
@@ -207,11 +242,16 @@ fun main() {
 //
 //            τ = smooth,
 //
+////            tf = 16.6,
+////            tf = 17.4,
 //            tf = 16.6,
+//            ε_max = 2000 * _μeV / _ħ, // ! using more realistic value
+//            ε_min = -200 * _μeV / _ħ, // ! using more realistic value
+//
 //            a = TAU * 100.0 * 1e6 / _s,
 //            Ω = 20.0 * _μeV / _ħ,
 //
-//            noiseVariance = 1.0 * _μeV / _ħ, // TODO correct values!?
+//            σ = 1.0 * _μeV / _ħ, // TODO correct values!?
 //            τ_c = 1.0 * _ns,
 //
 //            Γ = 0.0 / _ns,
@@ -232,11 +272,15 @@ fun main() {
 //
 //            τ = smooth,
 //
+////            tf = 16.6,
+////            tf = 17.4,
 //            tf = 16.6,
+//            ε_max = 2000 * _μeV / _ħ, // ! using more realistic value
+//            ε_min = -200 * _μeV / _ħ, // ! using more realistic value
 //            a = TAU * 100.0 * 1e6 / _s,
 //            Ω = 20.0 * _μeV / _ħ,
 //
-//            noiseVariance = 1.0 * _μeV / _ħ, // TODO correct values!?
+//            σ = 1.0 * _μeV / _ħ, // TODO correct values!?
 //            τ_c = 1.0 * _ns,
 //
 //            Γ = 0.0 / _ns,
