@@ -50,7 +50,7 @@ class DonorDotModel(
             if (pulse == null) {
                 // ? the first time the pulse shape is calculated, it will store the result in the
                 // ? companion object. After that, it can be reloaded.
-                // ! This assumes the parameters of the system (a, Ω) don't change!
+                // ! This assumes the parameters of the system (a,Ω) don't change!
 
                 fun dε(ε_: Double): Double {
                     val β = sqrt(ε_ * ε_ + Ω * Ω)
@@ -96,9 +96,8 @@ class DonorDotModel(
         }
 
 
-        // TODO check if this is the correct cutoff!
         val γ = 1.0 / τ_c
-        // the highest frequency is given by max(|ε_max|, |ε_min|) !
+        // * the highest frequency is given by max(|ε_max|, |ε_min|) !
         val ΔEmax = max(abs(ε_max), abs(ε_min))
         val cutoff = max(2.0 * π * ΔEmax, γ) * 10.0
         val noiseType = OUNoise(
@@ -141,13 +140,7 @@ class DonorDotModel(
                     val sys = H_0(t).eigenSystem()
                     val singletNeg = sys[0].second.normalized()
                     val singletPos = sys[2].second.normalized()
-
-//                    return singletNeg.bra() / singletPos
-
-                    // ! why did I use that???
-//                    return singletPos / singletNeg.bra()
-
-                    return singletNeg / singletPos.bra() // ? as in the text!
+                    return singletNeg / singletPos.bra()
                 })
         }
 
@@ -172,11 +165,6 @@ class ConstantGapModel(
     U_p = initialTransformation,
     U_m = finalTransformation,
 ) {
-    companion object {
-        var plotted: Boolean = true
-    }
-
-
     override fun build() {
         val ε = fun(t: Double) = gap * cos(π * clamp(0.0, t, tf) / tf)
         val Ω = fun(t: Double) = gap * sin(π * clamp(0.0, t, tf) / tf)
@@ -187,7 +175,7 @@ class ConstantGapModel(
         // "jaggy" lines of η(t) and the integrator will be slowed down unnecessarily.
         // By choosing a cutoff frequency that is much higher than the relevant 
         // frequency (in this case, the energy gap between the states), we cover
-        // the relevant physical aspects and we can neglect higher frequencies.
+        // the relevant physical aspects, and we can neglect higher frequencies.
         // Since E=ħω, the cutoff frequency is given by
         //     ω_max = gap / ħ
         // Using h=1 and ħ=h/2π, we get
@@ -208,24 +196,11 @@ class ConstantGapModel(
         println("tf = $tf, τ_c = $τ_c, γ = $γ")
         val η = Noise(
             max(tf, 10 * τ_c), // ? total time; make sure that the smallest, non-zero frequency ω_1 = 2π/tf is small compared to the width of the spectrum given by γ = 1/τ_c; The smalles frequency is given by ω_1 = 
-//            min(noiseType.initialSpacing, tf / 10.0), // ? make sure that the time-resolution of the η is high enough to result in a smooth curve
             min(noiseType.initialSpacing, tf/100.0), // ? see above; make sure that the time-resolution of the noise is high enough to result in a smooth curve
             noiseType.wnDeltaRate, // ? wnVariance
             tf, // ? maximum time to consider
         )
-//        val η = Noise(tf, tf / 100000.0, noiseType.wnDeltaRate)
         η.generate(noiseType::envelope, rescaleWN = true)
-
-
-//        println("maxIntegrationStep = $maxIntegrationStep, realSpacing = ${η.realSpacing}, tf/100 = ${tf/100.0}")
-//        println("cutoff = $cutoff, 2 pi gap = ${2.0 * π * gap}, γ = $γ")
-
-
-        if (!plotted) {
-            plotNoise(η, plotFrequencies = false)
-            η.values.forEach { println("tf = $tf -> η $it") }
-//            plotted = true
-        }
 
         H_η = fun(t: Double) = Operator(
             Pair(2, 2),
@@ -246,20 +221,6 @@ class ConstantGapModel(
 }
 
 
-fun main() {
-    val cg = ConstantGapModel(
-        1,
-        1.0,
-        1.0/10000.0,
-    )
-    cg.build()
-
-    println(cg.H_0(0.0));
-    val eigs = cg.H_0(0.0).eigenSystem()
-    eigs.forEach{ println("${it.first} -> ${it.second.str()}") }
-}
-
-
 class LandauZenerModel(
     initial: Int,
     tf: Double,
@@ -273,11 +234,6 @@ class LandauZenerModel(
 ) : Model(
     initial, tf, maxIntegrationStep, 2
 ) {
-    companion object {
-        var plotted: Boolean = true
-    }
-
-
     override fun build() {
 
         val Ω = gap
@@ -285,10 +241,8 @@ class LandauZenerModel(
         val ε = if (!useShapedPulse) {
             fun(t: Double) = (1.0 - 2.0 * t / tf) * ε_max
         } else {
-//            val α = Ω / ε_max * sqrt(Ω*Ω + ε_max*ε_max) * tf
             val α = sqrt(Ω * Ω + ε_max * ε_max) * tf * Ω / (2 * ε_max)
 
-            //            println("α = $α")
             fun(t: Double): Double {
                 val tt = clamp(0.0, t, tf) - tf / 2.0
                 return -tt * Ω * Ω / sqrt(α * α - tt * tt * Ω * Ω)
@@ -305,22 +259,13 @@ class LandauZenerModel(
             initialSpacing = 2 * π / cutoff,
         )
         val η = Noise(
-            max(tf, 10.0 * τ_c), 
-            min(noiseType.initialSpacing, tf / 100.0), 
+            max(tf, 10.0 * τ_c),
+            min(noiseType.initialSpacing, tf / 100.0),
             noiseType.wnDeltaRate,
             tf,
         )
         η.generate(noiseType::envelope, rescaleWN = true)
 
-
-//        println("maxIntegrationStep = $maxIntegrationStep, initialSpacing = ${noiseType.initialSpacing}, tf/100 = ${tf/100.0}")
-//        println("cutoff = $cutoff, 2 pi gap = ${2.0 * π * gap}, γ = $γ")
-
-
-        if (!plotted) {
-            plotNoise(η, plotFrequencies = false)
-            plotted = true
-        }
 
         H_η = fun(t: Double) = Operator(
             Pair(2, 2),
@@ -338,4 +283,19 @@ class LandauZenerModel(
             ) * 0.5
         )
     }
+
+
+}
+
+fun main() {
+    val cg = ConstantGapModel(
+        1,
+        1.0,
+        1.0/10000.0,
+    )
+    cg.build()
+
+    println(cg.H_0(0.0));
+    val eigs = cg.H_0(0.0).eigenSystem()
+    eigs.forEach{ println("${it.first} -> ${it.second.str()}") }
 }

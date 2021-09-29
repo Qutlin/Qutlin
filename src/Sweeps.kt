@@ -8,6 +8,19 @@ import kotlin.math.PI
 import kotlin.math.min
 
 
+/**
+ * Solve the Lindblad master equation for `t ∈ [-overhang, tf + overhang]`
+ *
+ * `d/dt ρ(t) = -i [H_η(t), ρ(t)] + Γ_0 D[Γ[1]] ρ(t)`,
+ *
+ * given a noisy Hamiltonian `H_η(t)` and a collapse operator `Γ.second` with factor `Γ.first`.
+ *
+ * The initial density matrix `ρ(0) = ρ_init = |initialState><initialState|`.
+ *
+ * `U_p` and `U_m` are the preparation and measurement unitaries used for the "generalized" strategy.
+ *
+ *
+ */
 fun integrate(
     initialState: Int,
     tf: Double,
@@ -22,14 +35,13 @@ fun integrate(
 
     val t0 = -overhang
     val t1 = tf + overhang
-//    val t1 = t0 * 1.01;
 
     // * generate initial density matrix depending on the chosen initial eigenstate
     val initSys = H_0(t0).eigenSystem()
 //    val initSys = H_η(t0).eigenSystem()
+
     var ρ_init = initSys[initialState].second.normalized().ketBra()
     if (U_p != null) {
-//        println("initial transformation = $U_p")
         ρ_init = U_p * ρ_init * U_p.dagger()
     }
 
@@ -44,10 +56,8 @@ fun integrate(
 
     // * define the ODE for the von Neumann equation
     val ode = if (Γ == null)
-//        fun(t: Double, ρ: ComplexMatrix) = -I * commutator(ρ, H_η(t))
         fun(t: Double, ρ: ComplexMatrix) = -I * commutator(H_η(t), ρ)
     else
-//        fun(t: Double, ρ: ComplexMatrix) = -I * commutator(ρ, H_η(t)) + Γ.first * collapse(Γ.second(t), ρ)
         fun(t: Double, ρ: ComplexMatrix) =
             -I * commutator(H_η(t), ρ) + Γ.first * collapse(Γ.second(t), ρ)
 
@@ -58,18 +68,7 @@ fun integrate(
             12, Double.MIN_VALUE, min(maxIntegrationStep, tf / 10000.0),
             1e-10, 1e-8
         )
-//        integrator = AdamsBashforthIntegrator(
-//            (tf/maxIntegrationStep / 100).toInt(), Double.MIN_VALUE, maxIntegrationStep,
-//            1e-6, 1e-4
-//        )
-//        integrator = GraggBulirschStoerIntegrator(
-//            Double.MIN_VALUE,min(maxIntegrationStep, tf/10000.0),
-//            1e-10, 1e-8
-//        )
     )
-
-//    val ρ_res = ρ_init;
-
 
     return if (U_m != null) ρ.map {
         (it * U_m * ρ_res * U_m.dagger()).trace().real
@@ -78,7 +77,9 @@ fun integrate(
     }
 }
 
-
+/**
+ * Helper function to calculate multiple quantum systems given by the `models` parameters with `samples` number of independent noise-samples each.
+ */
 fun sampleSweeps(
     models: List<Model>,
     samples: Int = 20,
@@ -89,8 +90,8 @@ fun sampleSweeps(
     val p = List(samples) { MutableList(nd) { MutableList(models.size) { 0.0 } } }
 
     println("start solver...")
-//    runBlocking(Dispatchers.Default) {
-//    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
+//    runBlocking(Dispatchers.Default) { // ? system default parallel dispatcher
+//    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded execution
     runBlocking(Executors.newFixedThreadPool(14).asCoroutineDispatcher()) {
         val futures = List(samples) { sample ->
             println("sample $sample")
@@ -120,6 +121,7 @@ fun sampleSweeps(
     println("solver finished.")
     return p
 }
+
 
 fun plotSweep(
     x: List<Double>,

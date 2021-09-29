@@ -11,73 +11,6 @@ abstract class NoiseType {
 }
 
 
-class GaussianSpectrumNoise(
-    var correlationTime: Double = 1.0,
-    override var initialVariance: Double = 1.0
-) : NoiseType() {
-    val omegaStd: Double
-        get() = 2.0 / correlationTime // ? CHECK
-
-    override val name = "gauss"
-    override val wnDeltaRate: Double
-        get() = sqrt(PI) * correlationTime * initialVariance // ? second sqrt already in noise generation // ? CHECK
-    override val initialSpacing
-        get() = 0.1 / omegaStd
-
-
-    /**
-     * omega: in TAU/s
-     */
-    override fun envelope(omega: Double): Double { // ? CHECK
-        val x = omega/omegaStd
-        return exp(-0.5 * x * x)
-    }
-
-
-    override fun toString() = "${name}[corr$correlationTime var%.3f]".format(initialVariance)
-}
-
-class FNoise(
-    var highCutoff: Double = 1000.0 * _μeV,
-    var lowCutoff: Double = 0.1 * _μeV,
-    var amplitude: Double = 1.0,
-    override var initialVariance: Double = 0.0 // TODO fix
-) : NoiseType() {
-    override val name: String = "1f"
-
-    override val wnDeltaRate: Double = 1.0
-
-    override val initialSpacing: Double
-        get() = 0.1 / highCutoff
-
-    override fun envelope(omega: Double): Double {
-        if (omega <= lowCutoff || omega >= highCutoff) return 0.0
-        return amplitude / sqrt(omega)
-    }
-
-
-    override fun toString() =
-        "${name}[a$amplitude lowC$lowCutoff highC$highCutoff]"
-}
-
-
-class WhiteNoise: NoiseType() {
-    override var initialSpacing = 0.01
-    override val name: String = "white"
-    override val wnDeltaRate: Double = 1.0
-    override val initialVariance: Double = 1.0 // TODO fix
-    override fun envelope(omega: Double): Double = 1.0
-}
-
-
-
-
-
-
-
-
-
-
 
 /**
  * Ornstein-Uhlenbeck Noise
@@ -102,7 +35,7 @@ class OUNoise(
 
     override fun envelope(ω: Double) =
         if (abs(ω) < cutoff)
-            σ * Math.sqrt( 2.0 * γ / (γ*γ + ω*ω) )
+            σ * sqrt( 2.0 * γ / (γ*γ + ω*ω) )
         else 0.0
 
     override fun toString() =
@@ -186,69 +119,4 @@ fun noiseTypesTest() {
     // * theoretical correlation curve
     val theo = timeValues.map { listOf(it, variance * exp(-γ * it)) }
     plot.addDataSet(Plot.DataSet(theo, symbol = Plot.Symbols.None, color = Plot.colorPalette[1]))
-
-
-//
-//
-//
-//    println("1/f noise ----------------------------------------------------")
-//    val fNoise = FNoise()
-////    noise = Noise(time, spacing = fNoise.spacing, wnVariance = fNoise.kappa)
-//
-//
-//    println("gaussian -----------------------------------------------------")
-//    val gNoise = GaussianSpectrumNoise()
-//
-//    gNoise.correlationTime = 0.05 * _ns
-//    val gamma = 1.0 / _ns
-//    gNoise.variance = gamma / (TAU * gNoise.correlationTime) // ? CHECK
-//    println("target variance: ${gNoise.variance}")
-//
-//    val noise2 = Noise(time = time, spacing = gNoise.spacing, wnVariance = gNoise.kappa)
-//    noise2.generate(gNoise::envelope)
-//    plotNoise(noise2)
-//    println(noise2)
-//
-//    val ns = noise2.noise.map{it.real}
-//
-//    val variance = ns.variance()
-//    val avg = ns.average()
-//    println("kappa = ${gNoise.kappa}")
-//    println("kappa/delta = ${gNoise.kappa / noise2.delta}")
-//    println("gamma = ${TAU * variance * gNoise.correlationTime}")
-//    println("gamma * delta = ${TAU * variance * gNoise.correlationTime * noise2.delta}")
-//
-//
-//    // * correlation time
-//
-//    val ct = ns.pAutoCorrelation()
-//    val ts = List(ct.size) {(it+1).toDouble() * gNoise.spacing}
-//    val tmp = ts.zip(ct) {t, c -> listOf(t,c)}
-//    tmp.take(100).forEach { println(it) }
-//    val p = Plot(
-//        Plot.DataSet(
-//            tmp,
-//            symbol = Plot.Symbols.None
-//        ),
-//        xScale = Mapper.Companion.Scales.Log10
-//    )
-//
-//
-//
-//    println("white -----------------------------------------------------")
-//
-//    val whiteNoise = WhiteNoise()
-//    val noise3 = Noise(time = time, spacing = whiteNoise.spacing, wnVariance = whiteNoise.kappa)
-//    noise3.generate(whiteNoise::envelope)
-////    plotNoise(noise3)
-////    println(noise3)
-//
-//
-//    // ! check, if the noise is generated correctly
-////    save("results/noise.csv", noise.noise.mapIndexed{i,n -> listOf(i.toDouble() * noise.dt, n.real)})
-//
-////    val generator = GaussianRandomGenerator(RandomDataGenerator(42))
-////    save("results/rng.csv", List(1000){
-////        listOf(it.toDouble(), generator.nextNormalizedDouble())
-////    })
 }
