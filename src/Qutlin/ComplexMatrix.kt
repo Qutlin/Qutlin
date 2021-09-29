@@ -45,20 +45,26 @@ data class ComplexMatrix(
             0.0, -R
         ))
 
-        // calculates e.g. Rx(phi) = e^(-i phi/2 pauliX)
-        fun rotPauliX(phi: Double) = ComplexMatrix(Pair(2,2), complexArrayOf(
-            cos(phi/2.0), -I*sin(phi/2.0),
-            -I*sin(phi/2.0), cos(phi/2.0)
+        /**
+         * calculates `Rx(θ) = e^(-i θ/2 pauliX)`
+         */
+        fun rotPauliX(θ: Double) = ComplexMatrix(Pair(2,2), complexArrayOf(
+            cos(θ/2.0), -I*sin(θ/2.0),
+            -I*sin(θ/2.0), cos(θ/2.0)
         ))
-        // calculates e^(-i phi/2 pauliY), where phi = angle
-        fun rotPauliY(phi: Double) = ComplexMatrix(Pair(2,2), complexArrayOf(
-            cos(phi/2.0), -sin(phi/2.0),
-            sin(phi/2.0), cos(phi/2.0)
+        /**
+         * calculates `Ry(θ) = e^(-i θ/2 pauliY)`
+         */
+        fun rotPauliY(θ: Double) = ComplexMatrix(Pair(2,2), complexArrayOf(
+            cos(θ/2.0), -sin(θ/2.0),
+            sin(θ/2.0), cos(θ/2.0)
         ))
-        // calculates e^(-i phi/2 pauliZ), where phi = angle
-        fun rotPauliZ(phi: Double) = ComplexMatrix(Pair(2,2), complexArrayOf(
-            exp(-I*phi/2.0), 0.0,
-            0.0, exp(I*phi/2.0)
+        /**
+         * calculates `Rz(θ) = e^(-i θ/2 pauliZ)`
+         */
+        fun rotPauliZ(θ: Double) = ComplexMatrix(Pair(2,2), complexArrayOf(
+            exp(-I*θ/2.0), 0.0,
+            0.0, exp(I*θ/2.0)
         ))
     }
 
@@ -152,7 +158,7 @@ data class ComplexMatrix(
         }
     }
 
-    inline fun conjugateTranspose(): ComplexMatrix {
+    fun conjugateTranspose(): ComplexMatrix {
         val res = ComplexMatrix(dimensions = dimensions, values = values.clone());
         res.conjugateTransposed();
         return res;
@@ -165,7 +171,7 @@ inline operator fun ComplexMatrix.set(i: Int, j: Int, value: Complex) {
     values[dimensions.second * i + j] = value
 }
 
-inline operator fun ComplexMatrix.plus(other: ComplexMatrix): ComplexMatrix {
+operator fun ComplexMatrix.plus(other: ComplexMatrix): ComplexMatrix {
     val res = this.copy()
     for (i in 0 until dimensions.first)
         for (j in 0 until dimensions.second)
@@ -173,7 +179,7 @@ inline operator fun ComplexMatrix.plus(other: ComplexMatrix): ComplexMatrix {
     return res
 }
 
-inline operator fun ComplexMatrix.minus(other: ComplexMatrix): ComplexMatrix {
+operator fun ComplexMatrix.minus(other: ComplexMatrix): ComplexMatrix {
     val res = this.copy()
     for (i in 0 until dimensions.first)
         for (j in 0 until dimensions.second)
@@ -181,7 +187,7 @@ inline operator fun ComplexMatrix.minus(other: ComplexMatrix): ComplexMatrix {
     return res
 }
 
-inline operator fun ComplexMatrix.times(other: ComplexMatrix): ComplexMatrix {
+operator fun ComplexMatrix.times(other: ComplexMatrix): ComplexMatrix {
     val res = ComplexMatrix(dimensions = Pair(dimensions.first, other.dimensions.second))
     for (j in 0 until other.dimensions.second)
         for (k in 0 until dimensions.second) {
@@ -194,7 +200,7 @@ inline operator fun ComplexMatrix.times(other: ComplexMatrix): ComplexMatrix {
 }
 
 
-inline operator fun ComplexMatrix.times(other: Complex): ComplexMatrix {
+operator fun ComplexMatrix.times(other: Complex): ComplexMatrix {
     val res = this.copy()
     for (i in values.indices) res.values[i] *= other
     return res
@@ -206,7 +212,7 @@ inline operator fun Complex.times(other: ComplexMatrix) = other * this
 
 
 
-inline operator fun ComplexMatrix.div(other: Complex): ComplexMatrix {
+operator fun ComplexMatrix.div(other: Complex): ComplexMatrix {
     val res = this.copy()
     for (i in values.indices) res.values[i] /= other
     return res
@@ -227,8 +233,6 @@ fun main() {
     m = 0.5.toComplex() * (m + m.conjugateTranspose())
     println(m)
 
-//    m = ComplexMatrix.eye(Pair(2,2))
-//    m[1,1] = 2.0 + 3.0 * I
     val eig = m.eigenSystem()
     eig.forEach {
         println("eigenvalue: ${it.first}")

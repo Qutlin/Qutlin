@@ -1,6 +1,5 @@
 package Qutlin
 
-import org.hipparchus.complex.Complex
 import org.hipparchus.ode.ODEIntegrator
 import org.hipparchus.ode.ODEState
 import org.hipparchus.ode.OrdinaryDifferentialEquation
@@ -10,12 +9,6 @@ import org.hipparchus.util.FastMath.sqrt
 
 typealias State = ComplexArray
 typealias Operator = ComplexMatrix
-
-fun state(vararg numbers: Any) = complexArrayOf(*numbers)
-
-
-fun zeroState(dim: Int): State = State(dim) {Complex.ZERO}
-fun onesState(dim: Int): State = State(dim) {Complex.ONE}
 
 fun State.normalize() {
     val norm = sqrt((this.bra() * this).real)
@@ -41,11 +34,14 @@ fun Operator.dagger(): Operator {
 fun State.ketBra() = this / this.bra()
 
 
-
-
-fun collapse(op: Operator, density: Operator): Operator {
-    val opDagger = op.dagger();
-    return op * density * opDagger - 0.5 * antiCommutator(opDagger * op, density);
+/**
+ * Returns the result of a collapse operator `O` acting on a density matrix `ρ`:
+ *
+ * `collapse(ρ) = O ρ O^† - 1/2 [O^† O, ρ]`
+ */
+fun collapse(O: Operator, ρ: Operator): Operator {
+    val opDagger = O.dagger();
+    return O * ρ * opDagger - 0.5 * antiCommutator(opDagger * O, ρ);
 }
 
 

@@ -54,20 +54,19 @@ class Noise(
     /**
      * from the Hipparchus docs:
      *
-     * forward transform: yn =     ∑_k=0^N-1 x_k  exp(-2πi n k / N),
+     * forward transform: `yn =     ∑_k=0^N-1 x_k  exp(-2πi n k / N)`,
      *
-     * inverse transform: xk = 1/N ∑_n=0^N-1 y_n exp( 2πi n k / N)
+     * inverse transform: `xk = 1/N ∑_n=0^N-1 y_n exp( 2πi n k / N)`
      *
-     * in terms of ω_k and t_n: a(ω_k) =     ∑_n=1^N η(t_n)   exp(-i ω_k t_n),
+     * in terms of `ω_k` and `t_n`: `a(ω_k) =     ∑_n=1^N η(t_n)   exp(-i ω_k t_n)`,
      *
-     * inverse transform: η(t_n)   = 1/N ∑_k=1^N a(ω_k) exp( i ω_k t_n)
+     * inverse transform: `η(t_n)   = 1/N ∑_k=1^N a(ω_k) exp( i ω_k t_n)`
      *
-     * @param envelope function in radian frequencies (ω)
+     * @param envelope function in radian frequencies (`ω`)
      * */
     fun generate(envelope: (Double) -> Double = unit, rescaleWN: Boolean = true, targetVariance: Double = -1.0) {
         // * make sure the seed is new in every run
         val seed = LocalDateTime.now().nano.toLong()
-//        println("seed to generate noise: $seed")
 
         // * generator for gaussian normalized random numbers (0 mean, 1 std)
 
@@ -75,7 +74,6 @@ class Noise(
 
         val factor = if (rescaleWN) sqrt(wnVariance/realSpacing) else 1.0
         val whiteNoise = List(N) { generator.nextNormalizedDouble() * factor }
-//        println("whiteNoise: var = ${whiteNoise.variance()}, avg = ${whiteNoise.average()}; target wn var = ${wnVariance/delta}")
 
         amplitudes = fftTransformer.transform(whiteNoise.toDoubleArray(), TransformType.FORWARD )
 
@@ -98,7 +96,6 @@ class Noise(
      * Generate interpolated values from generated noise data.
      */
     private fun interpolate(t: Double): Complex {
-//        if(t > time) return 0.0.toComplex()
         val tt = t/realSpacing
         val index0 = floor(tt).toInt()
         val index1 = floor(tt + 1.0).toInt()
@@ -114,7 +111,7 @@ class Noise(
     }
 
     /**
-     * Makes Noise callable, e.g. val noise = Noise(...) can be used as noise(t)
+     * Makes `Noise` callable, e.g. `val noise = Noise(...)` can be used as `noise(t)`
      */
     operator fun invoke(t: Double) = this.interpolate(t).real
 
@@ -122,15 +119,10 @@ class Noise(
 
     override fun toString(): String {
         val realValues = values.map { it.real }
-//        val dN = N.toDouble()
 
         val avg = realValues.average()
         val std = realValues.std()
         val variance = realValues.variance()
-        // ! "reduce" is wrong since it uses the first value of rNoise as the initial value of acc
-        // ! -> use "fold" instead -> done.
-//        val avg = rNoise.reduce { acc, n -> acc + n } / dN
-//        val std = sqrt(rNoise.reduce() { acc, n -> acc + (avg - n)*(avg - n)} / (dN-1))
 
         return """
             Noise
@@ -149,12 +141,6 @@ class Noise(
 
 
 fun plotNoise(noise: Noise, take: Int = -1, plotFrequencies: Boolean = true, plotTimeSeries: Boolean = true) {
-//    println(noise.frequencies)
-
-//    if (take == -1)
-//        noise.omegaFreq.drop(1).zip(noise.amplitudes.drop(1)){ f, a -> listOf(f,a.imaginary)}.take(take)
-//    else
-//        noise.omegaFreq.drop(1).zip(noise.amplitudes.drop(1)){ f, a -> listOf(f,a.imaginary)}
 
     if(plotFrequencies) {
         val p0 = Plot(

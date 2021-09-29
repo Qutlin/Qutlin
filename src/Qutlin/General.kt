@@ -10,6 +10,11 @@ import org.hipparchus.util.FastMath.sqrt
 import pmap
 import java.util.function.Function
 
+
+/**
+ * constants used throughout the code.
+ */
+
 const val _ns : Double = 1.0
 const val _s = 1.0e9 * _ns
 const val _Hz = 1.0/_s
@@ -42,11 +47,14 @@ fun List<Complex>.average(): Complex =
 
 fun List<Double>.variance(): Double {
     val avg = average()
-    return fold(0.0){acc, v -> acc + (v-avg)*(v-avg)} / size //(size - 1.0)
+    return fold(0.0){acc, v -> acc + (v-avg)*(v-avg)} / size
 }
 
 fun List<Double>.std(): Double = sqrt(variance())
 
+/**
+ * Calculates the auto correlation function of the values in a `List<Double>` in parallel.
+ */
 fun List<Double>.pAutoCorrelation(normalized: Boolean = true) = runBlocking(Dispatchers.Default) {
     val tmp = List(size) {it}
     val avg = average()
@@ -60,7 +68,6 @@ fun List<Double>.pAutoCorrelation(normalized: Boolean = true) = runBlocking(Disp
         }.sum() / (σ2 * size)//(size-1))
     }
 }
-
 
 
 fun ((Double) -> Double).uvFun() = UnivariateFunction{ x -> this.invoke(x) }

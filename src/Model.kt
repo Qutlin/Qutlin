@@ -296,6 +296,6 @@ fun main() {
     cg.build()
 
     println(cg.H_0(0.0));
-    val eigs = cg.H_0(0.0).eigenSystem()
-    eigs.forEach{ println("${it.first} -> ${it.second.str()}") }
+    val eigenvalues = cg.H_0(0.0).eigenSystem()
+    eigenvalues.forEach{ println("${it.first} -> ${it.second.str()}") }
 }

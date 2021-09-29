@@ -32,13 +32,13 @@ fun complexArrayOf(vararg numbers: Any): ComplexArray {
 fun List<Complex>.toComplexArray(): ComplexArray = this.toTypedArray()
 
 
-inline operator fun ComplexArray.plus(other: ComplexArray): ComplexArray {
+operator fun ComplexArray.plus(other: ComplexArray): ComplexArray {
     val res = copyOf()
     for (i in res.indices) res[i] += other[i]
     return res
 }
 
-inline operator fun ComplexArray.times(other: Complex): ComplexArray {
+operator fun ComplexArray.times(other: Complex): ComplexArray {
     val res = copyOf()
     for (i in res.indices) res[i] *= other
     return res
@@ -54,7 +54,7 @@ inline operator fun ComplexArray.div(other: Complex) =
     this.times(Complex(1.0) / other)
 
 
-inline operator fun ComplexArray.times(other: ComplexMatrix): ComplexArray {
+operator fun ComplexArray.times(other: ComplexMatrix): ComplexArray {
     assert(size == other.dimensions.second)
 
     val dim = other.dimensions.first
@@ -67,7 +67,7 @@ inline operator fun ComplexArray.times(other: ComplexMatrix): ComplexArray {
     return res
 }
 
-inline operator fun ComplexMatrix.times(other: ComplexArray): ComplexArray {
+operator fun ComplexMatrix.times(other: ComplexArray): ComplexArray {
     assert(dimensions.first == other.size)
 
     val res = ComplexArray(dimensions.second) { Complex.ZERO }
@@ -80,14 +80,14 @@ inline operator fun ComplexMatrix.times(other: ComplexArray): ComplexArray {
     return res
 }
 
-inline operator fun ComplexArray.times(other: ComplexArray): Complex {
+operator fun ComplexArray.times(other: ComplexArray): Complex {
     assert(size == other.size)
     var res = Complex.ZERO
     for (i in 0 until size) res += this[i] * other[i]
     return res
 }
 
-inline operator fun ComplexArray.div(other: ComplexArray): ComplexMatrix {
+operator fun ComplexArray.div(other: ComplexArray): ComplexMatrix {
     val res = ComplexMatrix(Pair(size, other.size))
     for (i in indices)
         for (j in other.indices) res[i, j] = this[i] * other[j]
