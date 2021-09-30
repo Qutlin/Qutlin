@@ -2,9 +2,20 @@ import org.hipparchus.migration.ode.FirstOrderDifferentialEquations
 import org.hipparchus.ode.nonstiff.GraggBulirschStoerIntegrator
 import org.hipparchus.util.FastMath.floor
 
+
+/**
+ * Solves the differential equation for the fast-QUAD pulse. Here, the derivative is given as a function of the
+ * detuning parameter itself: `dε/dt[ε(t)] = f[ε(t)]`.
+ *
+ * The numerically solved fast-QUAD pulse shape is returned as a `List` of `Pair`s of time and detuning parameters.
+ *
+ * @param eps initial conditions as a `Pair(t0, ε(t0))`.
+ * @param depsilon function returning the derivative of the detuning `dε/dt[ε]` as a function of the detuning itself.
+ */
 fun calculatePulseShape(
     eps: Pair<Double,Double>,
-    depsilon: (Double) -> Double) : List<Pair<Double, Double>> {
+    depsilon: (Double) -> Double
+) : List<Pair<Double, Double>> {
 
     val integrator = GraggBulirschStoerIntegrator(
         1e-16,

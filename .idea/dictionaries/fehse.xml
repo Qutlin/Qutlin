@@ -2,12 +2,14 @@
   <dictionary name="fehse">
     <words>
       <w>depsilon</w>
+      <w>detuning</w>
       <w>dtheta</w>
       <w>hbar</w>
       <w>linspace</w>
       <w>linsteps</w>
       <w>nakajima</w>
       <w>neumann</w>
+      <w>prefactor</w>
       <w>proj</w>
       <w>unitaries</w>
     </words>

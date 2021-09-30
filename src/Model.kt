@@ -1,9 +1,20 @@
 import Qutlin.*
 import org.hipparchus.util.FastMath.*
 
-
+/**
+ * The abstract Model defines properties that every simulation run of a concrete setup should have, such as
+ * the final time `tf`, the dimensions of the Hilbert space `dimensions`, the overhang of the time variable before and
+ * after the targeted time `t ∈ [0-overhang,tf+overhang]`, as well as preparation and measurement unitaries
+ * `U_p` & `U_m` when using the _"generalized"_ strategy.
+ *
+ * The noise-free Hamiltonian `H_0` and the noisy Hamiltonian `H_η`, and the `collapse` operators are to be initialized
+ * by the concrete implementation in `build()`, which is to be overridden.
+ *
+ * The `collapse` operator is given as a pair of the scalar prefactor `Γ` and a function `D(t)` returning the collapse
+ * operator at time `t`.
+ */
 abstract class Model(
-    val initial: Int,
+    val initial: Int, // ? the initially prepare eigenstate
     val tf: Double,
     val maxIntegrationStep: Double,
     val dimensions: Int,
@@ -50,8 +61,9 @@ class DonorDotModel(
             if (pulse == null) {
                 // ? the first time the pulse shape is calculated, it will store the result in the
                 // ? companion object. After that, it can be reloaded.
-                // ! This assumes the parameters of the system (a,Ω) don't change!
+                // ! This assumes the parameters of the system `(a, Ω)` don't change!
 
+                // ? derivative of the detuning depending on the detuning `dε/dt[ε(t)]`
                 fun dε(ε_: Double): Double {
                     val β = sqrt(ε_ * ε_ + Ω * Ω)
                     val x = β.e(3) * sqrt(1.0 + ε_ / β)
@@ -68,7 +80,7 @@ class DonorDotModel(
                 interpolate(pulse!!, pulse!!.last().first * clamp(0.0, t, tf) / tf, Pair(ε_min, ε_max)),
                 ε_max,
             )
-        } else {
+        } else { // ? linear pulse
             fun(t: Double) = clamp(
                 ε_min,
                 ε_max + clamp(0.0, t, tf) / tf * (ε_min - ε_max),
@@ -116,6 +128,7 @@ class DonorDotModel(
         η.generate(noiseType::envelope, rescaleWN = true)
 
 
+        // * noisy Hamiltonian
         H_η = fun(t: Double) = Operator(
             Pair(3, 3), complexArrayOf(
                 0.0, δbz, Ω / 2.0,
@@ -124,6 +137,7 @@ class DonorDotModel(
             )
         )
 
+        // * noise-free Hamiltonian
         H_0 = fun(t: Double) = Operator(
             Pair(3, 3), complexArrayOf(
                 0.0, δbz, Ω / 2.0,
