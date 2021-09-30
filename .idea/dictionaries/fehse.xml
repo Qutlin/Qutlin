@@ -5,12 +5,14 @@
       <w>detuning</w>
       <w>dtheta</w>
       <w>hbar</w>
+      <w>lindblad</w>
       <w>linspace</w>
       <w>linsteps</w>
       <w>nakajima</w>
       <w>neumann</w>
       <w>prefactor</w>
       <w>proj</w>
+      <w>qubit</w>
       <w>unitaries</w>
     </words>
   </dictionary>
