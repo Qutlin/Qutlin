@@ -31,7 +31,39 @@ abstract class Model(
 }
 
 
-class DonorDotModel(
+
+class DoubleQuantumDotModel(
+    initial: Int,
+    tf: Double,
+    maxIntegrationStep: Double,
+    δbz: Double = 1.0 * _μeV / _ħ, // TODO good values for DQD systems
+    Ω: Double = 20.0 * _μeV / _ħ,
+    useShapedPulse: Boolean = false,
+    useSmoothPulse: Boolean = true,
+    τ: Double = 5.0 * _ns,
+    ε_max: Double = 1700 * _μeV / _ħ,
+    ε_min: Double = -200 * _μeV / _ħ,
+    σ: Double = 1.0 * _μeV,
+    τ_c: Double = 1.0 * _ns,
+    Γ: Double = 0.0 / _ns,
+) : DonorDotModel(
+    initial,
+    tf,
+    maxIntegrationStep,
+    4 * δbz,
+    Ω,
+    useShapedPulse,
+    useSmoothPulse,
+    τ,
+    ε_max,
+    ε_min,
+    σ,
+    τ_c,
+    Γ,
+) {}
+
+
+open class DonorDotModel(
         initial: Int,
         tf: Double,
         maxIntegrationStep: Double,

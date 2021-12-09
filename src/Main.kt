@@ -8,9 +8,10 @@ import kotlin.math.pow
 
 
 fun main() {
-    constant_gap();
-    landau_zener();
-    donor_dot();
+    // constant_gap()
+    // landau_zener()
+    // donor_dot()
+    double_quantum_dot()
 }
 
 
@@ -302,6 +303,308 @@ fun donor_dot() {
             saveData = true,
             saveName = dateName,
         )
+    }
+}
+
+
+/**
+ * Calculate all the data for the donor-dot model.
+ */
+fun double_quantum_dot() {
+
+    val setup = DqdSetup()
+
+    // transfer error depending on `tf` for the linear pulse
+    completeSet_DQD(
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
+        variable = "tf",
+        setup = setup,
+
+        useShapedPulse = false,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = "2021 09 26 DonorDot",
+    )
+
+    // transfer error depending on `tf` for the fast-QUAD pulse
+    completeSet_DQD(
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
+        variable = "tf",
+        setup = setup,
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = "2021 09 26 DonorDot",
+    )
+
+    // transfer error depending on relaxation rate `Γ` for the linear pulse
+    completeSet_DQD(
+        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
+        variable = "Γ",
+        setup = setup,
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = "2021 09 28 DonorDot",
+    )
+
+    // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
+    completeSet_DQD(
+        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
+        variable = "Γ",
+        setup = setup,
+
+        useShapedPulse = false,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = "2021 09 28 DonorDot",
+    )
+
+    // transfer error depending on noise correlation time `τ_c = 1/γ` for the fast-QUAD pulse
+    completeSet_DQD(
+        x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+        variable = "τ_c",
+        setup = setup,
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = "2021 09 28 DonorDot",
+    )
+
+    // transfer error depending on noise correlation time `τ_c = 1/γ` for the linear pulse
+    completeSet_DQD(
+        x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+        variable = "τ_c",
+        setup = setup,
+
+        useShapedPulse = false,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = "2021 09 28 DonorDot",
+    )
+
+
+
+    // transfer error depending on `tf` for the following list of values
+    // for the time constant `τ` of the pulse-smoothing Gaussian.
+    val time_constant_τ = concatenate(
+        listOf(0.1, 0.25, 0.5, 0.75),
+        linsteps(1.0, 1.0, 10.0).map { it * _ns }
+    )
+
+    val dateName = "2021 09 24v2 DonorDot"
+
+    time_constant_τ.forEach { smooth ->
+        println("smooth = $smooth")
+
+        completeSet_DQD(
+            x = concatenate(
+                linsteps(5.0, 1.0, 40.0).map { it * _ns }
+            ),
+            variable = "tf",
+            setup = DqdSetup(τ = smooth),
+
+            useShapedPulse = true, // fast-QUAD pulse
+            useSmoothPulse = true,
+
+            saveData = true,
+            saveName = dateName,
+        )
+
+        completeSet_DQD(
+            x = concatenate(
+                linsteps(5.0, 1.0, 40.0).map { it * _ns }
+            ),
+            variable = "tf",
+            setup = DqdSetup(τ = smooth),
+
+            useShapedPulse = false, // linear pulse
+            useSmoothPulse = true,
+
+            saveData = true,
+            saveName = dateName,
+        )
+    }
+}
+
+
+
+
+/**
+ * This class simply stores the default values of the double-quantum dot system parameters.
+ */
+data class DqdSetup(
+    val samples : Int = 20,
+    
+    // system parameters
+    val tf    : Double =   18.0 * _ns,
+    val Ω     : Double =   20.0 * _μeV / _ħ,
+    val δbz   : Double =    1.0 * _μeV / _ħ,
+    val ε_max : Double = 2000.0 * _μeV / _ħ,
+    val ε_min : Double = -200.0 * _μeV / _ħ,
+    val τ     : Double =    4.0 * _ns,
+
+    //  detuning noise
+    val σ     : Double =    1.0 * _μeV / _ħ,
+    val τ_c   : Double =    1.0 * _ns,
+    
+    // relaxation
+    val Γ     : Double =    0.0 / _ns,
+)
+
+
+
+/**
+ * This function generates a list of parameters for which the population transfer is being calculated.
+ * `x` is the variable over the list is generated over. By setting `variable`, you can choose what parameter to
+ * iterate over. Available are `"Γ"`, `"τ_c"`, `"noiseVariance"`, `"tf"`, `"smooth"`. The default is `"tf"`.
+ * It will solve the master equation for a number of `samples` independent (noise) realizations.
+ */
+fun completeSet_DQD(
+    x: List<Double> = linspace(-1.0, 3.0, 100).map { 10.0.pow(it) },
+    variable: String = "tf",
+
+    setup: DqdSetup,
+
+    useSmoothPulse: Boolean = true,
+    useShapedPulse: Boolean = false,
+    saveData: Boolean = true,
+    saveName: String = "2021 12 03 DQD",
+    plotData: Boolean = true,
+) {
+
+    val (samples, tf, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ) = setup // deconstruct the variables
+
+    val γ = 1.0/τ_c
+    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
+//    runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) { // ? 8 threads
+//    runBlocking(Dispatchers.Default) { // ? system default (as many as possible usually)
+        // ? only interested in initializing the lowest two eigenstates, not the excited hybridized singlet state
+        List(2) { initial ->
+            x.map {
+                val cutoff = max(2.0 * π * ε_max, γ) * 10.0
+                val initialSpacing = 2*π/(cutoff * 2)
+
+                when(variable) {
+                    "Γ" -> DoubleQuantumDotModel(
+                        initial,
+                        tf,
+                        initialSpacing,
+                        δbz,
+                        Ω,
+                        useShapedPulse,
+                        useSmoothPulse,
+                        τ,
+                        ε_max,
+                        ε_min,
+                        σ,
+                        τ_c,
+                        it,
+                    )
+                    "τ_c" -> DoubleQuantumDotModel(
+                        initial,
+                        tf,
+                        initialSpacing,
+                        δbz,
+                        Ω,
+                        useShapedPulse,
+                        useSmoothPulse,
+                        τ,
+                        ε_max,
+                        ε_min,
+                        σ,
+                        it,
+                        Γ,
+                    )
+                    "noiseVariance" -> DoubleQuantumDotModel(
+                        initial,
+                        tf,
+                        initialSpacing,
+                        δbz,
+                        Ω,
+                        useShapedPulse,
+                        useSmoothPulse,
+                        τ,
+                        ε_max,
+                        ε_min,
+                        it,
+                        τ_c,
+                        Γ,
+                    )
+                    "tf" -> DoubleQuantumDotModel(
+                        initial,
+                        it,
+                        initialSpacing,
+                        δbz,
+                        Ω,
+                        useShapedPulse,
+                        useSmoothPulse,
+                        τ,
+                        ε_max,
+                        ε_min,
+                        σ,
+                        τ_c,
+                        Γ,
+                    )
+                    "smooth" -> DoubleQuantumDotModel(
+                        initial,
+                        tf,
+                        initialSpacing,
+                        δbz,
+                        Ω,
+                        useShapedPulse,
+                        useSmoothPulse,
+                        it,
+                        ε_max,
+                        ε_min,
+                        σ,
+                        τ_c,
+                        Γ,
+                    )
+                    else -> DoubleQuantumDotModel(
+                        initial,
+                        it,
+                        initialSpacing,
+                        δbz,
+                        Ω,
+                        useShapedPulse,
+                        useSmoothPulse,
+                        τ,
+                        ε_max,
+                        ε_min,
+                        σ,
+                        τ_c,
+                        Γ,
+                    )
+                }
+            }
+        }.mapIndexed { initial, models ->
+            async {
+                val res = sampleSweeps(
+                    models,
+                    samples,
+                )
+                if(saveData) {
+                    val smooth = if(useSmoothPulse) "smooth(%.2e) ".format(τ) else ""
+                    val shaped = if(useShapedPulse) "shaped " else ""
+                    val filename = "_results_/$saveName $variable ${smooth}${shaped}i$initial Ω%.2e s%.2e tc%.2e coll%.2e tf%.2e n$samples.csv"
+                        .format(Ω, σ, τ_c, Γ, tf)
+                    saveSweep(filename, x, res)
+                }
+                if(plotData)
+                    try { plotSweep(x, res) }
+                    catch (e: Exception) { println("could not plot") }
+            }
+        }.awaitAll()
     }
 }
 
