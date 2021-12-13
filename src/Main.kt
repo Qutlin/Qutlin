@@ -398,8 +398,9 @@ fun double_quantum_dot() {
     // transfer error depending on `tf` for the following list of values
     // for the time constant `τ` of the pulse-smoothing Gaussian.
     val time_constant_τ = concatenate(
-        listOf(0.1, 0.25, 0.5, 0.75),
-        linsteps(1.0, 1.0, 10.0).map { it * _ns }
+//        listOf(0.1, 0.25, 0.5, 0.75),
+//        linsteps(1.0, 1.0, 10.0).map { it * _ns }
+        linsteps(3.0, 1.0, 10.0).map { it * _ns }
     )
 
     time_constant_τ.forEach { smooth ->
@@ -410,7 +411,7 @@ fun double_quantum_dot() {
                 linsteps(5.0, 1.0, 40.0).map { it * _ns }
             ),
             variable = "tf",
-            setup = DqdSetup(τ = smooth),
+            setup = DqdSetup(τ = smooth, samples = 5),
 
             useShapedPulse = true, // fast-QUAD pulse
             useSmoothPulse = true,
@@ -424,7 +425,7 @@ fun double_quantum_dot() {
                 linsteps(5.0, 1.0, 40.0).map { it * _ns }
             ),
             variable = "tf",
-            setup = DqdSetup(τ = smooth),
+            setup = DqdSetup(τ = smooth, samples = 5),
 
             useShapedPulse = false, // linear pulse
             useSmoothPulse = true,
