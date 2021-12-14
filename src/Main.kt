@@ -408,7 +408,9 @@ fun double_quantum_dot() {
 
         completeSet_DQD(
             x = concatenate(
-                linsteps(5.0, 1.0, 40.0).map { it * _ns }
+                linsteps(0.25, 0.25, 5.0).map { it * _ns }
+                // linsteps(5.0, 1.0, 10.0).map { it * _ns },
+                // linsteps(10.0, 5.0, 40.0).map { it * _ns }
             ),
             variable = "tf",
             setup = DqdSetup(τ = smooth, samples = 5),
@@ -422,7 +424,9 @@ fun double_quantum_dot() {
 
         completeSet_DQD(
             x = concatenate(
-                linsteps(5.0, 1.0, 40.0).map { it * _ns }
+                linsteps(0.25, 0.25, 5.0).map { it * _ns }
+                // linsteps(5.0, 1.0, 10.0).map { it * _ns },
+                // linsteps(10.0, 5.0, 40.0).map { it * _ns }
             ),
             variable = "tf",
             setup = DqdSetup(τ = smooth, samples = 5),
