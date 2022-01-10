@@ -312,132 +312,134 @@ fun donor_dot() {
  */
 fun double_quantum_dot() {
 
-    val setup = DqdSetup()
-    val saveName  = "2021 12 09 DQD"
+    val setup = DqdSetup(
+        τ = 1.0 * _ns // found to be optimal in the ε-vs-τ plot
+    )
+    val saveName  = "2022 01 10 DQD"
 
-//    // transfer error depending on `tf` for the linear pulse
-//    completeSet_DQD(
-//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
-//        variable = "tf",
-//        setup = setup,
-//
-//        useShapedPulse = false,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
+   // transfer error depending on `tf` for the linear pulse
+   completeSet_DQD(
+       x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
+       variable = "tf",
+       setup = setup,
+
+       useShapedPulse = false,
+       useSmoothPulse = true,
+
+       saveData = true,
+       saveName = saveName,
+   )
 //
 //    // transfer error depending on `tf` for the fast-QUAD pulse
-//    completeSet_DQD(
-//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
-//        variable = "tf",
-//        setup = setup,
-//
-//        useShapedPulse = true,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
+   completeSet_DQD(
+       x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
+       variable = "tf",
+       setup = setup,
+
+       useShapedPulse = true,
+       useSmoothPulse = true,
+
+       saveData = true,
+       saveName = saveName,
+   )
 //
 //    // transfer error depending on relaxation rate `Γ` for the linear pulse
-//    completeSet_DQD(
-//        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
-//        variable = "Γ",
-//        setup = setup,
-//
-//        useShapedPulse = true,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
+   completeSet_DQD(
+       x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
+       variable = "Γ",
+       setup = setup,
+
+       useShapedPulse = true,
+       useSmoothPulse = true,
+
+       saveData = true,
+       saveName = saveName,
+   )
 //
 //    // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
-//    completeSet_DQD(
-//        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
-//        variable = "Γ",
-//        setup = setup,
-//
-//        useShapedPulse = false,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
+   completeSet_DQD(
+       x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
+       variable = "Γ",
+       setup = setup,
+
+       useShapedPulse = false,
+       useSmoothPulse = true,
+
+       saveData = true,
+       saveName = saveName,
+   )
 //
 //    // transfer error depending on noise correlation time `τ_c = 1/γ` for the fast-QUAD pulse
-//    completeSet_DQD(
-//        x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
-//        variable = "τ_c",
-//        setup = setup,
-//
-//        useShapedPulse = true,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
+   completeSet_DQD(
+       x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+       variable = "τ_c",
+       setup = setup,
+
+       useShapedPulse = true,
+       useSmoothPulse = true,
+
+       saveData = true,
+       saveName = saveName,
+   )
 //
 //    // transfer error depending on noise correlation time `τ_c = 1/γ` for the linear pulse
-//    completeSet_DQD(
-//        x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
-//        variable = "τ_c",
-//        setup = setup,
-//
-//        useShapedPulse = false,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
+   completeSet_DQD(
+       x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+       variable = "τ_c",
+       setup = setup,
+
+       useShapedPulse = false,
+       useSmoothPulse = true,
+
+       saveData = true,
+       saveName = saveName,
+   )
 
 
 
     // transfer error depending on `tf` for the following list of values
     // for the time constant `τ` of the pulse-smoothing Gaussian.
-    val time_constant_τ = concatenate(
-//        listOf(0.1, 0.25, 0.5, 0.75),
-//        linsteps(1.0, 1.0, 10.0).map { it * _ns }
-        linsteps(3.0, 1.0, 10.0).map { it * _ns }
-    )
+//     val time_constant_τ = concatenate(
+// //        listOf(0.1, 0.25, 0.5, 0.75),
+// //        linsteps(1.0, 1.0, 10.0).map { it * _ns }
+//         linsteps(3.0, 1.0, 10.0).map { it * _ns }
+//     )
 
-    time_constant_τ.forEach { smooth ->
-        println("smooth = $smooth")
+//     time_constant_τ.forEach { smooth ->
+//         println("smooth = $smooth")
 
-        completeSet_DQD(
-            x = concatenate(
-                linsteps(0.25, 0.25, 5.0).map { it * _ns }
-                // linsteps(5.0, 1.0, 10.0).map { it * _ns },
-                // linsteps(10.0, 5.0, 40.0).map { it * _ns }
-            ),
-            variable = "tf",
-            setup = DqdSetup(τ = smooth, samples = 5),
+//         completeSet_DQD(
+//             x = concatenate(
+//                 linsteps(0.25, 0.25, 5.0).map { it * _ns }
+//                 // linsteps(5.0, 1.0, 10.0).map { it * _ns },
+//                 // linsteps(10.0, 5.0, 40.0).map { it * _ns }
+//             ),
+//             variable = "tf",
+//             setup = DqdSetup(τ = smooth, samples = 5),
 
-            useShapedPulse = true, // fast-QUAD pulse
-            useSmoothPulse = true,
+//             useShapedPulse = true, // fast-QUAD pulse
+//             useSmoothPulse = true,
 
-            saveData = true,
-            saveName = saveName,
-        )
+//             saveData = true,
+//             saveName = saveName,
+//         )
 
-        completeSet_DQD(
-            x = concatenate(
-                linsteps(0.25, 0.25, 5.0).map { it * _ns }
-                // linsteps(5.0, 1.0, 10.0).map { it * _ns },
-                // linsteps(10.0, 5.0, 40.0).map { it * _ns }
-            ),
-            variable = "tf",
-            setup = DqdSetup(τ = smooth, samples = 5),
+//         completeSet_DQD(
+//             x = concatenate(
+//                 linsteps(0.25, 0.25, 5.0).map { it * _ns }
+//                 // linsteps(5.0, 1.0, 10.0).map { it * _ns },
+//                 // linsteps(10.0, 5.0, 40.0).map { it * _ns }
+//             ),
+//             variable = "tf",
+//             setup = DqdSetup(τ = smooth, samples = 5),
 
-            useShapedPulse = false, // linear pulse
-            useSmoothPulse = true,
+//             useShapedPulse = false, // linear pulse
+//             useSmoothPulse = true,
 
-            saveData = true,
-            saveName = saveName,
-        )
-    }
+//             saveData = true,
+//             saveName = saveName,
+//         )
+//     }
 }
 
 
