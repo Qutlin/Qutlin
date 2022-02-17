@@ -31,12 +31,19 @@ abstract class Model(
 }
 
 
+// ########   #######  ########
+// ##     ## ##     ## ##     ##
+// ##     ## ##     ## ##     ##
+// ##     ## ##     ## ##     ##
+// ##     ## ##  ## ## ##     ##
+// ##     ## ##    ##  ##     ##
+// ########   ##### ## ########
 
 class DoubleQuantumDotModel(
     initial: Int,
     tf: Double,
     maxIntegrationStep: Double,
-    δbz: Double = 1.0 * _μeV / _ħ, // TODO good values for DQD systems
+    δbz: Double = 1.0 * _μeV / _ħ, // ?  ~1.5/ns
     Ω: Double = 20.0 * _μeV / _ħ,
     useShapedPulse: Boolean = false,
     useSmoothPulse: Boolean = true,
@@ -50,7 +57,7 @@ class DoubleQuantumDotModel(
     initial,
     tf,
     maxIntegrationStep,
-    4 * δbz,
+    4 * δbz, // ?  ~6.0/ns
     Ω,
     useShapedPulse,
     useSmoothPulse,
@@ -62,12 +69,19 @@ class DoubleQuantumDotModel(
     Γ,
 ) {}
 
+// ########  ########
+// ##     ## ##     ##
+// ##     ## ##     ##
+// ##     ## ##     ##
+// ##     ## ##     ##
+// ##     ## ##     ##
+// ########  ########
 
 open class DonorDotModel(
         initial: Int,
         tf: Double,
         maxIntegrationStep: Double,
-        private val a: Double = TAU * 100.0 * 1e6 / _s,
+        private val a: Double = TAU * 100.0 * 1e6 / _s, // ?  ~0.6/ns
         private val Ω: Double = 20.0 * _μeV / _ħ,
         private val useShapedPulse: Boolean = false,
         private val useSmoothPulse: Boolean = true,
@@ -193,6 +207,13 @@ open class DonorDotModel(
     }
 }
 
+//  ######   ######
+// ##    ## ##    ##
+// ##       ##
+// ##       ##   ####
+// ##       ##    ##
+// ##    ## ##    ##
+//  ######   ######
 
 class ConstantGapModel(
     initial: Int,
@@ -266,6 +287,13 @@ class ConstantGapModel(
     }
 }
 
+// ##       ########
+// ##            ##
+// ##           ##
+// ##          ##
+// ##         ##
+// ##        ##
+// ######## ########
 
 class LandauZenerModel(
     initial: Int,

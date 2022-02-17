@@ -48,7 +48,7 @@ fun constant_gap() {
 
     // transfer error depending on rate `γ`
     completeSet_ConstantGap(
-        x = linspace(-3.0, 4.0, 50).map{10.0.pow(it)},
+        x = linspace(-3.0, 4.0, 50).map { 10.0.pow(it) },
         samples = 20,
         variable = "γ",
         saveName = "2021 02 09"
@@ -66,7 +66,7 @@ fun landau_zener() {
             linspace(0.0, 1.0, 50).map { 10.0.pow(it) },
             linspace(1.0, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
         ),
-        samples=20,
+        samples = 20,
         σ = 0.1,
         γ = 1.0,
         gap = 1.0,
@@ -99,11 +99,11 @@ fun donor_dot() {
 
     // transfer error depending on `tf` for the linear pulse
     completeSet_DonorDot(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
         variable = "tf",
         samples = 20,
 
-        a = TAU * 100.0 *1e6 / _s,
+        a = TAU * 100.0 * 1e6 / _s,
         Ω = 20.0 * _μeV / _ħ,
 
         σ = 1.0 * _μeV / _ħ,
@@ -122,11 +122,11 @@ fun donor_dot() {
 
     // transfer error depending on `tf` for the fast-QUAD pulse
     completeSet_DonorDot(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
         variable = "tf",
         samples = 20,
 
-        a = TAU * 100.0 *1e6 / _s,
+        a = TAU * 100.0 * 1e6 / _s,
         Ω = 20.0 * _μeV / _ħ,
 
         σ = 1.0 * _μeV / _ħ,
@@ -145,7 +145,7 @@ fun donor_dot() {
 
     // transfer error depending on relaxation rate `Γ` for the linear pulse
     completeSet_DonorDot(
-        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
+        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
         variable = "Γ",
         samples = 20,
 
@@ -169,7 +169,7 @@ fun donor_dot() {
 
     // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
     completeSet_DonorDot(
-        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
+        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
         variable = "Γ",
         samples = 20,
 
@@ -198,7 +198,7 @@ fun donor_dot() {
         samples = 20,
 
         tf = 18.0 * _ns,
-        a = TAU * 100.0 *1e6 / _s,
+        a = TAU * 100.0 * 1e6 / _s,
         Ω = 20.0 * _μeV / _ħ,
 
         σ = 1.0 * _μeV / _ħ,
@@ -221,7 +221,7 @@ fun donor_dot() {
         samples = 20,
 
         tf = 18.0,
-        a = TAU * 100.0 *1e6 / _s,
+        a = TAU * 100.0 * 1e6 / _s,
         Ω = 20.0 * _μeV / _ħ,
 
         σ = 1.0 * _μeV / _ħ,
@@ -236,7 +236,6 @@ fun donor_dot() {
         saveData = true,
         saveName = "2021 09 28 DonorDot",
     )
-
 
 
     // transfer error depending on `tf` for the following list of values
@@ -313,160 +312,163 @@ fun donor_dot() {
 fun double_quantum_dot() {
 
     val setup = DqdSetup(
-        τ = 1.0 * _ns // found to be optimal in the ε-vs-τ plot
+        δbz = 1.0 * _μeV / _ħ // very close to the donor_dot value, rounded to next full μeV
     )
-    val saveName  = "2022 01 10 DQD"
-
-   // transfer error depending on `tf` for the linear pulse
-   completeSet_DQD(
-       x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
-       variable = "tf",
-       setup = setup,
-
-       useShapedPulse = false,
-       useSmoothPulse = true,
-
-       saveData = true,
-       saveName = saveName,
-   )
-//
-//    // transfer error depending on `tf` for the fast-QUAD pulse
-   completeSet_DQD(
-       x = linspace(0.0, 2.0, 100).map { 10.0.pow(it)/_ns },
-       variable = "tf",
-       setup = setup,
-
-       useShapedPulse = true,
-       useSmoothPulse = true,
-
-       saveData = true,
-       saveName = saveName,
-   )
-//
-//    // transfer error depending on relaxation rate `Γ` for the linear pulse
-   completeSet_DQD(
-       x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
-       variable = "Γ",
-       setup = setup,
-
-       useShapedPulse = true,
-       useSmoothPulse = true,
-
-       saveData = true,
-       saveName = saveName,
-   )
-//
-//    // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
-   completeSet_DQD(
-       x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it)/_ns },
-       variable = "Γ",
-       setup = setup,
-
-       useShapedPulse = false,
-       useSmoothPulse = true,
-
-       saveData = true,
-       saveName = saveName,
-   )
-//
-//    // transfer error depending on noise correlation time `τ_c = 1/γ` for the fast-QUAD pulse
-   completeSet_DQD(
-       x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
-       variable = "τ_c",
-       setup = setup,
-
-       useShapedPulse = true,
-       useSmoothPulse = true,
-
-       saveData = true,
-       saveName = saveName,
-   )
-//
-//    // transfer error depending on noise correlation time `τ_c = 1/γ` for the linear pulse
-   completeSet_DQD(
-       x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
-       variable = "τ_c",
-       setup = setup,
-
-       useShapedPulse = false,
-       useSmoothPulse = true,
-
-       saveData = true,
-       saveName = saveName,
-   )
-
+    val saveName = "2022 02 17 DQD"
 
 
     // transfer error depending on `tf` for the following list of values
     // for the time constant `τ` of the pulse-smoothing Gaussian.
-//     val time_constant_τ = concatenate(
-// //        listOf(0.1, 0.25, 0.5, 0.75),
-// //        linsteps(1.0, 1.0, 10.0).map { it * _ns }
+    // ! This should be the FIRST run of calculation you do, before settling on a time constant τ
+    val time_constant_τ = concatenate(
+        listOf(0.1, 0.25, 0.5, 0.75),
+        linsteps(1.0, 1.0, 10.0).map { it * _ns }
 //         linsteps(3.0, 1.0, 10.0).map { it * _ns }
-//     )
+    )
 
-//     time_constant_τ.forEach { smooth ->
-//         println("smooth = $smooth")
+    time_constant_τ.forEach { smooth ->
+        println("smooth = $smooth")
 
-//         completeSet_DQD(
-//             x = concatenate(
-//                 linsteps(0.25, 0.25, 5.0).map { it * _ns }
-//                 // linsteps(5.0, 1.0, 10.0).map { it * _ns },
-//                 // linsteps(10.0, 5.0, 40.0).map { it * _ns }
-//             ),
-//             variable = "tf",
-//             setup = DqdSetup(τ = smooth, samples = 5),
+        completeSet_DQD(
+            x = concatenate(
+//                linsteps(0.25, 0.25, 5.0).map { it * _ns }
+                listOf(0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5),
+                linsteps(5.0, 1.0, 10.0).map { it * _ns },
+                linsteps(10.0, 5.0, 40.0).map { it * _ns },
+            ),
+            variable = "tf",
+            setup = DqdSetup(τ = smooth, samples = 5),
 
-//             useShapedPulse = true, // fast-QUAD pulse
-//             useSmoothPulse = true,
+            useShapedPulse = true, // fast-QUAD pulse
+            useSmoothPulse = true,
 
-//             saveData = true,
-//             saveName = saveName,
-//         )
+            saveData = true,
+            saveName = saveName,
+        )
 
-//         completeSet_DQD(
-//             x = concatenate(
-//                 linsteps(0.25, 0.25, 5.0).map { it * _ns }
-//                 // linsteps(5.0, 1.0, 10.0).map { it * _ns },
-//                 // linsteps(10.0, 5.0, 40.0).map { it * _ns }
-//             ),
-//             variable = "tf",
-//             setup = DqdSetup(τ = smooth, samples = 5),
+        completeSet_DQD(
+            x = concatenate(
+//                linsteps(0.25, 0.25, 5.0).map { it * _ns }
+                listOf(0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5),
+                linsteps(5.0, 1.0, 10.0).map { it * _ns },
+                linsteps(10.0, 5.0, 40.0).map { it * _ns }
+            ),
+            variable = "tf",
+            setup = DqdSetup(τ = smooth, samples = 5),
 
-//             useShapedPulse = false, // linear pulse
-//             useSmoothPulse = true,
+            useShapedPulse = false, // linear pulse
+            useSmoothPulse = true,
 
-//             saveData = true,
-//             saveName = saveName,
-//         )
-//     }
+            saveData = true,
+            saveName = saveName,
+        )
+    }
+
+
+    // ! the following block should be evaluated AFTER the optimal time constant τ has been determined
+//    {
+//        // transfer error depending on `tf` for the linear pulse
+//        completeSet_DQD(
+//            x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+//            variable = "tf",
+//            setup = setup,
+//
+//            useShapedPulse = false,
+//            useSmoothPulse = true,
+//
+//            saveData = true,
+//            saveName = saveName,
+//        )
+//
+//        // transfer error depending on `tf` for the fast-QUAD pulse
+//        completeSet_DQD(
+//            x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+//            variable = "tf",
+//            setup = setup,
+//
+//            useShapedPulse = true,
+//            useSmoothPulse = true,
+//
+//            saveData = true,
+//            saveName = saveName,
+//        )
+//
+//        // transfer error depending on relaxation rate `Γ` for the linear pulse
+//        completeSet_DQD(
+//            x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
+//            variable = "Γ",
+//            setup = setup,
+//
+//            useShapedPulse = true,
+//            useSmoothPulse = true,
+//
+//            saveData = true,
+//            saveName = saveName,
+//        )
+//
+//        // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
+//        completeSet_DQD(
+//            x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
+//            variable = "Γ",
+//            setup = setup,
+//
+//            useShapedPulse = false,
+//            useSmoothPulse = true,
+//
+//            saveData = true,
+//            saveName = saveName,
+//        )
+//
+//        // transfer error depending on noise correlation time `τ_c = 1/γ` for the fast-QUAD pulse
+//        completeSet_DQD(
+//            x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+//            variable = "τ_c",
+//            setup = setup,
+//
+//            useShapedPulse = true,
+//            useSmoothPulse = true,
+//
+//            saveData = true,
+//            saveName = saveName,
+//        )
+//
+//        // transfer error depending on noise correlation time `τ_c = 1/γ` for the linear pulse
+//        completeSet_DQD(
+//            x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+//            variable = "τ_c",
+//            setup = setup,
+//
+//            useShapedPulse = false,
+//            useSmoothPulse = true,
+//
+//            saveData = true,
+//            saveName = saveName,
+//        )
+//    }
 }
-
-
 
 
 /**
  * This class simply stores the default values of the double-quantum dot system parameters.
  */
 data class DqdSetup(
-    val samples : Int = 20,
-    
+    val samples: Int = 20,
+
     // system parameters
-    val tf    : Double =   18.0 * _ns,
-    val Ω     : Double =   20.0 * _μeV / _ħ,
-    val δbz   : Double =    2.0 * _μeV / _ħ,
-    val ε_max : Double = 2000.0 * _μeV / _ħ,
-    val ε_min : Double = -200.0 * _μeV / _ħ,
-    val τ     : Double =    4.0 * _ns,
+    val tf: Double = 18.0 * _ns,
+    val Ω: Double = 20.0 * _μeV / _ħ,
+    val δbz: Double = 2.0 * _μeV / _ħ,
+    val ε_max: Double = 2000.0 * _μeV / _ħ,
+    val ε_min: Double = -200.0 * _μeV / _ħ,
+    val τ: Double = 4.0 * _ns,
 
     //  detuning noise
-    val σ     : Double =    1.0 * _μeV / _ħ,
-    val τ_c   : Double =    1.0 * _ns,
-    
-    // relaxation
-    val Γ     : Double =    0.0 / _ns,
-)
+    val σ: Double = 1.0 * _μeV / _ħ,
+    val τ_c: Double = 1.0 * _ns,
 
+    // relaxation
+    val Γ: Double = 0.0 / _ns,
+)
 
 
 /**
@@ -490,7 +492,7 @@ fun completeSet_DQD(
 
     val (samples, tf, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ) = setup // deconstruct the variables
 
-    val γ = 1.0/τ_c
+    val γ = 1.0 / τ_c
     runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
 //    runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) { // ? 8 threads
 //    runBlocking(Dispatchers.Default) { // ? system default (as many as possible usually)
@@ -498,9 +500,9 @@ fun completeSet_DQD(
         List(2) { initial ->
             x.map {
                 val cutoff = max(2.0 * π * ε_max, γ) * 10.0
-                val initialSpacing = 2*π/(cutoff * 2)
+                val initialSpacing = 2 * π / (cutoff * 2)
 
-                when(variable) {
+                when (variable) {
                     "Γ" -> DoubleQuantumDotModel(
                         initial,
                         tf,
@@ -599,16 +601,20 @@ fun completeSet_DQD(
                     models,
                     samples,
                 )
-                if(saveData) {
-                    val smooth = if(useSmoothPulse) "smooth(%.2e) ".format(τ) else ""
-                    val shaped = if(useShapedPulse) "shaped " else ""
-                    val filename = "_results_/$saveName $variable ${smooth}${shaped}i$initial Ω%.2e s%.2e tc%.2e coll%.2e tf%.2e n$samples.csv"
-                        .format(Ω, σ, τ_c, Γ, tf)
+                if (saveData) {
+                    val smooth = if (useSmoothPulse) "smooth(%.2e) ".format(τ) else ""
+                    val shaped = if (useShapedPulse) "shaped " else ""
+                    val filename =
+                        "_results_/$saveName $variable ${smooth}${shaped}i$initial Ω%.2e s%.2e tc%.2e coll%.2e tf%.2e n$samples.csv"
+                            .format(Ω, σ, τ_c, Γ, tf)
                     saveSweep(filename, x, res)
                 }
-                if(plotData)
-                    try { plotSweep(x, res) }
-                    catch (e: Exception) { println("could not plot") }
+                if (plotData)
+                    try {
+                        plotSweep(x, res)
+                    } catch (e: Exception) {
+                        println("could not plot")
+                    }
             }
         }.awaitAll()
     }
@@ -622,29 +628,29 @@ fun completeSet_DQD(
  * It will solve the master equation for a number of `samples` independent (noise) realizations.
  */
 fun completeSet_DonorDot(
-        samples: Int = 20,
-        x: List<Double> = linspace(-1.0, 3.0, 100).map { 10.0.pow(it) },
-        variable: String = "tf",
+    samples: Int = 20,
+    x: List<Double> = linspace(-1.0, 3.0, 100).map { 10.0.pow(it) },
+    variable: String = "tf",
 
-        tf: Double = 100.0,
-        a: Double = TAU * 100.0 *1e6 / _s,
-        Ω: Double = 20.0 * _μeV / _ħ,
-        
-        τ: Double = 5.0 * _ns,
-        ε_max: Double = 1700 * _μeV / _ħ,
-        ε_min: Double = -200 * _μeV / _ħ,
+    tf: Double = 100.0,
+    a: Double = TAU * 100.0 * 1e6 / _s,
+    Ω: Double = 20.0 * _μeV / _ħ,
 
-        σ: Double = 1.0 * _μeV,
-        τ_c: Double = 1.0 * _ns,
-        Γ: Double = 0.0,
+    τ: Double = 5.0 * _ns,
+    ε_max: Double = 1700 * _μeV / _ħ,
+    ε_min: Double = -200 * _μeV / _ħ,
 
-        useSmoothPulse: Boolean = true,
-        useShapedPulse: Boolean = false,
-        saveData: Boolean = true,
-        saveName: String = "2021 02 15 DonorDot",
-        plotData: Boolean = true,
+    σ: Double = 1.0 * _μeV,
+    τ_c: Double = 1.0 * _ns,
+    Γ: Double = 0.0,
+
+    useSmoothPulse: Boolean = true,
+    useShapedPulse: Boolean = false,
+    saveData: Boolean = true,
+    saveName: String = "2021 02 15 DonorDot",
+    plotData: Boolean = true,
 ) {
-    val γ = 1.0/τ_c
+    val γ = 1.0 / τ_c
     runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
 //    runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) { // ? 8 threads
 //    runBlocking(Dispatchers.Default) { // ? system default (as many as possible usually)
@@ -652,9 +658,9 @@ fun completeSet_DonorDot(
         List(2) { initial ->
             x.map {
                 val cutoff = max(2.0 * π * ε_max, γ) * 10.0
-                val initialSpacing = 2*π/(cutoff * 2)
+                val initialSpacing = 2 * π / (cutoff * 2)
 
-                when(variable) {
+                when (variable) {
                     "Γ" -> DonorDotModel(
                         initial,
                         tf,
@@ -753,28 +759,24 @@ fun completeSet_DonorDot(
                     models,
                     samples,
                 )
-                if(saveData) {
-                    val smooth = if(useSmoothPulse) "smooth(%.2e) ".format(τ) else ""
-                    val shaped = if(useShapedPulse) "shaped " else ""
-                    val filename = "_results_/$saveName $variable ${smooth}${shaped}i$initial Ω%.2e s%.2e tc%.2e coll%.2e tf%.2e n$samples.csv"
-                        .format(Ω, σ, τ_c, Γ, tf)
+                if (saveData) {
+                    val smooth = if (useSmoothPulse) "smooth(%.2e) ".format(τ) else ""
+                    val shaped = if (useShapedPulse) "shaped " else ""
+                    val filename =
+                        "_results_/$saveName $variable ${smooth}${shaped}i$initial Ω%.2e s%.2e tc%.2e coll%.2e tf%.2e n$samples.csv"
+                            .format(Ω, σ, τ_c, Γ, tf)
                     saveSweep(filename, x, res)
                 }
-                if(plotData)
-                    try { plotSweep(x, res) }
-                    catch (e: Exception) { println("could not plot") }
+                if (plotData)
+                    try {
+                        plotSweep(x, res)
+                    } catch (e: Exception) {
+                        println("could not plot")
+                    }
             }
         }.awaitAll()
     }
 }
-
-
-
-
-
-
-
-
 
 
 /**
@@ -801,8 +803,8 @@ fun completeSet_ConstantGap(
 ) {
 
     // The preparation and measurement unitaries for the generalized strategy
-    fun transformations(tf: Double) : Pair<Operator?, Operator?> {
-        if(!superAdiabatic) return Pair(null, null);
+    fun transformations(tf: Double): Pair<Operator?, Operator?> {
+        if (!superAdiabatic) return Pair(null, null);
 
         val ϕ = atan(π / (tf * gap))
         println("ϕ(tf = $tf) = $ϕ")
@@ -821,10 +823,10 @@ fun completeSet_ConstantGap(
 
         List(2) { initial ->
             x.map {
-                val cutoff = 2.0*π*gap*10 //max(2.0 * π * gap * 10, 10 * γ)
-                val maxIntegrationStep = 2*π/(cutoff * 10)
+                val cutoff = 2.0 * π * gap * 10 //max(2.0 * π * gap * 10, 10 * γ)
+                val maxIntegrationStep = 2 * π / (cutoff * 10)
 
-                when(variable) {
+                when (variable) {
                     "σ" -> {
                         val trans = transformations(tf)
                         ConstantGapModel(
@@ -872,13 +874,22 @@ fun completeSet_ConstantGap(
                     models,
                     samples,
                 )
-                if(saveData) {
-                    val filename = "_results_/$saveName CG $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(gap, σ, γ, tf)
+                if (saveData) {
+                    val filename =
+                        "_results_/$saveName CG $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(
+                            gap,
+                            σ,
+                            γ,
+                            tf
+                        )
                     saveSweep(filename, x, res)
                 }
-                if(plotData)
-                    try { plotSweep(x, res) }
-                    catch (e: Exception) { println("could not plot") }
+                if (plotData)
+                    try {
+                        plotSweep(x, res)
+                    } catch (e: Exception) {
+                        println("could not plot")
+                    }
             }
         }.awaitAll()
     }
@@ -907,7 +918,7 @@ fun completeSet_LandauZener(
 
     plotData: Boolean = true,
 ) {
-    val name = if(!useShapedPulse) saveName else "$saveName shaped"
+    val name = if (!useShapedPulse) saveName else "$saveName shaped"
 
 //    runBlocking(Dispatchers.Default) {
     runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
@@ -915,10 +926,10 @@ fun completeSet_LandauZener(
         List(2) { initial ->
             x.map {
                 val cutoff = max(2.0 * π * ε_max * 10, 10 * γ)
-                val initialSpacing = 2*π/(cutoff * 10)
+                val initialSpacing = 2 * π / (cutoff * 10)
 //                if(useShapedPulse) initialSpacing *= 0.1
 
-                when(variable) {
+                when (variable) {
                     "σ" -> LandauZenerModel(
                         initial,
                         tf,
@@ -957,13 +968,21 @@ fun completeSet_LandauZener(
                     models,
                     samples,
                 )
-                if(saveData) {
-                    val filename = "_results_/$name $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(gap, σ, γ, tf)
+                if (saveData) {
+                    val filename = "_results_/$name $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(
+                        gap,
+                        σ,
+                        γ,
+                        tf
+                    )
                     saveSweep(filename, x, res)
                 }
-                if(plotData)
-                    try { plotSweep(x, res) }
-                    catch (e: Exception) { println("could not plot") }
+                if (plotData)
+                    try {
+                        plotSweep(x, res)
+                    } catch (e: Exception) {
+                        println("could not plot")
+                    }
             }
         }.awaitAll()
     }
