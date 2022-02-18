@@ -312,9 +312,9 @@ fun donor_dot() {
 fun double_quantum_dot() {
 
     val setup = DqdSetup(
-        δbz = 1.0 * _μeV / _ħ // very close to the donor_dot value, rounded to next full μeV
+        δbz = 0.1 * _μeV / _ħ // very close to the donor_dot value, rounded to next full μeV
     )
-    val saveName = "2022 02 17 DQD"
+    val saveName = "2022 02 18 DQD"
 
 
     // transfer error depending on `tf` for the following list of values

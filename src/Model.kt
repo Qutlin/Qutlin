@@ -50,7 +50,7 @@ class DoubleQuantumDotModel(
     τ: Double = 5.0 * _ns,
     ε_max: Double = 1700 * _μeV / _ħ,
     ε_min: Double = -200 * _μeV / _ħ,
-    σ: Double = 1.0 * _μeV,
+    σ: Double = 1.0 * _μeV / _ħ,
     τ_c: Double = 1.0 * _ns,
     Γ: Double = 0.0 / _ns,
 ) : DonorDotModel(
@@ -88,7 +88,7 @@ open class DonorDotModel(
         private val τ: Double = 5.0 * _ns,
         private val ε_max: Double = 1700 * _μeV / _ħ,
         private val ε_min: Double = -200 * _μeV / _ħ,
-        private val σ: Double = 1.0 * _μeV, // TODO correct values!?
+        private val σ: Double = 1.0 * _μeV / _ħ, // TODO correct values!?
         private val τ_c: Double = 1.0 * _ns,
         private val Γ: Double = 0.0 / _ns,
 ) : Model(
