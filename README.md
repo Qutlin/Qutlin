@@ -7,4 +7,4 @@ and [Lindblad master equation](https://en.wikipedia.org/wiki/Lindbladian?oldform
 library.
 
 This library was used in the research paper:
-["Generalized fast quasi-adiabatic population transfer:Improved qubit readout, shuttling, and noise mitigation."]().
+["Generalized fast quasi-adiabatic population transfer for improved qubit readout, shuttling, and noise mitigation"]().
