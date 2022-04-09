@@ -314,137 +314,175 @@ fun double_quantum_dot() {
     val setup = DqdSetup(
         δbz = 0.1 * _μeV / _ħ // very close to the donor_dot value, rounded to next full μeV
     )
-    val saveName = "2022 02 18 DQD"
+    val saveName = "2022 03 10 DQD"
 
 
-    // transfer error depending on `tf` for the following list of values
-    // for the time constant `τ` of the pulse-smoothing Gaussian.
-    // ! This should be the FIRST run of calculation you do, before settling on a time constant τ
-    val time_constant_τ = concatenate(
-        listOf(0.1, 0.25, 0.5, 0.75),
-        linsteps(1.0, 1.0, 10.0).map { it * _ns }
-//         linsteps(3.0, 1.0, 10.0).map { it * _ns }
-    )
-
-    time_constant_τ.forEach { smooth ->
-        println("smooth = $smooth")
-
-        completeSet_DQD(
-            x = concatenate(
-//                linsteps(0.25, 0.25, 5.0).map { it * _ns }
-                listOf(0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5),
-                linsteps(5.0, 1.0, 10.0).map { it * _ns },
-                linsteps(10.0, 5.0, 40.0).map { it * _ns },
-            ),
-            variable = "tf",
-            setup = DqdSetup(τ = smooth, samples = 5),
-
-            useShapedPulse = true, // fast-QUAD pulse
-            useSmoothPulse = true,
-
-            saveData = true,
-            saveName = saveName,
-        )
-
-        completeSet_DQD(
-            x = concatenate(
-//                linsteps(0.25, 0.25, 5.0).map { it * _ns }
-                listOf(0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5),
-                linsteps(5.0, 1.0, 10.0).map { it * _ns },
-                linsteps(10.0, 5.0, 40.0).map { it * _ns }
-            ),
-            variable = "tf",
-            setup = DqdSetup(τ = smooth, samples = 5),
-
-            useShapedPulse = false, // linear pulse
-            useSmoothPulse = true,
-
-            saveData = true,
-            saveName = saveName,
-        )
-    }
+//    // transfer error depending on `tf` for the following list of values
+//    // for the time constant `τ` of the pulse-smoothing Gaussian.
+//    // ! This should be the FIRST run of calculation you do, before settling on a time constant τ
+//    val time_constant_τ = concatenate(
+//        listOf(0.1, 0.25, 0.5, 0.75),
+//        linsteps(1.0, 1.0, 10.0).map { it * _ns }
+////         linsteps(3.0, 1.0, 10.0).map { it * _ns }
+//    )
 
 
-    // ! the following block should be evaluated AFTER the optimal time constant τ has been determined
-//    {
-//        // transfer error depending on `tf` for the linear pulse
+//    val x = linsteps(0.7, 0.025, 1.7).map { 10.0.pow(it) }
+//    val x = concatenate(
+////                linsteps(0.25, 0.25, 5.0).map { it * _ns }
+////        listOf(0.25, 0.5, 0.75, 1.0, 1.5, 2.0, 2.5, 3.0, 3.5, 4.0, 4.5),
+//        linsteps(6.0, 1.0, 20.0).map { it * _ns },
+//        linsteps(20.0, 5.0, 60.0).map { it * _ns },
+//    )
+
+//    time_constant_τ.forEach { smooth ->
+//        println("smooth = $smooth")
+//
 //        completeSet_DQD(
-//            x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+//            x = x,
 //            variable = "tf",
-//            setup = setup,
+//            setup = setup.copy(τ = smooth),
 //
-//            useShapedPulse = false,
+//            useShapedPulse = true, // fast-QUAD pulse
 //            useSmoothPulse = true,
 //
 //            saveData = true,
 //            saveName = saveName,
 //        )
 //
-//        // transfer error depending on `tf` for the fast-QUAD pulse
 //        completeSet_DQD(
-//            x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+//            x = x,
 //            variable = "tf",
-//            setup = setup,
+//            setup = setup.copy(τ = smooth),
 //
-//            useShapedPulse = true,
-//            useSmoothPulse = true,
-//
-//            saveData = true,
-//            saveName = saveName,
-//        )
-//
-//        // transfer error depending on relaxation rate `Γ` for the linear pulse
-//        completeSet_DQD(
-//            x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
-//            variable = "Γ",
-//            setup = setup,
-//
-//            useShapedPulse = true,
-//            useSmoothPulse = true,
-//
-//            saveData = true,
-//            saveName = saveName,
-//        )
-//
-//        // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
-//        completeSet_DQD(
-//            x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
-//            variable = "Γ",
-//            setup = setup,
-//
-//            useShapedPulse = false,
-//            useSmoothPulse = true,
-//
-//            saveData = true,
-//            saveName = saveName,
-//        )
-//
-//        // transfer error depending on noise correlation time `τ_c = 1/γ` for the fast-QUAD pulse
-//        completeSet_DQD(
-//            x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
-//            variable = "τ_c",
-//            setup = setup,
-//
-//            useShapedPulse = true,
-//            useSmoothPulse = true,
-//
-//            saveData = true,
-//            saveName = saveName,
-//        )
-//
-//        // transfer error depending on noise correlation time `τ_c = 1/γ` for the linear pulse
-//        completeSet_DQD(
-//            x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
-//            variable = "τ_c",
-//            setup = setup,
-//
-//            useShapedPulse = false,
+//            useShapedPulse = false, // linear pulse
 //            useSmoothPulse = true,
 //
 //            saveData = true,
 //            saveName = saveName,
 //        )
 //    }
+
+//
+//    // ! This run is to analyze the effect of the effective magnetic field gradient δbz on the error
+//    // ? units _μeV/_ħ will be multiplied down below
+////    val δbz_range = linsteps(-2.0,0.25,1.0).map{10.0.pow(it)} // * original datapoints
+//    val δbz_range_calculated = linsteps(-2.0,0.25,1.0)
+//    val δbz_range = linsteps(-2.0,0.125,-0.5).filterNot{ δbz_range_calculated.asList().contains(it) }.map{10.0.pow(it)} // * additional datapoints
+//    // ? relevant values are the first 6 for δbz, so 10^{-2.0,-1.75,-1.5,-1.25,-1,-0.75,-0.5}
+//    // ? and tf is most relevant in [10, 50] ns
+//
+//    δbz_range.forEach { δbz ->
+//        println("δbz = $δbz")
+//        val saveName = "${saveName} δbz%.2e".format(δbz)
+////        val tf = linsteps(0.75, 0.025, 1.75).map { 10.0.pow(it) * _ns }
+//        val tf = linsteps(1.0, 0.025, 1.75).map { 10.0.pow(it) * _ns }
+//        val setup = setup.copy(δbz=δbz*_μeV/_ħ, samples=5) // ! don't forget the units
+//
+//        completeSet_DQD(
+//            x = tf,
+//            variable = "tf",
+//            setup = setup,
+//
+//            useShapedPulse = true, // fast-QUAD pulse
+//            useSmoothPulse = true,
+//
+//            saveData = true,
+//            saveName = saveName,
+//        )
+//
+//        completeSet_DQD(
+//            x = tf,
+//            variable = "tf",
+//            setup = setup,
+//
+//            useShapedPulse = false, // linear pulse
+//            useSmoothPulse = true,
+//
+//            saveData = true,
+//            saveName = saveName,
+//        )
+//    }
+
+
+    // ! the following block should be evaluated AFTER the optimal time constant τ has been determined
+    // transfer error depending on `tf` for the linear pulse
+//    completeSet_DQD(
+//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+//        variable = "tf",
+//        setup = setup,
+//
+//        useShapedPulse = false,
+//        useSmoothPulse = true,
+//
+//        saveData = true,
+//        saveName = saveName,
+//    )
+//
+//    // transfer error depending on `tf` for the fast-QUAD pulse
+//    completeSet_DQD(
+//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+//        variable = "tf",
+//        setup = setup,
+//
+//        useShapedPulse = true,
+//        useSmoothPulse = true,
+//
+//        saveData = true,
+//        saveName = saveName,
+//    )
+
+    // transfer error depending on relaxation rate `Γ` for the linear pulse
+    completeSet_DQD(
+        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
+        variable = "Γ",
+        setup = setup,
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
+
+    // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
+    completeSet_DQD(
+        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
+        variable = "Γ",
+        setup = setup,
+
+        useShapedPulse = false,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
+
+    // transfer error depending on noise correlation time `τ_c = 1/γ` for the fast-QUAD pulse
+    completeSet_DQD(
+        x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+        variable = "τ_c",
+        setup = setup,
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
+
+    // transfer error depending on noise correlation time `τ_c = 1/γ` for the linear pulse
+    completeSet_DQD(
+        x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
+        variable = "τ_c",
+        setup = setup,
+
+        useShapedPulse = false,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
 }
 
 
@@ -572,6 +610,21 @@ fun completeSet_DQD(
                         useShapedPulse,
                         useSmoothPulse,
                         it,
+                        ε_max,
+                        ε_min,
+                        σ,
+                        τ_c,
+                        Γ,
+                    )
+                    "δbz" -> DoubleQuantumDotModel(
+                        initial,
+                        tf,
+                        initialSpacing,
+                        it,
+                        Ω,
+                        useShapedPulse,
+                        useSmoothPulse,
+                        τ,
                         ε_max,
                         ε_min,
                         σ,

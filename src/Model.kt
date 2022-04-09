@@ -94,10 +94,11 @@ open class DonorDotModel(
 ) : Model(
     initial, tf, maxIntegrationStep, 3
 ) {
-    companion object {
-        // ? shaped pulse
-        var pulse: List<Pair<Double, Double>>? = null
-    }
+//    companion object {
+//        // ? shaped pulse
+//        var pulse: List<Pair<Double, Double>>? = null
+//    }
+    var pulse: List<Pair<Double, Double>>? = null
 
     override fun build() {
         val deltaNm = 1.0 // ? depending on the nuclear spin transition
@@ -105,10 +106,6 @@ open class DonorDotModel(
 
         var ε = if (useShapedPulse) {
             if (pulse == null) {
-                // ? the first time the pulse shape is calculated, it will store the result in the
-                // ? companion object. After that, it can be reloaded.
-                // ! This assumes the parameters of the system `(a, Ω)` don't change!
-
                 // ? derivative of the detuning depending on the detuning `dε/dt[ε(t)]`
                 fun dε(ε_: Double): Double {
                     val β = sqrt(ε_ * ε_ + Ω * Ω)
