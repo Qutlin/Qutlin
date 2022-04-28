@@ -313,8 +313,16 @@ class LandauZenerModel(
     private val ε_max: Double = 10.0 * gap,
 
     private val useShapedPulse: Boolean = false,
+
+    initialTransformation: Operator? = null,
+    finalTransformation: Operator? = null,
 ) : Model(
-    initial, tf, maxIntegrationStep, 2
+    initial, 
+    tf, 
+    maxIntegrationStep, 
+    2,
+    U_p = initialTransformation,
+    U_m = finalTransformation,
 ) {
     override fun build() {
 

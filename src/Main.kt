@@ -30,7 +30,7 @@ fun constant_gap() {
         tf = 100.0,
         variable = "σ",
         saveName = "2021 05 04",
-        superAdiabatic = false,
+        useGeneralized = false,
     )
 
     // transfer error depending on `tf`
@@ -43,7 +43,7 @@ fun constant_gap() {
         tf = 100.0,
         variable = "tf",
         saveName = "2021 05 31",
-        superAdiabatic = false,
+        useGeneralized = false,
     )
 
     // transfer error depending on rate `γ`
@@ -71,25 +71,26 @@ fun landau_zener() {
         γ = 1.0,
         gap = 1.0,
         variable = "tf",
-        useShapedPulse = false,
-        saveName = "2021 05 04 LZ",
+        saveName = "2022 04 28 LZ",
+        useShapedPulse = true,
+        useGeneralized = true,
     )
 
-    // transfer error depending on noise variance `σ`
-    completeSet_LandauZener(
-        x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
-        samples = 20,
-        variable = "σ",
-        saveName = "2021 05 04 LZ",
-    )
+    // // transfer error depending on noise variance `σ`
+    // completeSet_LandauZener(
+    //     x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
+    //     samples = 20,
+    //     variable = "σ",
+    //     saveName = "2021 05 04 LZ",
+    // )
 
-    // transfer error depending on rate `γ`
-    completeSet_LandauZener(
-        x = linspace(-4.0, 4.0, 100).map { 10.0.pow(it) },
-        samples = 20,
-        variable = "γ",
-        saveName = "2021 05 04 LZ",
-    )
+    // // transfer error depending on rate `γ`
+    // completeSet_LandauZener(
+    //     x = linspace(-4.0, 4.0, 100).map { 10.0.pow(it) },
+    //     samples = 20,
+    //     variable = "γ",
+    //     saveName = "2021 05 04 LZ",
+    // )
 }
 
 /**
@@ -853,22 +854,28 @@ fun completeSet_ConstantGap(
     σ: Double = 0.1,
     tf: Double = 100.0,
 
-    superAdiabatic: Boolean = false,
+    useGeneralized: Boolean = false,
 
     saveData: Boolean = true,
     saveName: String = "2021 02 01",
     plotData: Boolean = true,
 ) {
 
-    // The preparation and measurement unitaries for the generalized strategy
+    // The preparation and measurement unitaries for the generalized strategy via
+    //     R(tf) U(tf) R†(0)
+    // with
+    //     R(t) = Ry(t) Rx†(ϕ) Ry†(t).
+    // Therefore
+    //     R†(0) = Rx(ϕ),
+    //     R(tf) = Ry(tf) Rx†(ϕ) Ry†(tf).
     fun transformations(tf: Double): Pair<Operator?, Operator?> {
-        if (!superAdiabatic) return Pair(null, null);
+        if (!useGeneralized) return Pair(null, null);
 
         val ϕ = atan(π / (tf * gap))
         println("ϕ(tf = $tf) = $ϕ")
 
-        val initTrans = rotPauliX(ϕ);
-        val finalTrans = (rotPauliY(π) * rotPauliX(ϕ).dagger() * rotPauliY(π).dagger());
+        val initTrans = rotPauliX(ϕ)
+        val finalTrans = (rotPauliY(π) * rotPauliX(ϕ).dagger() * rotPauliY(π).dagger())
 
         return Pair(initTrans, finalTrans)
     }
@@ -974,9 +981,39 @@ fun completeSet_LandauZener(
     saveName: String = "2021 02 01 LZ",
     useShapedPulse: Boolean = false,
 
+    useGeneralized: Boolean = false;
+
     plotData: Boolean = true,
 ) {
     val name = if (!useShapedPulse) saveName else "$saveName shaped"
+
+
+
+    // The preparation and measurement unitaries for the generalized strategy via
+    //     R(tf) U(tf) R†(0)
+    // with
+    //     R(t) = Ry(t) Rx(ϕ)^† Ry(t)^†.
+    // Therefore
+    //     R( 0)^† = ( Ry( 0) Rx(ϕ)^† Ry( 0)^† )^†,
+    //     R(tf)   =   Ry(tf) Rx(ϕ)^† Ry(tf)^† .
+    fun transformations(tf: Double): Pair<Operator?, Operator?> {
+        if (!(useGeneralized && useShapedPulse)) return Pair(null, null);
+
+        val δ = 2.0/(gap*tf)*ε_max/sqrt(gap*gap + ε_max*ε_max)
+        val ϕ = atan(δ)
+        println("ϕ(tf = $tf) = $ϕ")
+
+        val θ_0 = atan(-ε_max/gap) - π/2.0
+        val θ_f = atan( ε_max/gap) - π/2.0
+
+        val initTrans  = (rotPauliY(θ_0) * rotPauliX(ϕ).dagger() * rotPauliY(θ_0).dagger()).dagger()
+        val finalTrans =  rotPauliY(θ_f) * rotPauliX(ϕ).dagger() * rotPauliY(θ_f).dagger()
+
+        return Pair(initTrans, finalTrans)
+    }
+
+
+
 
 //    runBlocking(Dispatchers.Default) {
     runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
@@ -988,36 +1025,51 @@ fun completeSet_LandauZener(
 //                if(useShapedPulse) initialSpacing *= 0.1
 
                 when (variable) {
-                    "σ" -> LandauZenerModel(
-                        initial,
-                        tf,
-                        initialSpacing,
-                        gap,
-                        it,
-                        γ,
-                        ε_max,
-                        useShapedPulse,
-                    )
-                    "γ" -> LandauZenerModel(
-                        initial,
-                        tf,
-                        initialSpacing,
-                        gap,
-                        σ,
-                        it,
-                        ε_max,
-                        useShapedPulse,
-                    )
-                    else -> LandauZenerModel(
-                        initial,
-                        it,
-                        initialSpacing,
-                        gap,
-                        σ,
-                        γ,
-                        ε_max,
-                        useShapedPulse,
-                    )
+                    "σ" -> {
+                        val trans = transformations(tf)
+                        LandauZenerModel(
+                            initial,
+                            tf,
+                            initialSpacing,
+                            gap,
+                            it,
+                            γ,
+                            ε_max,
+                            useShapedPulse,
+                            trans.first,
+                            trans.second,
+                        )
+                    }
+                    "γ" -> {
+                        val trans = transformations(tf)
+                        LandauZenerModel(
+                            initial,
+                            tf,
+                            initialSpacing,
+                            gap,
+                            σ,
+                            it,
+                            ε_max,
+                            useShapedPulse,
+                            trans.first,
+                            trans.second,
+                        )
+                    }
+                    else -> {
+                        val trans = transformations(it)
+                        LandauZenerModel(
+                            initial,
+                            it,
+                            initialSpacing,
+                            gap,
+                            σ,
+                            γ,
+                            ε_max,
+                            useShapedPulse,
+                            trans.first,
+                            trans.second,
+                        )
+                    }
                 }
             }
         }.mapIndexed { initial, models ->
