@@ -162,7 +162,12 @@ open class DonorDotModel(
             initialSpacing = 2 * π / cutoff,
         )
 
-        val η = Noise(
+        val η = if(useShapedPulse) Noise(
+            max(tf+6*τ, 10.0*τ_c),
+            min(noiseType.initialSpacing, (tf+6*τ) / 100.0),
+            noiseType.wnDeltaRate,
+            tf + 6*τ
+        ) else Noise(
             max(tf, 10.0*τ_c),
             min(noiseType.initialSpacing, tf / 100.0),
             noiseType.wnDeltaRate,
@@ -172,7 +177,13 @@ open class DonorDotModel(
 
 
         // * noisy Hamiltonian
-        H_η = fun(t: Double) = Operator(
+        H_η = if(useShapedPulse) fun(t: Double) = Operator(
+            Pair(3, 3), complexArrayOf(
+                0.0, δbz, Ω / 2.0,
+                δbz, 0.0, 0.0,
+                Ω / 2.0, 0.0, ε(t) + η(t+3*τ),
+            )
+        ) else fun(t: Double) = Operator(
             Pair(3, 3), complexArrayOf(
                 0.0, δbz, Ω / 2.0,
                 δbz, 0.0, 0.0,

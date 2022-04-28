@@ -1,6 +1,7 @@
 package Qutlin
 
 import Plot
+import kotlinx.atomicfu.atomic
 import org.hipparchus.complex.Complex
 import org.hipparchus.random.GaussianRandomGenerator
 import org.hipparchus.random.RandomDataGenerator
@@ -29,6 +30,9 @@ class Noise(
 ) {
     companion object {
         private val unit = fun(_: Double) = 1.0
+
+        // * make sure the seed is new in every run
+        var seed = atomic(LocalDateTime.now().nano.toLong())
     }
 
     private val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
@@ -41,7 +45,7 @@ class Noise(
     init {
         // ? Generate a List of `omegaFreq` with 2^N elements
         val n = time/initialSpacing
-        N = round(pow(2.0, 1 + ceil(log2(n)).toInt())).toInt()
+        N = round(pow(2.0, ceil(log2(n)).toInt())).toInt()
         println("Noise of time $time initialized with $N frequencies")
         realSpacing = time/N.toDouble()
         // * omegaFreq in units of TAU
@@ -65,12 +69,12 @@ class Noise(
      * @param envelope function in radian frequencies (`ω`)
      * */
     fun generate(envelope: (Double) -> Double = unit, rescaleWN: Boolean = true, targetVariance: Double = -1.0) {
-        // * make sure the seed is new in every run
-        val seed = LocalDateTime.now().nano.toLong()
 
+        seed.plusAssign(LocalDateTime.now().nano.toLong())
+        println("seed = $seed")
         // * generator for gaussian normalized random numbers (0 mean, 1 std)
 
-        val generator = GaussianRandomGenerator(RandomDataGenerator(seed))
+        val generator = GaussianRandomGenerator(RandomDataGenerator(seed.value))
 
         val factor = if (rescaleWN) sqrt(wnVariance/realSpacing) else 1.0
         val whiteNoise = List(N) { generator.nextNormalizedDouble() * factor }

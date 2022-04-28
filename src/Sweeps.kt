@@ -81,7 +81,7 @@ fun integrate(
  * Helper function to calculate multiple quantum systems given by the `models` parameters with `samples` number of independent noise-samples each.
  */
 fun sampleSweeps(
-    models: List<Model>,
+    models: MutableList<Model>,
     samples: Int = 20,
 ): List<List<List<Double>>> {
 
@@ -112,6 +112,8 @@ fun sampleSweeps(
                         U_p = model.U_p,
                         U_m = model.U_m,
                     )
+
+                    models.remove(model) // ? free up memory, otherwise the noise values will accumulate until ALL models are evaluated - Fehse, 2022-04-20
                     res.forEachIndexed { i, r -> p[sample][i][i_model] = r }
                 }//.await()
             }
