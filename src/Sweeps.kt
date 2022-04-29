@@ -52,6 +52,7 @@ fun integrate(
     }
     if(U_m != null)
         ρ = ρ.map { U_m * it * U_m.dagger() }
+
 //    val ρ = initSys.map { rotPauliY(PI) * it.second.normalized().ketBra() * rotPauliY(PI).dagger() }
 
     // * define the ODE for the von Neumann equation
@@ -70,11 +71,12 @@ fun integrate(
         )
     )
 
-    return if (U_m != null) ρ.map {
-        (it * U_m * ρ_res * U_m.dagger()).trace().real
-    } else ρ.map {
-        (it * ρ_res).trace().real
-    }
+    // return if (U_m != null) ρ.map {
+    //     (it * U_m * ρ_res * U_m.dagger()).trace().real
+    // } else ρ.map {
+    //     (it * ρ_res).trace().real
+    // }
+    return p.map { (it * ρ_res).trace().real } // I already applied U_m on ρ above - Fehse, 2022-04-29
 }
 
 /**
