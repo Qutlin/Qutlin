@@ -307,10 +307,10 @@ class LandauZenerModel(
     initial: Int,
     tf: Double,
     maxIntegrationStep: Double,
-    private val gap: Double = 10.0,
+    private val Ω: Double = 10.0,
     private val σ: Double = 1.0,
     private val γ: Double = 1.0,
-    private val ε_max: Double = 10.0 * gap,
+    private val ε_max: Double = 10.0 * Ω,
 
     private val useShapedPulse: Boolean = false,
 
@@ -326,8 +326,6 @@ class LandauZenerModel(
 ) {
     override fun build() {
 
-        val Ω = gap
-
         val ε = if (!useShapedPulse) {
             fun(t: Double) = (1.0 - 2.0 * t / tf) * ε_max
         } else {
@@ -339,7 +337,7 @@ class LandauZenerModel(
             }
         }
 
-        val cutoff = max(2.0 * π * gap, γ) * 10.0
+        val cutoff = max(2.0 * π * Ω, γ) * 10.0
         val τ_c = 1.0/γ
 
         val noiseType = OUNoise(

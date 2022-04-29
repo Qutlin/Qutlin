@@ -63,15 +63,15 @@ fun landau_zener() {
     // transfer error depending on `tf`
     completeSet_LandauZener(
         x = concatenate(
-            linspace(0.0, 1.0, 50).map { 10.0.pow(it) },
+            linspace(-3.0, 1.0, 50).map { 10.0.pow(it) },
             linspace(1.0, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
         ),
         samples = 20,
         σ = 0.1,
         γ = 1.0,
-        gap = 1.0,
+        Ω = 1.0,
         variable = "tf",
-        saveName = "2022 04 28 LZ",
+        saveName = "2022 04 29b LZ",
         useShapedPulse = true,
         useGeneralized = true,
     )
@@ -972,16 +972,16 @@ fun completeSet_LandauZener(
     x: List<Double> = linspace(-4.0, 3.0, 200).map { 10.0.pow(it) },
     variable: String = "tf",
 
-    gap: Double = 1.0,
+    Ω: Double = 1.0,
     γ: Double = 1.0,
     σ: Double = 0.1,
-    ε_max: Double = 10.0 * gap,
+    ε_max: Double = 10.0 * Ω,
     tf: Double = 100.0,
     saveData: Boolean = true,
     saveName: String = "2021 02 01 LZ",
     useShapedPulse: Boolean = false,
 
-    useGeneralized: Boolean = false;
+    useGeneralized: Boolean = false,
 
     plotData: Boolean = true,
 ) {
@@ -999,15 +999,17 @@ fun completeSet_LandauZener(
     fun transformations(tf: Double): Pair<Operator?, Operator?> {
         if (!(useGeneralized && useShapedPulse)) return Pair(null, null);
 
-        val δ = 2.0/(gap*tf)*ε_max/sqrt(gap*gap + ε_max*ε_max)
+        val δ = 2.0/(Ω*tf)*ε_max/sqrt(Ω*Ω + ε_max*ε_max)
         val ϕ = atan(δ)
         println("ϕ(tf = $tf) = $ϕ")
 
-        val θ_0 = atan(-ε_max/gap) - π/2.0
-        val θ_f = atan( ε_max/gap) - π/2.0
+        // B e^iθ = Bz + i Bx
+        val θ_0 = atan(  Ω/ε_max)     // - π/2.0
+        val θ_f = atan( -Ω/ε_max) + π // - π/2.0
+        println("θ_0 = $θ_0, θ_f = $θ_f")
 
-        val initTrans  = (rotPauliY(θ_0) * rotPauliX(ϕ).dagger() * rotPauliY(θ_0).dagger()).dagger()
-        val finalTrans =  rotPauliY(θ_f) * rotPauliX(ϕ).dagger() * rotPauliY(θ_f).dagger()
+        val initTrans  =  rotPauliY(θ_0).dagger() * rotPauliX(ϕ)          * rotPauliY(θ_0)
+        val finalTrans =  rotPauliY(θ_f)          * rotPauliX(ϕ).dagger() * rotPauliY(θ_f).dagger()
 
         return Pair(initTrans, finalTrans)
     }
@@ -1031,7 +1033,7 @@ fun completeSet_LandauZener(
                             initial,
                             tf,
                             initialSpacing,
-                            gap,
+                            Ω,
                             it,
                             γ,
                             ε_max,
@@ -1046,7 +1048,7 @@ fun completeSet_LandauZener(
                             initial,
                             tf,
                             initialSpacing,
-                            gap,
+                            Ω,
                             σ,
                             it,
                             ε_max,
@@ -1061,7 +1063,7 @@ fun completeSet_LandauZener(
                             initial,
                             it,
                             initialSpacing,
-                            gap,
+                            Ω,
                             σ,
                             γ,
                             ε_max,
@@ -1080,7 +1082,7 @@ fun completeSet_LandauZener(
                 )
                 if (saveData) {
                     val filename = "_results_/$name $variable i$initial B%.2e s%.2e g%.2e tf%.2e n$samples.csv".format(
-                        gap,
+                        Ω,
                         σ,
                         γ,
                         tf
