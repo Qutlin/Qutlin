@@ -49,8 +49,8 @@ data class ComplexMatrix(
          * calculates `Rx(θ) = e^(-i θ/2 pauliX)`
          */
         fun rotPauliX(θ: Double) = ComplexMatrix(Pair(2,2), complexArrayOf(
-            cos(θ/2.0), I*sin(θ/2.0),
-            I*sin(θ/2.0), cos(θ/2.0)
+            cos(θ/2.0), -I*sin(θ/2.0),
+            -I*sin(θ/2.0), cos(θ/2.0)
         ))
         /**
          * calculates `Ry(θ) = e^(-i θ/2 pauliY)`

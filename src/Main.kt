@@ -66,11 +66,11 @@ fun landau_zener() {
             linspace(-3.0, 1.0, 50).map { 10.0.pow(it) },
             linspace(1.0, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
         ),
-        samples = 5,
-        σ = 0.1 * _μeV / _ħ,
-        γ = 1.0 / _ns,
-        Ω = 1.0 * _μeV / _ħ,
-        ε_max = 10.0 * _μeV / _ħ,
+        samples = 20,
+        σ = 0.1,
+        γ = 1.0,
+        Ω = 1.0,
+        ε_max = 10.0,
         variable = "tf",
         saveName = "2022 05 01 LZ",
         useShapedPulse = true,
@@ -1009,8 +1009,8 @@ fun completeSet_LandauZener(
         val θ_f = atan2(Ω, ε_max)
         println("θ_0 = $θ_0, θ_f = $θ_f")
 
-        val initTrans  =  rotPauliY(θ_0) * rotPauliX(ϕ).dagger() * rotPauliY(θ_0).dagger()
-        val finalTrans =  rotPauliY(θ_f) * rotPauliX(ϕ)          * rotPauliY(θ_f).dagger()
+        val initTrans  =  rotPauliY(θ_0) * rotPauliX(ϕ)          * rotPauliY(θ_0).dagger()
+        val finalTrans =  rotPauliY(θ_f) * rotPauliX(ϕ).dagger() * rotPauliY(θ_f).dagger()
 
         return Pair(initTrans, finalTrans)
     }
