@@ -1,10 +1,7 @@
 import Qutlin.*
-import Qutlin.ComplexMatrix.Companion.rotPauliY
 import kotlinx.coroutines.*
 import org.hipparchus.ode.nonstiff.AdamsMoultonIntegrator
-import org.hipparchus.ode.nonstiff.GraggBulirschStoerIntegrator
 import java.util.concurrent.Executors
-import kotlin.math.PI
 import kotlin.math.min
 
 
@@ -47,11 +44,11 @@ fun integrate(
 
     // * generate the density matrices of the final eigenstates
     val finalSys = H_0(t1).eigenSystem()
-    var ρ = List(initSys.size) {
+    val projection_ops = List(initSys.size) {
         finalSys[it].second.normalized().ketBra()
     }
-    if(U_m != null)
-        ρ = ρ.map { U_m * it * U_m.dagger() }
+//    if(U_m != null)
+//        ρ = ρ.map { U_m * it * U_m.dagger() }
 
 //    val ρ = initSys.map { rotPauliY(PI) * it.second.normalized().ketBra() * rotPauliY(PI).dagger() }
 
@@ -71,12 +68,12 @@ fun integrate(
         )
     )
 
-    // return if (U_m != null) ρ.map {
-    //     (it * U_m * ρ_res * U_m.dagger()).trace().real
-    // } else ρ.map {
-    //     (it * ρ_res).trace().real
-    // }
-    return p.map { (it * ρ_res).trace().real } // I already applied U_m on ρ above - Fehse, 2022-04-29
+     return if (U_m != null) projection_ops.map {Π ->
+         (Π * U_m * ρ_res * U_m.dagger()).trace().real
+     } else projection_ops.map {Π ->
+         (Π * ρ_res).trace().real
+     }
+//    return ρ.map { (it * ρ_res).trace().real } // I already applied U_m on ρ above - Fehse, 2022-04-29
 }
 
 /**

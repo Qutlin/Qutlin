@@ -327,13 +327,14 @@ class LandauZenerModel(
     override fun build() {
 
         val ε = if (!useShapedPulse) {
-            fun(t: Double) = (1.0 - 2.0 * t / tf) * ε_max
+            fun(t: Double) = (2.0 * t / tf - 1.0) * ε_max
         } else {
-            val α = sqrt(Ω * Ω + ε_max * ε_max) * tf * Ω / (2 * ε_max)
+            val δ = -2.0/(Ω*tf) * ε_max/sqrt(Ω * Ω + ε_max * ε_max)
 
             fun(t: Double): Double {
                 val tt = clamp(0.0, t, tf) - tf / 2.0
-                return -tt * Ω * Ω / sqrt(α * α - tt * tt * Ω * Ω)
+                val x = tt*Ω*δ
+                return -x * Ω / sqrt(1 - x*x)
             }
         }
 

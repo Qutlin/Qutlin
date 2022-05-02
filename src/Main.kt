@@ -8,7 +8,7 @@ import kotlin.math.pow
 
 
 fun main() {
-    // constant_gap()
+//     constant_gap()
      landau_zener()
     // donor_dot()
 //    double_quantum_dot()
@@ -20,39 +20,39 @@ fun main() {
  */
 fun constant_gap() {
 
-    // transfer error depending on variance `σ`
-    completeSet_ConstantGap(
-        x = linspace(-4.0, 1.0, 100).map { 10.0.pow(it) },
-        samples = 20,
-        gap = 10.0,
-        γ = 1.0,
-        σ = 0.1,
-        tf = 100.0,
-        variable = "σ",
-        saveName = "2021 05 04",
-        useGeneralized = false,
-    )
+//    // transfer error depending on variance `σ`
+//    completeSet_ConstantGap(
+//        x = linspace(-4.0, 1.0, 100).map { 10.0.pow(it) },
+//        samples = 20,
+//        gap = 10.0,
+//        γ = 1.0,
+//        σ = 0.1,
+//        tf = 100.0,
+//        variable = "σ",
+//        saveName = "2021 05 04",
+//        useGeneralized = false,
+//    )
 
     // transfer error depending on `tf`
     completeSet_ConstantGap(
-        x = linspace(-2.0, 3.0, 200).map { 10.0.pow(it) },
-        samples = 20,
+        x = linspace(-2.0, 3.0, 25).map { 10.0.pow(it) },
+        samples = 5,
         gap = 10.0,
         γ = 1.0,
         σ = 0.1,
         tf = 100.0,
         variable = "tf",
-        saveName = "2021 05 31",
-        useGeneralized = false,
+        saveName = "2022 04 29",
+        useGeneralized = true,
     )
 
-    // transfer error depending on rate `γ`
-    completeSet_ConstantGap(
-        x = linspace(-3.0, 4.0, 50).map { 10.0.pow(it) },
-        samples = 20,
-        variable = "γ",
-        saveName = "2021 02 09"
-    )
+//    // transfer error depending on rate `γ`
+//    completeSet_ConstantGap(
+//        x = linspace(-3.0, 4.0, 50).map { 10.0.pow(it) },
+//        samples = 20,
+//        variable = "γ",
+//        saveName = "2021 02 09"
+//    )
 }
 
 /**
@@ -66,12 +66,13 @@ fun landau_zener() {
             linspace(-3.0, 1.0, 50).map { 10.0.pow(it) },
             linspace(1.0, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
         ),
-        samples = 20,
-        σ = 0.1,
-        γ = 1.0,
-        Ω = 1.0,
+        samples = 5,
+        σ = 0.1 * _μeV / _ħ,
+        γ = 1.0 / _ns,
+        Ω = 1.0 * _μeV / _ħ,
+        ε_max = 10.0 * _μeV / _ħ,
         variable = "tf",
-        saveName = "2022 04 29b LZ",
+        saveName = "2022 05 01 LZ",
         useShapedPulse = true,
         useGeneralized = true,
     )
@@ -874,8 +875,8 @@ fun completeSet_ConstantGap(
         val ϕ = atan(π / (tf * gap))
         println("ϕ(tf = $tf) = $ϕ")
 
-        val initTrans = rotPauliX(ϕ)
-        val finalTrans = (rotPauliY(π) * rotPauliX(ϕ).dagger() * rotPauliY(π).dagger())
+        val initTrans  = rotPauliX(ϕ)
+        val finalTrans = rotPauliY(π) * rotPauliX(ϕ).dagger() * rotPauliY(π).dagger()
 
         return Pair(initTrans, finalTrans)
     }
@@ -999,22 +1000,20 @@ fun completeSet_LandauZener(
     fun transformations(tf: Double): Pair<Operator?, Operator?> {
         if (!(useGeneralized && useShapedPulse)) return Pair(null, null);
 
-        val δ = 2.0/(Ω*tf)*ε_max/sqrt(Ω*Ω + ε_max*ε_max)
+        val δ = -2.0/(Ω*tf)*ε_max/sqrt(Ω*Ω + ε_max*ε_max)
         val ϕ = atan(δ)
         println("ϕ(tf = $tf) = $ϕ")
 
         // B e^iθ = Bz + i Bx
-        val θ_0 = atan(  Ω/ε_max)     // - π/2.0
-        val θ_f = atan( -Ω/ε_max) + π // - π/2.0
+        val θ_0 = atan2(Ω,-ε_max)
+        val θ_f = atan2(Ω, ε_max)
         println("θ_0 = $θ_0, θ_f = $θ_f")
 
-        val initTrans  =  rotPauliY(θ_0).dagger() * rotPauliX(ϕ)          * rotPauliY(θ_0)
-        val finalTrans =  rotPauliY(θ_f)          * rotPauliX(ϕ).dagger() * rotPauliY(θ_f).dagger()
+        val initTrans  =  rotPauliY(θ_0) * rotPauliX(ϕ).dagger() * rotPauliY(θ_0).dagger()
+        val finalTrans =  rotPauliY(θ_f) * rotPauliX(ϕ)          * rotPauliY(θ_f).dagger()
 
         return Pair(initTrans, finalTrans)
     }
-
-
 
 
 //    runBlocking(Dispatchers.Default) {
