@@ -9,10 +9,13 @@ import kotlin.math.pow
 
 fun main() {
 //     constant_gap()
-     landau_zener()
+     // landau_zener()
+     charge_qubit()
     // donor_dot()
 //    double_quantum_dot()
 }
+
+
 
 
 /**
@@ -55,6 +58,9 @@ fun constant_gap() {
 //    )
 }
 
+
+
+
 /**
  * Calculate all the data for the Landau-Zener model.
  */
@@ -70,7 +76,8 @@ fun landau_zener() {
         σ = 0.1,
         γ = 1.0,
         Ω = 1.0,
-        ε_max = 10.0,
+        ε0 = -10.0,
+        ε1 =  10.0,
         variable = "tf",
         saveName = "2022 05 01 LZ",
         useShapedPulse = true,
@@ -93,6 +100,52 @@ fun landau_zener() {
     //     saveName = "2021 05 04 LZ",
     // )
 }
+
+
+
+/**
+ * Calculate all the data for the Landau-Zener charge qubit model.
+ */
+fun charge_qubit() {
+
+    // transfer error depending on `tf`
+    completeSet_ChargeQubit(
+        x = concatenate(
+            linspace(-3.0, 1.0, 50).map { 10.0.pow(it) },
+            linspace(1.0, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
+        ),
+        samples = 20,
+        Ω = 1.0,
+        ε0 =  0.0,
+        ε1 = 10.0,
+        S0 = 2.67*1e6*_Hz*_Hz * 2.0*π, // yoneda2018quantum, in units of _ħ
+        ω0 = 2.0*π/1.0e3,              // period given by max tf
+        variable = "tf",
+        saveName = "2022 05 03 CQ",
+        useShapedPulse = false,
+        useGeneralized = false,
+    )
+
+    // // transfer error depending on noise variance `σ`
+    // completeSet_LandauZener(
+    //     x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
+    //     samples = 20,
+    //     variable = "σ",
+    //     saveName = "2021 05 04 LZ",
+    // )
+
+    // // transfer error depending on rate `γ`
+    // completeSet_LandauZener(
+    //     x = linspace(-4.0, 4.0, 100).map { 10.0.pow(it) },
+    //     samples = 20,
+    //     variable = "γ",
+    //     saveName = "2021 05 04 LZ",
+    // )
+}
+
+
+
+
 
 /**
  * Calculate all the data for the donor-dot model.
@@ -976,7 +1029,8 @@ fun completeSet_LandauZener(
     Ω: Double = 1.0,
     γ: Double = 1.0,
     σ: Double = 0.1,
-    ε_max: Double = 10.0 * Ω,
+    ε0: Double = -10.0 * Ω,
+    ε1: Double =  10.0 * Ω,
     tf: Double = 100.0,
     saveData: Boolean = true,
     saveName: String = "2021 02 01 LZ",
@@ -1000,13 +1054,13 @@ fun completeSet_LandauZener(
     fun transformations(tf: Double): Pair<Operator?, Operator?> {
         if (!(useGeneralized && useShapedPulse)) return Pair(null, null);
 
-        val δ = -2.0/(Ω*tf)*ε_max/sqrt(Ω*Ω + ε_max*ε_max)
+        val δ = -1.0/(Ω*tf) * ( ε1/sqrt(Ω*Ω + ε1*ε1) - ε0/sqrt(Ω*Ω + ε0*ε0) )
         val ϕ = atan(δ)
         println("ϕ(tf = $tf) = $ϕ")
 
         // B e^iθ = Bz + i Bx
-        val θ_0 = atan2(Ω,-ε_max)
-        val θ_f = atan2(Ω, ε_max)
+        val θ_0 = atan2(Ω, ε0)
+        val θ_f = atan2(Ω, ε1)
         println("θ_0 = $θ_0, θ_f = $θ_f")
 
         val initTrans  =  rotPauliY(θ_0) * rotPauliX(ϕ)          * rotPauliY(θ_0).dagger()
@@ -1021,21 +1075,24 @@ fun completeSet_LandauZener(
 
         List(2) { initial ->
             x.map {
-                val cutoff = max(2.0 * π * ε_max * 10, 10 * γ)
+                val cutoff = max(2.0 * π * max(abs(ε0),abs(ε1)) * 10, 10 * γ)
                 val initialSpacing = 2 * π / (cutoff * 10)
 //                if(useShapedPulse) initialSpacing *= 0.1
 
                 when (variable) {
                     "σ" -> {
                         val trans = transformations(tf)
+                        val noiseType = OUNoise(it, γ, cutoff, 2*π/cutoff)
                         LandauZenerModel(
                             initial,
                             tf,
                             initialSpacing,
                             Ω,
-                            it,
-                            γ,
-                            ε_max,
+                            // it,
+                            // γ,
+                            ε0,
+                            ε1,
+                            noiseType,
                             useShapedPulse,
                             trans.first,
                             trans.second,
@@ -1043,14 +1100,17 @@ fun completeSet_LandauZener(
                     }
                     "γ" -> {
                         val trans = transformations(tf)
+                        val noiseType = OUNoise(σ, it, cutoff, 2*π/cutoff)
                         LandauZenerModel(
                             initial,
                             tf,
                             initialSpacing,
                             Ω,
-                            σ,
-                            it,
-                            ε_max,
+                            // σ,
+                            // it,
+                            ε0,
+                            ε1,
+                            noiseType,
                             useShapedPulse,
                             trans.first,
                             trans.second,
@@ -1058,14 +1118,17 @@ fun completeSet_LandauZener(
                     }
                     else -> {
                         val trans = transformations(it)
+                        val noiseType = OUNoise(σ, γ, cutoff, 2*π/cutoff)
                         LandauZenerModel(
                             initial,
                             it,
                             initialSpacing,
                             Ω,
-                            σ,
-                            γ,
-                            ε_max,
+                            // σ,
+                            // γ,
+                            ε0,
+                            ε1,
+                            noiseType,
                             useShapedPulse,
                             trans.first,
                             trans.second,
@@ -1084,6 +1147,151 @@ fun completeSet_LandauZener(
                         Ω,
                         σ,
                         γ,
+                        tf
+                    )
+                    saveSweep(filename, x, res)
+                }
+                if (plotData)
+                    try {
+                        plotSweep(x, res)
+                    } catch (e: Exception) {
+                        println("could not plot")
+                    }
+            }
+        }.awaitAll()
+    }
+}
+
+
+
+/**
+ * This function generates a list of parameters for which the population transfer is being calculated.
+ * `x` is the variable over the list is generated over. By setting `variable`, you can choose what parameter to
+ * iterate over. Available are `"S0"`, `"ω0"`, (implicitly) `"tf"`. The default is `"tf"`.
+ * It will solve the master equation for a number of `samples` independent (noise) realizations.
+ */
+fun completeSet_ChargeQubit(
+    samples: Int = 20,
+    x: List<Double> = linspace(-4.0, 3.0, 200).map { 10.0.pow(it) },
+    variable: String = "tf",
+
+    Ω: Double = 1.0,
+    ε0: Double = -10.0 * Ω,
+    ε1: Double =  10.0 * Ω,
+    tf: Double = 100.0,
+
+    S0: Double,
+    ω0: Double,
+
+    saveData: Boolean = true,
+    saveName: String = "2021 02 01 CQ",
+    useShapedPulse: Boolean = false,
+
+    useGeneralized: Boolean = false,
+
+    plotData: Boolean = true,
+) {
+    val name = if (!useShapedPulse) saveName else "$saveName shaped"
+
+
+
+    // The preparation and measurement unitaries for the generalized strategy via
+    //     R(tf) U(tf) R†(0)
+    // with
+    //     R(t) = Ry(t) Rx(ϕ)^† Ry(t)^†.
+    // Therefore
+    //     R( 0)^† = ( Ry( 0) Rx(ϕ)^† Ry( 0)^† )^†,
+    //     R(tf)   =   Ry(tf) Rx(ϕ)^† Ry(tf)^† .
+    fun transformations(tf: Double): Pair<Operator?, Operator?> {
+        if (!(useGeneralized && useShapedPulse)) return Pair(null, null);
+
+        val δ = -1.0/(Ω*tf) * ( ε1/sqrt(Ω*Ω + ε1*ε1) - ε0/sqrt(Ω*Ω + ε0*ε0) )
+        val ϕ = atan(δ)
+        println("ϕ(tf = $tf) = $ϕ")
+
+        // B e^iθ = Bz + i Bx
+        val θ_0 = atan2(Ω, ε0)
+        val θ_f = atan2(Ω, ε1)
+        println("θ_0 = $θ_0, θ_f = $θ_f")
+
+        val initTrans  =  rotPauliY(θ_0) * rotPauliX(ϕ)          * rotPauliY(θ_0).dagger()
+        val finalTrans =  rotPauliY(θ_f) * rotPauliX(ϕ).dagger() * rotPauliY(θ_f).dagger()
+
+        return Pair(initTrans, finalTrans)
+    }
+
+
+//    runBlocking(Dispatchers.Default) {
+    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
+
+        List(2) { initial ->
+            x.map {
+                val cutoff = 2.0 * π * max(abs(ε0),abs(ε1)) * 10
+                val initialSpacing = 2 * π / (cutoff * 10)
+//                if(useShapedPulse) initialSpacing *= 0.1
+
+                when (variable) {
+                    "S0" -> {
+                        val trans = transformations(tf)
+                        val noiseType = f_inv_Noise(it, ω0, cutoff, 2*π/cutoff)
+                        LandauZenerModel(
+                            initial,
+                            tf,
+                            initialSpacing,
+                            Ω,
+                            ε0,
+                            ε1,
+                            noiseType,
+                            useShapedPulse,
+                            trans.first,
+                            trans.second,
+                        )
+                    }
+                    "ω0" -> {
+                        val trans = transformations(tf)
+                        val noiseType = f_inv_Noise(S0, it, cutoff, 2*π/cutoff)
+                        LandauZenerModel(
+                            initial,
+                            tf,
+                            initialSpacing,
+                            Ω,
+                            ε0,
+                            ε1,
+                            noiseType,
+                            useShapedPulse,
+                            trans.first,
+                            trans.second,
+                        )
+                    }
+                    else -> {
+                        val trans = transformations(it)
+                        val noiseType = f_inv_Noise(S0, ω0, cutoff, 2*π/cutoff)
+                        LandauZenerModel(
+                            initial,
+                            it,
+                            initialSpacing,
+                            Ω,
+                            ε0,
+                            ε1,
+                            noiseType,
+                            useShapedPulse,
+                            trans.first,
+                            trans.second,
+                        )
+                    }
+                }
+            }
+        }.mapIndexed { initial, models ->
+            async {
+                val res = sampleSweeps(
+                    models.toMutableList(),
+                    samples,
+                )
+                if (saveData) {
+                    val filename = "_results_/$name $variable i$initial Ω%.2e S%.2e ω%.2e tf%.2e n$samples.csv".format(
+                        Ω,
+                        S0,
+                        ω0,
                         tf
                     )
                     saveSweep(filename, x, res)

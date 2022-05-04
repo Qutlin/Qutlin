@@ -308,9 +308,12 @@ class LandauZenerModel(
     tf: Double,
     maxIntegrationStep: Double,
     private val Ω: Double = 10.0,
-    private val σ: Double = 1.0,
-    private val γ: Double = 1.0,
-    private val ε_max: Double = 10.0 * Ω,
+    // private val σ: Double = 1.0,
+    // private val γ: Double = 1.0,
+    private val ε0: Double = -10.0 * Ω,
+    private val ε1: Double =  10.0 * Ω,
+
+    private val noiseType: NoiseType,
 
     private val useShapedPulse: Boolean = false,
 
@@ -327,28 +330,29 @@ class LandauZenerModel(
     override fun build() {
 
         val ε = if (!useShapedPulse) {
-            fun(t: Double) = (2.0 * t / tf - 1.0) * ε_max
+            fun(t: Double) = ε0 + (ε1-ε0) * t/tf
         } else {
-            val δ = -2.0/(Ω*tf) * ε_max/sqrt(Ω * Ω + ε_max * ε_max)
+            val δ = -1.0/(Ω*tf) * ( ε1/sqrt(Ω*Ω + ε1*ε1) - ε0/sqrt(Ω*Ω + ε0*ε0) )
+            val t0 = -1.0/(Ω*tf) * ε0/sqrt(Ω*Ω + ε0*ε0)
 
             fun(t: Double): Double {
                 val tt = clamp(0.0, t, tf) - tf / 2.0
-                val x = tt*Ω*δ
+                val x = (tt+t0)*Ω*δ
                 return -x * Ω / sqrt(1 - x*x)
             }
         }
 
-        val cutoff = max(2.0 * π * Ω, γ) * 10.0
-        val τ_c = 1.0/γ
+//        val cutoff = max(2.0 * π * Ω, γ) * 10.0
+        // val τ_c = 1.0/γ
 
-        val noiseType = OUNoise(
-            σ,
-            γ,
-            cutoff,
-            initialSpacing = 2 * π / cutoff,
-        )
+        // val noiseType = OUNoise(
+        //     σ,
+        //     γ,
+        //     cutoff,
+        //     initialSpacing = 2 * π / cutoff,
+        // )
         val η = Noise(
-            max(tf, 10.0 * τ_c),
+            max(tf, noiseType.minTime),
             min(noiseType.initialSpacing, tf / 100.0),
             noiseType.wnDeltaRate,
             tf,
