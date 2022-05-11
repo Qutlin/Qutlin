@@ -69,7 +69,7 @@ class f_inv_Noise(
 
     override fun envelope(ω: Double) =
         if (abs(ω) < ω0 || abs(ω) > cutoff) 0.0
-        else S0/abs(ω)
+        else sqrt(S0/abs(ω))
 
     override fun toString() =
         "${name}[S0$S0 ω0$ω0 spacing%.1e co%.1e]".format(initialSpacing, cutoff)

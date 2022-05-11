@@ -333,10 +333,10 @@ class LandauZenerModel(
             fun(t: Double) = ε0 + (ε1-ε0) * t/tf
         } else {
             val δ = -1.0/(Ω*tf) * ( ε1/sqrt(Ω*Ω + ε1*ε1) - ε0/sqrt(Ω*Ω + ε0*ε0) )
-            val t0 = -1.0/(Ω*tf) * ε0/sqrt(Ω*Ω + ε0*ε0)
+            val t0 = -1.0/(Ω*δ) * ε0/sqrt(Ω*Ω + ε0*ε0)
 
             fun(t: Double): Double {
-                val tt = clamp(0.0, t, tf) - tf / 2.0
+                val tt = clamp(0.0, t, tf)
                 val x = (tt+t0)*Ω*δ
                 return -x * Ω / sqrt(1 - x*x)
             }
@@ -358,7 +358,6 @@ class LandauZenerModel(
             tf,
         )
         η.generate(noiseType::envelope, rescaleWN = true)
-
 
         H_η = fun(t: Double) = Operator(
             Pair(2, 2),
