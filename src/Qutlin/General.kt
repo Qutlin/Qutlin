@@ -32,8 +32,8 @@ const val π = PI
 
 
 infix fun Double.e(b: Double) = FastMath.pow(this, b)
-fun Double.e2() = FastMath.pow(this, 2)
-fun Double.e3() = FastMath.pow(this, 3)
+fun Double.e2() = this*this
+fun Double.e3() = this*this*this
 infix fun Double.e(b: Int) = FastMath.pow(this, b)
 
 

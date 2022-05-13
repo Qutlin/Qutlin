@@ -32,7 +32,7 @@ class Noise(
         private val unit = fun(_: Double) = 1.0
 
         // * make sure the seed is new in every run
-        var seed = atomic(LocalDateTime.now().nano.toLong())
+        var seed = atomic(LocalDateTime.now().nano.toLong()/100)
     }
 
     private val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
@@ -40,13 +40,13 @@ class Noise(
     val realSpacing: Double
     val omegaFreq: List<Double>
     lateinit var amplitudes: ComplexArray
-    lateinit var values: ComplexArray
+    lateinit var values: DoubleArray
 
     init {
         // ? Generate a List of `omegaFreq` with 2^N elements
         val n = time/initialSpacing
         N = round(pow(2.0, ceil(log2(n)).toInt())).toInt()
-        println("Noise of time $time initialized with $N frequencies")
+        println("Noise of time $time initialized with $N~$n frequencies")
         realSpacing = time/N.toDouble()
         // * omegaFreq in units of TAU
         omegaFreq = List(N) {
@@ -70,7 +70,7 @@ class Noise(
      * */
     fun generate(envelope: (Double) -> Double = unit, rescaleWN: Boolean = true, targetVariance: Double = -1.0) {
 
-        seed.plusAssign(LocalDateTime.now().nano.toLong())
+        seed.plusAssign(LocalDateTime.now().nano.toLong()/100)
         println("seed = $seed")
         // * generator for gaussian normalized random numbers (0 mean, 1 std)
 
@@ -83,23 +83,27 @@ class Noise(
 
         amplitudes = amplitudes.zip(omegaFreq) {a, o -> envelope(o) * a}.toComplexArray()
 
-        values = fftTransformer.transform(amplitudes, TransformType.INVERSE )
+        val cvalues = fftTransformer.transform(amplitudes, TransformType.INVERSE )
+        values = cvalues.map {it.real}.toDoubleArray()
 
         if(targetVariance > 0.0) {
-            val variance = values.map { it.real }.variance()
+//            val variance = values.map { it.real }.variance()
+            val variance = values.toList().variance()
             val f = sqrt(targetVariance / variance)
-            values = values.map { it * f }.toComplexArray()
+            values = values.map { it * f }.toDoubleArray() //.toComplexArray()
         }
+        println("noise generated with mean ${values.toList().average()} and std ${values.toList().std()}")
 
         val maxN = ceil(maxTime / realSpacing).toInt() + 1
-        values = values.take(maxN).toComplexArray()
+        values = values.take(maxN).toDoubleArray()//.toComplexArray()
+
     }
 
 
     /**
      * Generate interpolated values from generated noise data.
      */
-    private fun interpolate(t: Double): Complex {
+    private fun interpolate(t: Double): Double {
         val tt = t/realSpacing
         val index0 = floor(tt).toInt()
         val index1 = floor(tt + 1.0).toInt()
@@ -117,16 +121,16 @@ class Noise(
     /**
      * Makes `Noise` callable, e.g. `val noise = Noise(...)` can be used as `noise(t)`
      */
-    operator fun invoke(t: Double) = this.interpolate(t).real
+    operator fun invoke(t: Double) = this.interpolate(t)//.real
 
 
 
     override fun toString(): String {
-        val realValues = values.map { it.real }
+        val realValues = values//.map { it.real }
 
         val avg = realValues.average()
-        val std = realValues.std()
-        val variance = realValues.variance()
+        val std = realValues.toList().std()
+        val variance = realValues.toList().variance()
 
         return """
             Noise
@@ -164,7 +168,8 @@ fun plotNoise(noise: Noise, take: Int = -1, plotFrequencies: Boolean = true, plo
     }
 
     if(plotTimeSeries) {
-        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.real) }
+        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n) }
+//        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.real) }
 //        var nIm = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.imaginary) }
 
         if (take > 0) {

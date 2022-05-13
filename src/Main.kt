@@ -9,7 +9,7 @@ import kotlin.math.pow
 
 fun main() {
 //     constant_gap()
-     // landau_zener()
+//      landau_zener()
      charge_qubit()
     // donor_dot()
 //    double_quantum_dot()
@@ -69,17 +69,18 @@ fun landau_zener() {
     // transfer error depending on `tf`
     completeSet_LandauZener(
         x = concatenate(
-            linspace(-3.0, 1.0, 50).map { 10.0.pow(it) },
-            linspace(1.0, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
+            linspace(-3.0, 0.0, 50).map { 10.0.pow(it) },
+            linspace(0.0, 1.5,50, skipFirst = true).map { 10.0.pow(it) },
+            linspace(1.5, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
         ),
-        samples = 20,
+        samples = 1,
         σ = 0.1,
         γ = 1.0,
         Ω = 1.0,
         ε0 = -10.0,
         ε1 =  10.0,
         variable = "tf",
-        saveName = "2022 05 01 LZ",
+        saveName = "2022 05 11 LZ",
         useShapedPulse = true,
         useGeneralized = true,
     )
@@ -109,38 +110,47 @@ fun landau_zener() {
 fun charge_qubit() {
 
     // transfer error depending on `tf`
-    completeSet_ChargeQubit(
-        x = concatenate(
-            linspace(-3.0, 1.0, 50).map { 10.0.pow(it) },
-            linspace(1.0, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
-        ),
-        samples = 20,
-        Ω = 1.0,
-        ε0 =  0.0,
-        ε1 = 10.0,
-        S0 = 2.67*1e6*_Hz*_Hz * 2.0*π, // yoneda2018quantum, in units of _ħ
-        ω0 = 2.0*π/1.0e3,              // period given by max tf
-        variable = "tf",
-        saveName = "2022 05 03 CQ",
-        useShapedPulse = false,
-        useGeneralized = false,
-    )
+//    completeSet_ChargeQubit(
+//        x = concatenate(
+//            linspace(-3.0, 1.0, 10).map { 10.0.pow(it) },
+//            linspace(1.0, 3.0, 10, skipFirst = true).map { 10.0.pow(it) },
+//        ),
+//        samples = 1,
+//        Ω = 20.0 * _μeV/ _ħ,
+//        ε0 =  0.0,
+//        ε1 = 200.0 * _μeV/ _ħ,
+//        S0 = 0.273 / _ns.e2(), // Notes 2022-05-10 - Fehse, 2022-05-10
+////        ω0 = 2.0*π/(60*60*_s), // period between calibrations or experimental runs
+//        ω0 = 2.0*π * 1e-3 / _ns, // period between calibrations or experimental runs
+//        variable = "tf",
+//        saveName = "2022 05 13 CQ",
+//        useShapedPulse = true,
+//        useGeneralized = true,
+//    )
 
-    // // transfer error depending on noise variance `σ`
-    // completeSet_LandauZener(
-    //     x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
-    //     samples = 20,
-    //     variable = "σ",
-    //     saveName = "2021 05 04 LZ",
-    // )
 
-    // // transfer error depending on rate `γ`
-    // completeSet_LandauZener(
-    //     x = linspace(-4.0, 4.0, 100).map { 10.0.pow(it) },
-    //     samples = 20,
-    //     variable = "γ",
-    //     saveName = "2021 05 04 LZ",
-    // )
+    // transfer error depending on low-frequency cutoff ω0
+    val cuttoffs = linsteps(-3.0,1.0,-1.0).map {10.0.pow(it)}
+//    val cuttoffs = listOf(1e-6, 1e-5, 1e-4, 1e4, 1e5, 1e6)
+//        .map{it * 2.0*π/(60*60*_s)}
+        .forEach {
+            completeSet_ChargeQubit(
+                x = concatenate(
+                    linspace(-3.0, 1.0, 10).map { 10.0.pow(it) },
+                    linspace(1.0, 3.0, 10, skipFirst = true).map { 10.0.pow(it) },
+                ),
+                samples = 20,
+                Ω = 20.0 * _μeV/ _ħ,
+                ε0 =  0.0,
+                ε1 = 200.0 * _μeV/ _ħ,
+                S0 = 0.273 / _ns.e2(), // Notes 2022-05-10 - Fehse, 2022-05-10
+                ω0 = it, // period between calibrations or experimental runs
+                variable = "tf",
+                saveName = "2022 05 13 CQ",
+                useShapedPulse = true,
+                useGeneralized = true,
+            )
+        }
 }
 
 
@@ -1040,8 +1050,8 @@ fun completeSet_LandauZener(
 
     plotData: Boolean = true,
 ) {
-    val name = if (!useShapedPulse) saveName else "$saveName shaped"
-
+    var name = if (!useGeneralized) saveName else "$saveName generalized"
+    name = if (!useShapedPulse) name else "$name shaped"
 
 
     // The preparation and measurement unitaries for the generalized strategy via
@@ -1185,13 +1195,14 @@ fun completeSet_ChargeQubit(
 
     saveData: Boolean = true,
     saveName: String = "2021 02 01 CQ",
-    useShapedPulse: Boolean = false,
 
+    useShapedPulse: Boolean = false,
     useGeneralized: Boolean = false,
 
     plotData: Boolean = true,
 ) {
-    val name = if (!useShapedPulse) saveName else "$saveName shaped"
+    var name = if (!useGeneralized) saveName else "$saveName generalized"
+    name = if (!useShapedPulse) name else "$name shaped"
 
 
 
@@ -1226,14 +1237,15 @@ fun completeSet_ChargeQubit(
 
         List(2) { initial ->
             x.map {
-                val cutoff = 2.0 * π * max(abs(ε0),abs(ε1)) * 10
-                val initialSpacing = 2 * π / (cutoff * 10)
+                val cutoff = max(abs(ε0),abs(ε1)) * 10
+                val initialSpacing = 2 * π / cutoff
 //                if(useShapedPulse) initialSpacing *= 0.1
 
                 when (variable) {
                     "S0" -> {
                         val trans = transformations(tf)
-                        val noiseType = f_inv_Noise(it, ω0, cutoff, 2*π/cutoff)
+                        val minTime = 4.0/ω0;
+                        val noiseType = f_inv_Noise(it, ω0, cutoff, minTime, initialSpacing)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1249,7 +1261,8 @@ fun completeSet_ChargeQubit(
                     }
                     "ω0" -> {
                         val trans = transformations(tf)
-                        val noiseType = f_inv_Noise(S0, it, cutoff, 2*π/cutoff)
+                        val minTime = 4.0/ω0
+                        val noiseType = f_inv_Noise(S0, it, cutoff, minTime, initialSpacing)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1265,7 +1278,8 @@ fun completeSet_ChargeQubit(
                     }
                     else -> {
                         val trans = transformations(it)
-                        val noiseType = f_inv_Noise(S0, ω0, cutoff, 2*π/cutoff)
+                        val minTime = 4.0/ω0
+                        val noiseType = f_inv_Noise(S0, ω0, cutoff, minTime, initialSpacing)
                         LandauZenerModel(
                             initial,
                             it,
