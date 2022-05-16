@@ -43,6 +43,15 @@ fun List<Complex>.average(): Complex =
     this.fold(Complex.ZERO){acc, c -> acc + c} / size.toDouble()
 
 
+fun DoubleArray.average(): Double =
+    this.fold(0.0){ acc, d -> acc + d } / size.toDouble()
+
+fun DoubleArray.variance(): Double {
+    val avg = average()
+    return fold(0.0){acc, v -> acc + (v-avg)*(v-avg)}/size
+}
+
+fun DoubleArray.std(): Double = sqrt(variance())
 
 
 fun List<Double>.variance(): Double {

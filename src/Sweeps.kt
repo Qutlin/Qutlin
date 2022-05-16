@@ -91,13 +91,15 @@ fun sampleSweeps(
     println("start solver...")
 //    runBlocking(Dispatchers.Default) { // ? system default parallel dispatcher
 //    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded execution
-    runBlocking(Executors.newFixedThreadPool(4).asCoroutineDispatcher()) {
-        val futures = List(samples) { sample ->
+//    runBlocking(Executors.newFixedThreadPool(4).asCoroutineDispatcher()) {
+//        val futures = List(samples) { sample ->
+        List(samples) { sample ->
             println("sample $sample")
-            models.mapIndexed { i_model: Int, model: Model ->
-                async {
-                    println("%3d / $samples : %3d / ${models.size}".format(sample, i_model))
 
+//            async {
+                models.mapIndexed { i_model: Int, model: Model ->
+//                async {
+                    println("%3d / $samples : %3d / ${models.size}".format(sample, i_model))
                     model.build()
 
                     val res = integrate(
@@ -112,14 +114,14 @@ fun sampleSweeps(
                         U_m = model.U_m,
                     )
 
-                    model.free() // ? new memory free method - Fehse, 2022-05-16
+//                    model.free() // ? new memory free method - Fehse, 2022-05-16
 //                    models.remove(model) // ? free up memory, otherwise the noise values will accumulate until ALL models are evaluated - Fehse, 2022-04-20
                     res.forEachIndexed { i, r -> p[sample][i][i_model] = r }
                 }//.await()
-            }
+//            }
         }
-        futures.forEach { it.awaitAll() }
-    }
+//        futures.awaitAll()//.forEach { it.awaitAll() }
+//    }
     println("solver finished.")
     return p
 }

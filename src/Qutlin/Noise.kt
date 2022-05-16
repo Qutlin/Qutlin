@@ -38,7 +38,11 @@ class Noise(
     private val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
     val N: Int
     val realSpacing: Double
-    val omegaFreq: List<Double>
+//    val omegaFreq: List<Double>
+    private fun omegaFreq(n: Int): Double {
+        return if(n <= N/2) TAU/time * n
+        else                -TAU/time * (N-n)
+    }
     lateinit var amplitudes: ComplexArray
     lateinit var values: DoubleArray
 
@@ -49,10 +53,10 @@ class Noise(
         println("Noise of time $time initialized with $N~$n frequencies")
         realSpacing = time/N.toDouble()
         // * omegaFreq in units of TAU
-        omegaFreq = List(N) {
-            if(it <= N/2) TAU/time * it
-            else -TAU/time * (N-it)
-        }
+//        omegaFreq = List(N) {
+//            if(it <= N/2) TAU/time * it
+//            else -TAU/time * (N-it)
+//        }
     }
 
     /**
@@ -78,14 +82,23 @@ class Noise(
         val generator = GaussianRandomGenerator(RandomDataGenerator(seed.value))
 
         val factor = if (rescaleWN) sqrt(wnVariance/realSpacing) else 1.0
-        val whiteNoise = List(N) { generator.nextNormalizedDouble() * factor }
 
-        amplitudes = fftTransformer.transform(whiteNoise.toDoubleArray(), TransformType.FORWARD )
+        println("generating whiteNoise")
+        val whiteNoise = DoubleArray(N) { generator.nextNormalizedDouble() * factor }
 
-        amplitudes = amplitudes.zip(omegaFreq) {a, o -> envelope(o) * a}.toComplexArray()
+        println("FFT")
+        amplitudes = fftTransformer.transform(whiteNoise, TransformType.FORWARD )
+        println("applyting envelope")
+        for (i in 0..amplitudes.size) {
+            amplitudes[i] = amplitudes[i] * envelope(omegaFreq(i))
+        }
 
+        println("iFFT")
         val cvalues = fftTransformer.transform(amplitudes, TransformType.INVERSE )
-        values = cvalues.map {it.real}.toDoubleArray()
+
+        val maxN = ceil(maxTime / realSpacing).toInt() + 1
+        println("taking $maxN real values")
+        values = DoubleArray(maxN) { cvalues[it].real }
 
         if(targetVariance > 0.0) {
 //            val variance = values.map { it.real }.variance()
@@ -93,11 +106,7 @@ class Noise(
             val f = sqrt(targetVariance / variance)
             values = values.map { it * f }.toDoubleArray() //.toComplexArray()
         }
-        println("noise generated with mean ${values.toList().average()} and std ${values.toList().std()}")
-
-        val maxN = ceil(maxTime / realSpacing).toInt() + 1
-        values = values.take(maxN).toDoubleArray()//.toComplexArray()
-
+        println("noise generated with mean ${values.average()} and std ${values.std()}")
     }
 
 
@@ -146,108 +155,108 @@ class Noise(
 
 
 
-
-
-
-fun plotNoise(noise: Noise, take: Int = -1, plotFrequencies: Boolean = true, plotTimeSeries: Boolean = true) {
-
-    if(plotFrequencies) {
-        val p0 = Plot(
-            Plot.DataSet(
-                noise.omegaFreq.drop(1).zip(noise.amplitudes.drop(1)) { f, a -> listOf(f, a.real) },
-                color = Plot.colorPalette[0],
-                symbol = Plot.Symbols.None
-            ), xScale = Mapper.Companion.Scales.Linear
-        )
-        p0.addDataSet(
-            Plot.DataSet(
-                noise.omegaFreq.drop(1).zip(noise.amplitudes.drop(1)) { f, a -> listOf(f, a.imaginary) },
-                color = Plot.colorPalette[1],
-                symbol = Plot.Symbols.None
-            )
-        )
-    }
-
-    if(plotTimeSeries) {
-        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n) }
-//        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.real) }
-//        var nIm = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.imaginary) }
-
-        if (take > 0) {
-            nRe = nRe.take(take)
-//            nIm = nIm.take(take)
-        }
-
-
-        val p1 = Plot(
-            Plot.DataSet(
-                nRe,
-                color = Plot.colorPalette[0],
-                symbol = Plot.Symbols.None
-            )
-        )
-//        p1.addDataSet(
+//
+//
+//
+//fun plotNoise(noise: Noise, take: Int = -1, plotFrequencies: Boolean = true, plotTimeSeries: Boolean = true) {
+//
+//    if(plotFrequencies) {
+//        val p0 = Plot(
 //            Plot.DataSet(
-//                nIm,
+//                noise.omegaFreq.drop(1).zip(noise.amplitudes.drop(1)) { f, a -> listOf(f, a.real) },
+//                color = Plot.colorPalette[0],
+//                symbol = Plot.Symbols.None
+//            ), xScale = Mapper.Companion.Scales.Linear
+//        )
+//        p0.addDataSet(
+//            Plot.DataSet(
+//                noise.omegaFreq.drop(1).zip(noise.amplitudes.drop(1)) { f, a -> listOf(f, a.imaginary) },
 //                color = Plot.colorPalette[1],
 //                symbol = Plot.Symbols.None
 //            )
 //        )
-    }
-}
-
-
-
-
-
-
-fun main() {
-    fftTest()
-}
-
-
-
-
-fun fftTest() {
-    val seed = LocalDateTime.now().nano.toLong()
-    val generator = GaussianRandomGenerator(RandomDataGenerator(seed))
-    val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
-
-    val N = pow(2.0,10).toInt()
-    val T = 1.0
-    val t = List(N) { it.toDouble()/N.toDouble() * T}
-
-    val freq = 8
-
-//    val eta = List(N) { generator.nextNormalizedDouble() }
-    val eta = t.map { cos(it * freq * TAU - TAU/8.0) }
-    println("eta: var = ${eta.variance()}, avg = ${eta.average()}")
-
-    val p0 = Plot(Plot.DataSet(
-        t.zip(eta){ it, ieta -> listOf(it,ieta)},
-        color = Plot.colorPalette[0],
-        symbol = Plot.Symbols.None
-    ), xScale = Mapper.Companion.Scales.Linear)
-
-
-    val frequencies = List(N) {
-        if(it <= N/2) TAU/T * it
-        else -TAU/T * (N - it)
-    }
-    val amplitudes = fftTransformer.transform( eta.toDoubleArray(), TransformType.FORWARD )
-//    println(amplitudes.toList())
-
-    val p1 = Plot(Plot.DataSet(
-        frequencies.zip(amplitudes) {f,a -> listOf(f, a.real)},
-        color = Plot.colorPalette[0],
-        symbol = Plot.Symbols.None
-    ))
-    p1.addDataSet(Plot.DataSet(
-        frequencies.zip(amplitudes) {f,a -> listOf(f, a.imaginary)},
-        color = Plot.colorPalette[1],
-        symbol = Plot.Symbols.None
-    ))
-
-    val etaBack = fftTransformer.transform( amplitudes, TransformType.INVERSE ).map { it.real }
-    println("etaBack: var = ${etaBack.variance()}, avg = ${etaBack.average()}")
-}
+//    }
+//
+//    if(plotTimeSeries) {
+//        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n) }
+////        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.real) }
+////        var nIm = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.imaginary) }
+//
+//        if (take > 0) {
+//            nRe = nRe.take(take)
+////            nIm = nIm.take(take)
+//        }
+//
+//
+//        val p1 = Plot(
+//            Plot.DataSet(
+//                nRe,
+//                color = Plot.colorPalette[0],
+//                symbol = Plot.Symbols.None
+//            )
+//        )
+////        p1.addDataSet(
+////            Plot.DataSet(
+////                nIm,
+////                color = Plot.colorPalette[1],
+////                symbol = Plot.Symbols.None
+////            )
+////        )
+//    }
+//}
+//
+//
+//
+//
+//
+//
+//fun main() {
+//    fftTest()
+//}
+//
+//
+//
+//
+//fun fftTest() {
+//    val seed = LocalDateTime.now().nano.toLong()
+//    val generator = GaussianRandomGenerator(RandomDataGenerator(seed))
+//    val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
+//
+//    val N = pow(2.0,10).toInt()
+//    val T = 1.0
+//    val t = List(N) { it.toDouble()/N.toDouble() * T}
+//
+//    val freq = 8
+//
+////    val eta = List(N) { generator.nextNormalizedDouble() }
+//    val eta = t.map { cos(it * freq * TAU - TAU/8.0) }
+//    println("eta: var = ${eta.variance()}, avg = ${eta.average()}")
+//
+//    val p0 = Plot(Plot.DataSet(
+//        t.zip(eta){ it, ieta -> listOf(it,ieta)},
+//        color = Plot.colorPalette[0],
+//        symbol = Plot.Symbols.None
+//    ), xScale = Mapper.Companion.Scales.Linear)
+//
+//
+//    val frequencies = List(N) {
+//        if(it <= N/2) TAU/T * it
+//        else -TAU/T * (N - it)
+//    }
+//    val amplitudes = fftTransformer.transform( eta.toDoubleArray(), TransformType.FORWARD )
+////    println(amplitudes.toList())
+//
+//    val p1 = Plot(Plot.DataSet(
+//        frequencies.zip(amplitudes) {f,a -> listOf(f, a.real)},
+//        color = Plot.colorPalette[0],
+//        symbol = Plot.Symbols.None
+//    ))
+//    p1.addDataSet(Plot.DataSet(
+//        frequencies.zip(amplitudes) {f,a -> listOf(f, a.imaginary)},
+//        color = Plot.colorPalette[1],
+//        symbol = Plot.Symbols.None
+//    ))
+//
+//    val etaBack = fftTransformer.transform( amplitudes, TransformType.INVERSE ).map { it.real }
+//    println("etaBack: var = ${etaBack.variance()}, avg = ${etaBack.average()}")
+//}
