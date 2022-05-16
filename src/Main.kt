@@ -130,23 +130,23 @@ fun charge_qubit() {
 
 
     // transfer error depending on low-frequency cutoff ω0
-    val cuttoffs = linsteps(-3.0,1.0,-1.0).map {10.0.pow(it)}
+    val cuttoffs = listOf(-3,-4,-5,-6).map {10.0.pow(it)}
 //    val cuttoffs = listOf(1e-6, 1e-5, 1e-4, 1e4, 1e5, 1e6)
 //        .map{it * 2.0*π/(60*60*_s)}
         .forEach {
             completeSet_ChargeQubit(
                 x = concatenate(
-                    linspace(-3.0, 1.0, 10).map { 10.0.pow(it) },
-                    linspace(1.0, 3.0, 10, skipFirst = true).map { 10.0.pow(it) },
+                    linspace(-3.0, 1.0, 4).map { 10.0.pow(it) },
+                    linspace(1.0, 3.0, 4, skipFirst = true).map { 10.0.pow(it) },
                 ),
-                samples = 20,
+                samples = 10,
                 Ω = 20.0 * _μeV/ _ħ,
                 ε0 =  0.0,
                 ε1 = 200.0 * _μeV/ _ħ,
                 S0 = 0.273 / _ns.e2(), // Notes 2022-05-10 - Fehse, 2022-05-10
                 ω0 = it, // period between calibrations or experimental runs
                 variable = "tf",
-                saveName = "2022 05 13 CQ",
+                saveName = "2022 05 15 CQ",
                 useShapedPulse = true,
                 useGeneralized = true,
             )
@@ -1244,7 +1244,7 @@ fun completeSet_ChargeQubit(
                 when (variable) {
                     "S0" -> {
                         val trans = transformations(tf)
-                        val minTime = 4.0/ω0;
+                        val minTime = 4.0 * tf
                         val noiseType = f_inv_Noise(it, ω0, cutoff, minTime, initialSpacing)
                         LandauZenerModel(
                             initial,
@@ -1261,7 +1261,7 @@ fun completeSet_ChargeQubit(
                     }
                     "ω0" -> {
                         val trans = transformations(tf)
-                        val minTime = 4.0/ω0
+                        val minTime = 4.0/it
                         val noiseType = f_inv_Noise(S0, it, cutoff, minTime, initialSpacing)
                         LandauZenerModel(
                             initial,
@@ -1278,7 +1278,8 @@ fun completeSet_ChargeQubit(
                     }
                     else -> {
                         val trans = transformations(it)
-                        val minTime = 4.0/ω0
+//                        val minTime = 4.0*tf
+                        val minTime = 2.0*π/ω0
                         val noiseType = f_inv_Noise(S0, ω0, cutoff, minTime, initialSpacing)
                         LandauZenerModel(
                             initial,

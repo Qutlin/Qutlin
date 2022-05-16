@@ -6,7 +6,7 @@ abstract class NoiseType {
     abstract val name: String
     abstract val initialSpacing: Double
     abstract val wnDeltaRate: Double
-    abstract val minTime: Double
+    abstract val min_tf: Double
     abstract fun envelope(ω: Double): Double
 }
 
@@ -31,7 +31,7 @@ class OUNoise(
 ): NoiseType() {
     override val name: String = "OU"
     override val wnDeltaRate = 1.0
-    override val minTime = 10.0/γ
+    override val min_tf = 10.0/γ
 
     override fun envelope(ω: Double) =
         if (abs(ω) < cutoff)
@@ -61,7 +61,7 @@ class f_inv_Noise(
     var S0: Double,
     var ω0: Double,
     var cutoff: Double,
-    override val minTime: Double = 10.0/ω0,
+    override val min_tf: Double = 2.0*π/ω0,
     override var initialSpacing: Double,
 ): NoiseType() {
     override val name: String = "1_f"

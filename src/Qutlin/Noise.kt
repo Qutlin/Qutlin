@@ -70,7 +70,8 @@ class Noise(
      * */
     fun generate(envelope: (Double) -> Double = unit, rescaleWN: Boolean = true, targetVariance: Double = -1.0) {
 
-        seed.plusAssign(LocalDateTime.now().nano.toLong()/100)
+        val localdatetime = LocalDateTime.now().nano.toLong()/100
+        seed.plusAssign(localdatetime)
         println("seed = $seed")
         // * generator for gaussian normalized random numbers (0 mean, 1 std)
 

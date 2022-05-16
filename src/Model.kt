@@ -23,11 +23,16 @@ abstract class Model(
     val U_m: Operator? = null,
 ) {
     abstract fun build()
-    lateinit var H_η: (Double) -> Operator
-    lateinit var H_0: (Double) -> Operator
+    var H_η: ((Double) -> Operator)? = null
+    var H_0: ((Double) -> Operator)? = null
     var collapse: Pair<Double, (Double) -> Operator>? = null
 
-    operator fun invoke(t: Double) = H_η(t)
+    operator fun invoke(t: Double) = H_η!!.invoke(t)
+
+    fun free() {
+        H_0 = null;
+        H_η = null;
+    }
 }
 
 
@@ -205,7 +210,7 @@ open class DonorDotModel(
             collapse = Pair(Γ,
                 fun(t: Double): Operator {
                     // ? changed from H_η to H_0 since that's what we write in the text
-                    val sys = H_0(t).eigenSystem()
+                    val sys = H_0!!(t).eigenSystem()
                     val singletNeg = sys[0].second.normalized()
                     val singletPos = sys[2].second.normalized()
                     return singletNeg / singletPos.bra()
@@ -352,7 +357,7 @@ class LandauZenerModel(
         //     initialSpacing = 2 * π / cutoff,
         // )
         val η = Noise(
-            max(tf, noiseType.minTime),
+            max(4*tf, noiseType.min_tf),
             min(noiseType.initialSpacing, tf / 100.0),
             noiseType.wnDeltaRate,
             tf,
@@ -387,7 +392,7 @@ fun main() {
     )
     cg.build()
 
-    println(cg.H_0(0.0));
-    val eigenvalues = cg.H_0(0.0).eigenSystem()
+    println(cg.H_0!!(0.0));
+    val eigenvalues = cg.H_0!!(0.0).eigenSystem()
     eigenvalues.forEach{ println("${it.first} -> ${it.second.str()}") }
 }
