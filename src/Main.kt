@@ -614,7 +614,6 @@ fun completeSet_DQD(
                     "Γ" -> DoubleQuantumDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         δbz,
                         Ω,
                         useShapedPulse,
@@ -622,14 +621,12 @@ fun completeSet_DQD(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         it,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                     "τ_c" -> DoubleQuantumDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         δbz,
                         Ω,
                         useShapedPulse,
@@ -637,14 +634,12 @@ fun completeSet_DQD(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        it,
                         Γ,
+                        OUNoise(σ, 1.0/it),
                     )
                     "noiseVariance" -> DoubleQuantumDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         δbz,
                         Ω,
                         useShapedPulse,
@@ -652,14 +647,12 @@ fun completeSet_DQD(
                         τ,
                         ε_max,
                         ε_min,
-                        it,
-                        τ_c,
                         Γ,
+                        OUNoise(it, 1.0/τ_c),
                     )
                     "tf" -> DoubleQuantumDotModel(
                         initial,
                         it,
-                        initialSpacing,
                         δbz,
                         Ω,
                         useShapedPulse,
@@ -667,14 +660,12 @@ fun completeSet_DQD(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         Γ,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                     "smooth" -> DoubleQuantumDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         δbz,
                         Ω,
                         useShapedPulse,
@@ -682,14 +673,12 @@ fun completeSet_DQD(
                         it,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         Γ,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                     "δbz" -> DoubleQuantumDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         it,
                         Ω,
                         useShapedPulse,
@@ -697,14 +686,12 @@ fun completeSet_DQD(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         Γ,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                     else -> DoubleQuantumDotModel(
                         initial,
                         it,
-                        initialSpacing,
                         δbz,
                         Ω,
                         useShapedPulse,
@@ -712,9 +699,8 @@ fun completeSet_DQD(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         Γ,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                 }
             }
@@ -787,7 +773,6 @@ fun completeSet_DonorDot(
                     "Γ" -> DonorDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         a,
                         Ω,
                         useShapedPulse,
@@ -795,14 +780,12 @@ fun completeSet_DonorDot(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         it,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                     "τ_c" -> DonorDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         a,
                         Ω,
                         useShapedPulse,
@@ -810,14 +793,12 @@ fun completeSet_DonorDot(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        it,
                         Γ,
+                        OUNoise(σ, 1.0/it),
                     )
                     "noiseVariance" -> DonorDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         a,
                         Ω,
                         useShapedPulse,
@@ -825,14 +806,12 @@ fun completeSet_DonorDot(
                         τ,
                         ε_max,
                         ε_min,
-                        it,
-                        τ_c,
                         Γ,
+                        OUNoise(it, 1.0/τ_c),
                     )
                     "tf" -> DonorDotModel(
                         initial,
                         it,
-                        initialSpacing,
                         a,
                         Ω,
                         useShapedPulse,
@@ -840,14 +819,12 @@ fun completeSet_DonorDot(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         Γ,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                     "smooth" -> DonorDotModel(
                         initial,
                         tf,
-                        initialSpacing,
                         a,
                         Ω,
                         useShapedPulse,
@@ -855,14 +832,12 @@ fun completeSet_DonorDot(
                         it,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         Γ,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                     else -> DonorDotModel(
                         initial,
                         it,
-                        initialSpacing,
                         a,
                         Ω,
                         useShapedPulse,
@@ -870,9 +845,8 @@ fun completeSet_DonorDot(
                         τ,
                         ε_max,
                         ε_min,
-                        σ,
-                        τ_c,
                         Γ,
+                        OUNoise(σ, 1.0/τ_c),
                     )
                 }
             }
@@ -961,10 +935,8 @@ fun completeSet_ConstantGap(
                         ConstantGapModel(
                             initial,
                             tf,
-                            maxIntegrationStep,
                             gap,
-                            it,
-                            γ,
+                            OUNoise(it, γ),
                             trans.first,
                             trans.second,
                         )
@@ -974,10 +946,8 @@ fun completeSet_ConstantGap(
                         ConstantGapModel(
                             initial,
                             tf,
-                            maxIntegrationStep,
                             gap,
-                            σ,
-                            it,
+                            OUNoise(σ, it),
                             trans.first,
                             trans.second,
                         )
@@ -987,10 +957,8 @@ fun completeSet_ConstantGap(
                         ConstantGapModel(
                             initial,
                             it,
-                            maxIntegrationStep,
                             gap,
-                            σ,
-                            γ,
+                            OUNoise(σ, γ),
                             trans.first,
                             trans.second,
                         )
@@ -1092,54 +1060,51 @@ fun completeSet_LandauZener(
                 when (variable) {
                     "σ" -> {
                         val trans = transformations(tf)
-                        val noiseType = OUNoise(it, γ, cutoff, 2*π/cutoff)
+                        val noiseType = OUNoise(it, γ)
                         LandauZenerModel(
                             initial,
                             tf,
-                            initialSpacing,
                             Ω,
                             // it,
                             // γ,
                             ε0,
                             ε1,
-                            noiseType,
                             useShapedPulse,
+                            noiseType,
                             trans.first,
                             trans.second,
                         )
                     }
                     "γ" -> {
                         val trans = transformations(tf)
-                        val noiseType = OUNoise(σ, it, cutoff, 2*π/cutoff)
+                        val noiseType = OUNoise(σ, it)
                         LandauZenerModel(
                             initial,
                             tf,
-                            initialSpacing,
                             Ω,
                             // σ,
                             // it,
                             ε0,
                             ε1,
-                            noiseType,
                             useShapedPulse,
+                            noiseType,
                             trans.first,
                             trans.second,
                         )
                     }
                     else -> {
                         val trans = transformations(it)
-                        val noiseType = OUNoise(σ, γ, cutoff, 2*π/cutoff)
+                        val noiseType = OUNoise(σ, γ)
                         LandauZenerModel(
                             initial,
                             it,
-                            initialSpacing,
                             Ω,
                             // σ,
                             // γ,
                             ε0,
                             ε1,
-                            noiseType,
                             useShapedPulse,
+                            noiseType,
                             trans.first,
                             trans.second,
                         )
@@ -1237,24 +1202,23 @@ fun completeSet_ChargeQubit(
 
         List(2) { initial ->
             x.map {
-                val cutoff = max(abs(ε0),abs(ε1)) * 10
-                val initialSpacing = 2 * π / cutoff
+                val ω_max = max(abs(ε0),abs(ε1)) * 10
+                val initialSpacing = 2 * π / ω_max
 //                if(useShapedPulse) initialSpacing *= 0.1
 
                 when (variable) {
                     "S0" -> {
                         val trans = transformations(tf)
                         val minTime = 4.0 * tf
-                        val noiseType = f_inv_Noise(it, ω0, cutoff, minTime, initialSpacing)
+                        val noiseType = f_inv_Noise(it, ω0, ω_max)
                         LandauZenerModel(
                             initial,
                             tf,
-                            initialSpacing,
                             Ω,
                             ε0,
                             ε1,
-                            noiseType,
                             useShapedPulse,
+                            noiseType,
                             trans.first,
                             trans.second,
                         )
@@ -1262,16 +1226,15 @@ fun completeSet_ChargeQubit(
                     "ω0" -> {
                         val trans = transformations(tf)
                         val minTime = 4.0/it
-                        val noiseType = f_inv_Noise(S0, it, cutoff, minTime, initialSpacing)
+                        val noiseType = f_inv_Noise(S0, it, ω_max)
                         LandauZenerModel(
                             initial,
                             tf,
-                            initialSpacing,
                             Ω,
                             ε0,
                             ε1,
-                            noiseType,
                             useShapedPulse,
+                            noiseType,
                             trans.first,
                             trans.second,
                         )
@@ -1280,16 +1243,15 @@ fun completeSet_ChargeQubit(
                         val trans = transformations(it)
 //                        val minTime = 4.0*tf
                         val minTime = 2.0*π/ω0
-                        val noiseType = f_inv_Noise(S0, ω0, cutoff, minTime, initialSpacing)
+                        val noiseType = f_inv_Noise(S0, ω0, ω_max)
                         LandauZenerModel(
                             initial,
                             it,
-                            initialSpacing,
                             Ω,
                             ε0,
                             ε1,
-                            noiseType,
                             useShapedPulse,
+                            noiseType,
                             trans.first,
                             trans.second,
                         )

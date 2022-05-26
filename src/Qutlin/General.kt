@@ -27,8 +27,9 @@ const val _ħ = 6.582119 * 1e-16 * _eV * _s
 const val _T : Double = 1.0
 const val _μB = 5.788382 * 1e-5 * _eV / _T
 
-const val TAU = 2.0 * PI
-const val π = PI
+const val TAU : Double = 2.0 * PI
+const val π2 : Double = TAU
+const val π : Double = PI
 
 
 infix fun Double.e(b: Double) = FastMath.pow(this, b)
@@ -37,6 +38,21 @@ fun Double.e3() = this*this*this
 infix fun Double.e(b: Int) = FastMath.pow(this, b)
 
 
+
+fun max(vararg vals: Double) : Double {
+    var res = vals[0]
+    for (i in 1 until vals.size) {
+        if (vals[i] > res) res = vals[i]
+    }
+    return res
+}
+fun min(vararg vals: Double) : Double {
+    var res = vals[0]
+    for (i in 1 until vals.size) {
+        if (vals[i] < res) res = vals[i]
+    }
+    return res
+}
 
 
 fun List<Complex>.average(): Complex =
@@ -72,6 +88,20 @@ fun List<Double>.pAutoCorrelation(normalized: Boolean = true) = runBlocking(Disp
         mapIndexed { index: Int, d: Double ->
             if(index+it<size)
                     (d-avg) * (get(index+it)-avg)
+            else
+                0.0
+        }.sum() / (σ2 * size)//(size-1))
+    }
+}
+
+fun DoubleArray.pAutoCorrelation(normalized: Boolean = true) = runBlocking(Dispatchers.Default) {
+    val tmp = List(size) {it}
+    val avg = average()
+    val σ2 = if(normalized) variance() else 1.0
+    tmp.pmap {
+        mapIndexed { index: Int, d: Double ->
+            if(index+it<size)
+                (d-avg) * (get(index+it)-avg)
             else
                 0.0
         }.sum() / (σ2 * size)//(size-1))

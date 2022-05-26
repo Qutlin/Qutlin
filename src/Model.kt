@@ -16,13 +16,14 @@ import org.hipparchus.util.FastMath.*
 abstract class Model(
     val initial: Int, // ? the initially prepare eigenstate
     val tf: Double,
-    val maxIntegrationStep: Double,
     val dimensions: Int,
     var overhang: Double = 0.0,
     val U_p: Operator? = null,
     val U_m: Operator? = null,
 ) {
     abstract fun build()
+    abstract val maxIntegrationStep: Double
+
     var H_η: ((Double) -> Operator)? = null
     var H_0: ((Double) -> Operator)? = null
     var collapse: Pair<Double, (Double) -> Operator>? = null
@@ -30,8 +31,8 @@ abstract class Model(
     operator fun invoke(t: Double) = H_η!!.invoke(t)
 
     fun free() {
-        H_0 = null;
-        H_η = null;
+        H_0 = null
+        H_η = null
     }
 }
 
@@ -47,7 +48,6 @@ abstract class Model(
 class DoubleQuantumDotModel(
     initial: Int,
     tf: Double,
-    maxIntegrationStep: Double,
     δbz: Double = 1.0 * _μeV / _ħ, // ?  ~1.5/ns
     Ω: Double = 20.0 * _μeV / _ħ,
     useShapedPulse: Boolean = false,
@@ -55,13 +55,13 @@ class DoubleQuantumDotModel(
     τ: Double = 5.0 * _ns,
     ε_max: Double = 1700 * _μeV / _ħ,
     ε_min: Double = -200 * _μeV / _ħ,
-    σ: Double = 1.0 * _μeV / _ħ,
-    τ_c: Double = 1.0 * _ns,
+//    σ: Double = 1.0 * _μeV / _ħ,
+//    τ_c: Double = 1.0 * _ns,
     Γ: Double = 0.0 / _ns,
+    noiseType: NoiseType,
 ) : DonorDotModel(
     initial,
     tf,
-    maxIntegrationStep,
     4 * δbz, // ?  ~6.0/ns
     Ω,
     useShapedPulse,
@@ -69,9 +69,10 @@ class DoubleQuantumDotModel(
     τ,
     ε_max,
     ε_min,
-    σ,
-    τ_c,
+//    σ,
+//    τ_c,
     Γ,
+    noiseType,
 ) {}
 
 // ########  ########
@@ -85,7 +86,6 @@ class DoubleQuantumDotModel(
 open class DonorDotModel(
         initial: Int,
         tf: Double,
-        maxIntegrationStep: Double,
         private val a: Double = TAU * 100.0 * 1e6 / _s, // ?  ~0.6/ns
         private val Ω: Double = 20.0 * _μeV / _ħ,
         private val useShapedPulse: Boolean = false,
@@ -93,17 +93,13 @@ open class DonorDotModel(
         private val τ: Double = 5.0 * _ns,
         private val ε_max: Double = 1700 * _μeV / _ħ,
         private val ε_min: Double = -200 * _μeV / _ħ,
-        private val σ: Double = 1.0 * _μeV / _ħ, // TODO correct values!?
-        private val τ_c: Double = 1.0 * _ns,
         private val Γ: Double = 0.0 / _ns,
-) : Model(
-    initial, tf, maxIntegrationStep, 3
-) {
-//    companion object {
-//        // ? shaped pulse
-//        var pulse: List<Pair<Double, Double>>? = null
-//    }
+        private val noiseType: NoiseType,
+) : Model(initial, tf, 3) {
+
     var pulse: List<Pair<Double, Double>>? = null
+
+    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_max, abs(ε_max), abs(ε_min), Ω).toDouble() * 0.1
 
     override fun build() {
         val deltaNm = 1.0 // ? depending on the nuclear spin transition
@@ -156,29 +152,17 @@ open class DonorDotModel(
         }
 
 
-        val γ = 1.0 / τ_c
         // * the highest frequency is given by max(|ε_max|, |ε_min|) !
-        val ΔEmax = max(abs(ε_max), abs(ε_min))
-        val cutoff = max(2.0 * π * ΔEmax, γ) * 10.0
-        val noiseType = OUNoise(
-            σ,
-            γ,
-            cutoff,
-            initialSpacing = 2 * π / cutoff,
-        )
+        val ω_max = max(abs(ε_max), abs(ε_min), Ω, noiseType.ω_max)
+        val t_total = if(useShapedPulse) tf+6*τ else tf
 
-        val η = if(useShapedPulse) Noise(
-            max(tf+6*τ, 10.0*τ_c),
-            min(noiseType.initialSpacing, (tf+6*τ) / 100.0),
-            noiseType.wnDeltaRate,
-            tf + 6*τ
-        ) else Noise(
-            max(tf, 10.0*τ_c),
-            min(noiseType.initialSpacing, tf / 100.0),
-            noiseType.wnDeltaRate,
-            tf
+        val η = Noise(
+            t_total,
+            ω_max * 10.0 * 10.0,
+            π2/t_total * 0.1,
+            ω_max * 10.0,
         )
-        η.generate(noiseType::envelope, rescaleWN = true)
+        η.generate(noiseType)
 
 
         // * noisy Hamiltonian
@@ -231,20 +215,18 @@ open class DonorDotModel(
 class ConstantGapModel(
     initial: Int,
     tf: Double,
-    maxIntegrationStep: Double,
     private val gap: Double = 10.0,
-    private val σ: Double = 1.0,
-    private val γ: Double = 1.0,
+    val noiseType: NoiseType,
     initialTransformation: Operator? = null,
     finalTransformation: Operator? = null,
 ) : Model(
     initial,
     tf,
-    maxIntegrationStep,
     2,
     U_p = initialTransformation,
     U_m = finalTransformation,
 ) {
+    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_max, gap) * 0.1
     override fun build() {
         val ε = fun(t: Double) = gap * cos(π * clamp(0.0, t, tf) / tf)
         val Ω = fun(t: Double) = gap * sin(π * clamp(0.0, t, tf) / tf)
@@ -253,34 +235,27 @@ class ConstantGapModel(
         // The purpose of the cutoff frequency is to generate a "smooth" signal η.
         // If there is no cutoff frequency, the high frequency components lead to
         // "jaggy" lines of η(t) and the integrator will be slowed down unnecessarily.
-        // By choosing a cutoff frequency that is much higher than the relevant 
+        // By choosing a cutoff frequency that is much higher than the relevant
         // frequency (in this case, the energy gap between the states), we cover
         // the relevant physical aspects, and we can neglect higher frequencies.
         // Since E=ħω, the cutoff frequency is given by
         //     ω_max = gap / ħ
         // Using h=1 and ħ=h/2π, we get
         //     ω_max = 2π gap
-        // 
-        // On the other hand, we want to sample frequencies much higher than the 
+        //
+        // On the other hand, we want to sample frequencies much higher than the
         // width of the Lorenzian governing the Ornstein-Uhlenbeck noise
         //     S(ω) = 2σ²γ/(γ²+ω²)
-        val cutoffFrequency = max(2.0 * π * gap, γ) * 10
 
-        val noiseType = OUNoise(
-            σ,
-            γ,
-            cutoffFrequency,
-            initialSpacing = 2 * π / cutoffFrequency
-        )
-        val τ_c = 1.0/γ;
-        println("tf = $tf, τ_c = $τ_c, γ = $γ")
+        val ω_max = max(gap, noiseType.ω_max)
+
         val η = Noise(
-            max(tf, 10 * τ_c), // ? total time; make sure that the smallest, non-zero frequency ω_1 = 2π/tf is small compared to the width of the spectrum given by γ = 1/τ_c; The smalles frequency is given by ω_1 = 
-            min(noiseType.initialSpacing, tf/100.0), // ? see above; make sure that the time-resolution of the noise is high enough to result in a smooth curve
-            noiseType.wnDeltaRate, // ? wnVariance
-            tf, // ? maximum time to consider
+            tf,
+            ω_max * 10.0 * 10.0,
+            π2/tf * 0.1,
+            ω_max * 10,
         )
-        η.generate(noiseType::envelope, rescaleWN = true)
+        η.generate(noiseType)
 
         H_η = fun(t: Double) = Operator(
             Pair(2, 2),
@@ -311,27 +286,21 @@ class ConstantGapModel(
 class LandauZenerModel(
     initial: Int,
     tf: Double,
-    maxIntegrationStep: Double,
     private val Ω: Double = 10.0,
-    // private val σ: Double = 1.0,
-    // private val γ: Double = 1.0,
     private val ε0: Double = -10.0 * Ω,
     private val ε1: Double =  10.0 * Ω,
-
-    private val noiseType: NoiseType,
-
     private val useShapedPulse: Boolean = false,
-
+    private val noiseType: NoiseType,
     initialTransformation: Operator? = null,
     finalTransformation: Operator? = null,
 ) : Model(
-    initial, 
-    tf, 
-    maxIntegrationStep, 
+    initial,
+    tf,
     2,
     U_p = initialTransformation,
     U_m = finalTransformation,
 ) {
+    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_max, abs(ε0), abs(ε1), Ω).toDouble() * 0.1
     override fun build() {
 
         val ε = if (!useShapedPulse) {
@@ -347,22 +316,15 @@ class LandauZenerModel(
             }
         }
 
-//        val cutoff = max(2.0 * π * Ω, γ) * 10.0
-        // val τ_c = 1.0/γ
+        val ω_max = max(abs(ε0), abs(ε1), Ω, noiseType.ω_max)
 
-        // val noiseType = OUNoise(
-        //     σ,
-        //     γ,
-        //     cutoff,
-        //     initialSpacing = 2 * π / cutoff,
-        // )
         val η = Noise(
-            max(4*tf, noiseType.min_tf),
-            min(noiseType.initialSpacing, tf / 100.0),
-            noiseType.wnDeltaRate,
             tf,
+            ω_max * 10.0 * 10.0,
+            π2/tf * 0.1,
+            ω_max * 10.0,
         )
-        η.generate(noiseType::envelope, rescaleWN = true)
+        η.generate(noiseType)
 
         H_η = fun(t: Double) = Operator(
             Pair(2, 2),
@@ -380,8 +342,6 @@ class LandauZenerModel(
             ) * 0.5
         )
     }
-
-
 }
 
 fun main() {
@@ -389,10 +349,11 @@ fun main() {
         1,
         1.0,
         1.0/10000.0,
+        OUNoise(1.0,1.0),
     )
     cg.build()
 
-    println(cg.H_0!!(0.0));
+    println(cg.H_0!!(0.0))
     val eigenvalues = cg.H_0!!(0.0).eigenSystem()
     eigenvalues.forEach{ println("${it.first} -> ${it.second.str()}") }
 }

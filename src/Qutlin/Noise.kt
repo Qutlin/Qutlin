@@ -1,10 +1,11 @@
 package Qutlin
 
+import NoiseType
 import Plot
 import kotlinx.atomicfu.atomic
-import org.hipparchus.complex.Complex
 import org.hipparchus.random.GaussianRandomGenerator
 import org.hipparchus.random.RandomDataGenerator
+import org.hipparchus.random.UniformRandomGenerator
 import org.hipparchus.transform.DftNormalization
 import org.hipparchus.transform.FastFourierTransformer
 import org.hipparchus.transform.TransformType
@@ -13,51 +14,28 @@ import java.time.LocalDateTime
 import kotlin.math.log2
 
 
-
-
-
-
-
 /**
  * Noise Class to generate Gaussian noise with a given envelope of the spectrum.
  * Use objects as functions, e.g. `val noise = Noise(...)` used as `noise(t)`.
  */
 class Noise(
-    val time: Double, 
-    initialSpacing: Double, 
-    val wnVariance: Double = 1.0, 
-    val maxTime: Double = time
+    val time: Double,
+    val ω_sampling: Double,
+    val ω_min: Double,
+    val ω_max: Double,
+    val ω_0: Double? = null,
 ) {
     companion object {
-        private val unit = fun(_: Double) = 1.0
-
         // * make sure the seed is new in every run
         var seed = atomic(LocalDateTime.now().nano.toLong()/100)
     }
 
-    private val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
-    val N: Int
-    val realSpacing: Double
-//    val omegaFreq: List<Double>
-    private fun omegaFreq(n: Int): Double {
-        return if(n <= N/2) TAU/time * n
-        else                -TAU/time * (N-n)
-    }
-    lateinit var amplitudes: ComplexArray
+    val N: Int = (time * ω_sampling/π2).toInt()
+    val dt: Double = time/N.toDouble()
     lateinit var values: DoubleArray
 
-    init {
-        // ? Generate a List of `omegaFreq` with 2^N elements
-        val n = time/initialSpacing
-        N = round(pow(2.0, ceil(log2(n)).toInt())).toInt()
-        println("Noise of time $time initialized with $N~$n frequencies")
-        realSpacing = time/N.toDouble()
-        // * omegaFreq in units of TAU
-//        omegaFreq = List(N) {
-//            if(it <= N/2) TAU/time * it
-//            else -TAU/time * (N-it)
-//        }
-    }
+    val tf: Double = π2/ω_min
+    val Nt: Int = (tf * ω_max/π2).toInt()
 
     /**
      * from the Hipparchus docs:
@@ -72,40 +50,49 @@ class Noise(
      *
      * @param envelope function in radian frequencies (`ω`)
      * */
-    fun generate(envelope: (Double) -> Double = unit, rescaleWN: Boolean = true, targetVariance: Double = -1.0) {
-
-        val localdatetime = LocalDateTime.now().nano.toLong()/100
-        seed.plusAssign(localdatetime)
+    fun generate(noise_type: NoiseType, σ_w: Double = sqrt(1.0/dt)) {
+        val seed = seed.addAndGet(LocalDateTime.now().nano.toLong()/100)
         println("seed = $seed")
-        // * generator for gaussian normalized random numbers (0 mean, 1 std)
 
-        val generator = GaussianRandomGenerator(RandomDataGenerator(seed.value))
+        // * generator for uniform normalized random numbers (0 mean, 1 std)
+        // * Hipparchus: Since it is a normalized random generator, it generates values
+        // * from a uniform distribution with mean equal to 0 and standard deviation equal
+        // * to 1. Generated values fall in the range [-√3, +√3].
+        val u_generator = UniformRandomGenerator( RandomDataGenerator(seed))
+        val isqrt3 = 1.0/sqrt(3.0)
+        val g_generator = GaussianRandomGenerator(RandomDataGenerator(seed))
 
-        val factor = if (rescaleWN) sqrt(wnVariance/realSpacing) else 1.0
+        values = DoubleArray(N)
 
-        println("generating whiteNoise")
-        val whiteNoise = DoubleArray(N) { generator.nextNormalizedDouble() * factor }
+        val Nω = (ω_max/ω_min).toInt()
+        println("$Nω Fourier frequencies to sum over.")
+        val σ_r = σ_w * sqrt(Nω.toDouble())
 
-        println("FFT")
-        amplitudes = fftTransformer.transform(whiteNoise, TransformType.FORWARD )
-        println("applyting envelope")
-        for (i in 0..amplitudes.size) {
-            amplitudes[i] = amplitudes[i] * envelope(omegaFreq(i))
+        for (k in 0..Nω) {
+            if (k % (Nω/10) == 0)
+                println("$k/$Nω")
+
+            val α = π2 * 0.5*(u_generator.nextNormalizedDouble() * isqrt3 + 1) // see comment above
+            val p =      0.5*(u_generator.nextNormalizedDouble() * isqrt3 + 1) // see comment above
+            val r = sqrt(-2.0*log(1.0-p)) * σ_r
+
+            val ωk = ω_min * k
+
+            val s = sqrt(noise_type.envelope(ωk))
+//            val z = r * exp(I*α)
+            for (i in 0 until N) {
+                // ? Re[z * exp(ωk*t)] * sqrt(S(ωk))
+//                values[i] += (z.real*cos(ωk*(i*dt)) - z.imaginary*sin(ωk*(i*dt))) * s
+                values[i] += r * cos(ωk*(i*dt) + α) * s
+            }
         }
 
-        println("iFFT")
-        val cvalues = fftTransformer.transform(amplitudes, TransformType.INVERSE )
-
-        val maxN = ceil(maxTime / realSpacing).toInt() + 1
-        println("taking $maxN real values")
-        values = DoubleArray(maxN) { cvalues[it].real }
-
-        if(targetVariance > 0.0) {
-//            val variance = values.map { it.real }.variance()
-            val variance = values.toList().variance()
-            val f = sqrt(targetVariance / variance)
-            values = values.map { it * f }.toDoubleArray() //.toComplexArray()
+        val offset = if (ω_0 != null) g_generator.nextNormalizedDouble() * noise_type.variance(ω_0, ω_min) else 0.0
+        val sqrt2 = sqrt(2.0) // ? since we're only summing from 0 to Nω, not from -Nω to Nω; see notes from 2022-05-26 - Fehse 2022-05-26
+        for (i in 0 until Nt) {
+            values[i] = values[i]/Nω.toDouble() * sqrt2 + offset
         }
+
         println("noise generated with mean ${values.average()} and std ${values.std()}")
     }
 
@@ -114,16 +101,14 @@ class Noise(
      * Generate interpolated values from generated noise data.
      */
     private fun interpolate(t: Double): Double {
-        val tt = t/realSpacing
+        val tt = t/dt
         val index0 = floor(tt).toInt()
         val index1 = floor(tt + 1.0).toInt()
         val tr = tt - index0.toDouble()
 
-        val N = values.size
-
-        if(index0 >= N) return values[values.lastIndex]
-        if(index1 >= N) return values[index0]
-        if(index0 < 0) return values[0]
+        if(index0 >= Nt) return values[values.lastIndex]
+        if(index1 >= Nt) return values[index0]
+        if(index0 < 0)   return values[0]
 
         return values[index0] * (1.0 - tr) + values[index1] * tr
     }
@@ -136,78 +121,41 @@ class Noise(
 
 
     override fun toString(): String {
-        val realValues = values//.map { it.real }
-
-        val avg = realValues.average()
-        val std = realValues.toList().std()
-        val variance = realValues.toList().variance()
+        val avg      = values.average()
+        val variance = values.variance()
 
         return """
             Noise
                 avg         : $avg
-                std         : $std
+                std         : ${sqrt(variance)}
                 var         : $variance
-                realSpacing : $realSpacing
-                var * delta : ${std*std*realSpacing}
+                var * delta : ${variance*dt}
             """.trimIndent()
     }
 }
 
 
 
-//
-//
-//
-//fun plotNoise(noise: Noise, take: Int = -1, plotFrequencies: Boolean = true, plotTimeSeries: Boolean = true) {
-//
-//    if(plotFrequencies) {
-//        val p0 = Plot(
-//            Plot.DataSet(
-//                noise.omegaFreq.drop(1).zip(noise.amplitudes.drop(1)) { f, a -> listOf(f, a.real) },
-//                color = Plot.colorPalette[0],
-//                symbol = Plot.Symbols.None
-//            ), xScale = Mapper.Companion.Scales.Linear
-//        )
-//        p0.addDataSet(
-//            Plot.DataSet(
-//                noise.omegaFreq.drop(1).zip(noise.amplitudes.drop(1)) { f, a -> listOf(f, a.imaginary) },
-//                color = Plot.colorPalette[1],
-//                symbol = Plot.Symbols.None
-//            )
-//        )
-//    }
-//
-//    if(plotTimeSeries) {
-//        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n) }
-////        var nRe = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.real) }
-////        var nIm = noise.values.mapIndexed { i, n -> listOf(i.toDouble(), n.imaginary) }
-//
-//        if (take > 0) {
-//            nRe = nRe.take(take)
-////            nIm = nIm.take(take)
-//        }
-//
-//
-//        val p1 = Plot(
-//            Plot.DataSet(
-//                nRe,
-//                color = Plot.colorPalette[0],
-//                symbol = Plot.Symbols.None
-//            )
-//        )
-////        p1.addDataSet(
-////            Plot.DataSet(
-////                nIm,
-////                color = Plot.colorPalette[1],
-////                symbol = Plot.Symbols.None
-////            )
-////        )
-//    }
-//}
-//
-//
-//
-//
+
+
+
+fun plotNoise(noise: Noise, take: Int = 0) {
+
+    val v = if(take > 0) noise.values.take(take).toDoubleArray() else noise.values;
+    val nRe = v.mapIndexed { i, n -> listOf(i.toDouble()*noise.dt, n) }
+
+    val p1 = Plot(
+        Plot.DataSet(
+            nRe,
+            color = Plot.colorPalette[0],
+            symbol = Plot.Symbols.None
+        )
+    )
+}
+
+
+
+
 //
 //
 //fun main() {
