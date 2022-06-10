@@ -4,7 +4,7 @@ import org.hipparchus.util.FastMath.*
 
 abstract class NoiseType {
     abstract val name: String
-    abstract val ω_max: Double
+    abstract val ω_sampling: Double
     abstract fun envelope(ω: Double): Double
     abstract fun variance(ω_min: Double, ω_max: Double): Double
 }
@@ -13,36 +13,34 @@ abstract class NoiseType {
 
 data class WhiteNoise(
     val σ: Double,
-    override val ω_max: Double
 ) : NoiseType() {
     override val name: String = "WN"
-
+    override val ω_sampling: Double = Double.MAX_VALUE
     override fun envelope(ω: Double) = σ*σ
 
     override fun variance(ω_min: Double, ω_max: Double): Double = 0.0 // TODO correct variance
 
     override fun toString() = name
-}
 
+}
 
 /**
  * Ornstein-Uhlenbeck Noise
- * 
+ *
  * stores the properties of the noise:
- * 
+ *
  * σ     : std deviation of the noise
- * 
+ *
  * γ     : inverse correlation time γ = 1/τ_c
- * 
- * cutoff: 
+ *
+ * cutoff:
  */
 data class OUNoise(
     val σ: Double,
     val γ: Double,
 ): NoiseType() {
     override val name: String = "OU"
-    override val ω_max: Double = π2*γ
-
+    override val ω_sampling: Double = π2*γ
     override fun envelope(ω: Double) =
         σ*σ * 2.0 * γ / (γ*γ + ω*ω)
 
@@ -50,31 +48,30 @@ data class OUNoise(
         return 0.0
     }
 
-
     override fun toString() = "${name}[γ%.1e σ%.1e]".format(γ, σ)
+
 
 }
 
 
-
-
 /**
  * 1/f Noise
- * 
+ *
  * stores the properties of the noise:
- * 
+ *
  * S0     : factor
- * 
+ *
  * ω0     : low-frequency cutoff
- * 
- * cutoff: 
+ *
+ * cutoff:
  */
 data class f_inv_Noise(
     val S0: Double,
     val ω_min: Double,
-    override val ω_max: Double,
+    val ω_max: Double,
 ): NoiseType() {
     override val name: String = "1_f"
+    override val ω_sampling: Double = ω_max
     override fun envelope(ω: Double) =
         if (abs(ω) < ω_min || abs(ω) > ω_max) 0.0
         else S0/abs(ω)
@@ -161,26 +158,22 @@ fun main() {
 //}
 fun noiseTypesTest() {
     val time = 1.0
-    val N = 20000
+    val N = 100000
     val dt = time/N.toDouble()
 
     println("Ornstein-Uhlenbeck noise -------------------------------------")
     val γ = 40.0
-    val variance = 1.0
-    val σ = sqrt(variance)
-    println("σ = $σ")
+    val σ = 1.0
 
-//    val ouSetup = WhiteNoise(σ, π2/dt)
-    val ouSetup = OUNoise(σ = σ, γ = γ)
-    println("$ouSetup")
+//    val noise_setup = OUNoise(σ = σ, γ = γ)
+    val noise_setup = f_inv_Noise(S0 = 10.0, ω_min = π2/time, ω_max = π2/dt)
+    println("$noise_setup")
 
-    val noise = Noise(time, π2/dt, π2/time*1.0, π2/dt*1.0)
-    noise.generate(ouSetup, 1.0/sqrt(dt))
+    val noise = Noise(time, π2/dt)
+    noise.generate(noise_setup)
 
     plotNoise(noise)
     println(noise)
-//    noise.values.take(100).forEach { println("noise values: $it") }
-    val σ2_noise = noise.values.variance()
 
 //    // * testing interpolation
 //    val ts = List(10000) { 0.005 * time/10000.0 * it.toDouble() }
@@ -191,7 +184,7 @@ fun noiseTypesTest() {
 
     // * calculate correlation function
     val autoCorrelation = noise.values.pAutoCorrelation(normalized = false)
-    val timeValues = List(autoCorrelation.size) {it.toDouble() * dt}
+    val timeValues = List(autoCorrelation.size) {it.toDouble() * noise.dt}
 
     // * plot correlation functions
     val dataPairs = timeValues.zip(autoCorrelation) { t, c -> listOf(t,abs(c))}
@@ -205,12 +198,13 @@ fun noiseTypesTest() {
 //        xScale = Mapper.Companion.Scales.Log10,
         yScale = Mapper.Companion.Scales.Log10,
         minX = 0.0,
-        maxX = 1.0/γ * 4.0, // ? this corresponds to 4 * tau_c (correlation time)
-        maxY = variance,
-        minY = 1e-2 * variance,
+//        maxX = 1.0/γ * 4.0, // ? this corresponds to 4 * tau_c (correlation time)
+//        maxY = 2.0*σ*σ,
+//        minY = 1e-2 * σ*σ,
+        minY = 1e-4,
     )
 
     // * theoretical correlation curve
-    val theo = timeValues.map { listOf(it, variance * exp(-γ * it)) }
+    val theo = timeValues.map { listOf(it, σ*σ * exp(-γ * it)) }
     plot.addDataSet(Plot.DataSet(theo, symbol = Plot.Symbols.None, color = Plot.colorPalette[1]))
 }

@@ -99,7 +99,7 @@ open class DonorDotModel(
 
     var pulse: List<Pair<Double, Double>>? = null
 
-    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_max, abs(ε_max), abs(ε_min), Ω).toDouble() * 0.1
+    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_sampling, abs(ε_max), abs(ε_min), Ω).toDouble() * 0.1
 
     override fun build() {
         val deltaNm = 1.0 // ? depending on the nuclear spin transition
@@ -153,7 +153,7 @@ open class DonorDotModel(
 
 
         // * the highest frequency is given by max(|ε_max|, |ε_min|) !
-        val ω_max = max(abs(ε_max), abs(ε_min), Ω, noiseType.ω_max)
+        val ω_max = max(abs(ε_max), abs(ε_min), Ω, noiseType.ω_sampling)
         val t_total = if(useShapedPulse) tf+6*τ else tf
 
         val η = Noise(
@@ -226,7 +226,7 @@ class ConstantGapModel(
     U_p = initialTransformation,
     U_m = finalTransformation,
 ) {
-    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_max, gap) * 0.1
+    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_sampling, gap) * 0.1
     override fun build() {
         val ε = fun(t: Double) = gap * cos(π * clamp(0.0, t, tf) / tf)
         val Ω = fun(t: Double) = gap * sin(π * clamp(0.0, t, tf) / tf)
@@ -247,7 +247,7 @@ class ConstantGapModel(
         // width of the Lorenzian governing the Ornstein-Uhlenbeck noise
         //     S(ω) = 2σ²γ/(γ²+ω²)
 
-        val ω_max = max(gap, noiseType.ω_max)
+        val ω_max = max(gap, noiseType.ω_sampling)
 
         val η = Noise(
             tf,
@@ -300,7 +300,7 @@ class LandauZenerModel(
     U_p = initialTransformation,
     U_m = finalTransformation,
 ) {
-    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_max, abs(ε0), abs(ε1), Ω).toDouble() * 0.1
+    override val maxIntegrationStep : Double = π2 / max(noiseType.ω_sampling, abs(ε0), abs(ε1), Ω).toDouble() * 0.1
     override fun build() {
 
         val ε = if (!useShapedPulse) {
@@ -316,7 +316,7 @@ class LandauZenerModel(
             }
         }
 
-        val ω_max = max(abs(ε0), abs(ε1), Ω, noiseType.ω_max)
+        val ω_max = max(abs(ε0), abs(ε1), Ω, noiseType.ω_sampling)
 
         val η = Noise(
             tf,

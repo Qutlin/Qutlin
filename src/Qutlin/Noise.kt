@@ -5,7 +5,6 @@ import Plot
 import kotlinx.atomicfu.atomic
 import org.hipparchus.random.GaussianRandomGenerator
 import org.hipparchus.random.RandomDataGenerator
-import org.hipparchus.random.UniformRandomGenerator
 import org.hipparchus.transform.DftNormalization
 import org.hipparchus.transform.FastFourierTransformer
 import org.hipparchus.transform.TransformType
@@ -21,21 +20,18 @@ import kotlin.math.log2
 class Noise(
     val time: Double,
     val ω_sampling: Double,
-    val ω_min: Double,
-    val ω_max: Double,
-    val ω_0: Double? = null,
+    val ω_min: Double? = null,
+    val ω_max: Double? = null,
 ) {
     companion object {
         // * make sure the seed is new in every run
         var seed = atomic(LocalDateTime.now().nano.toLong()/100)
     }
 
-    val N: Int = (time * ω_sampling/π2).toInt()
-    val dt: Double = time/N.toDouble()
+    // ? The FFT algorithms needs arrays with a size of a power of 2
+    val Nt: Int = pow(2.0, ceil(log2(time * ω_sampling/π2))).toInt()
+    val dt: Double = time/Nt.toDouble()
     lateinit var values: DoubleArray
-
-    val tf: Double = π2/ω_min
-    val Nt: Int = (tf * ω_max/π2).toInt()
 
     /**
      * from the Hipparchus docs:
@@ -50,50 +46,27 @@ class Noise(
      *
      * @param envelope function in radian frequencies (`ω`)
      * */
-    fun generate(noise_type: NoiseType, σ_w: Double = sqrt(1.0/dt)) {
+    fun generate(noise_type: NoiseType, σ_wn: Double = sqrt(1.0/dt)) {
         val seed = seed.addAndGet(LocalDateTime.now().nano.toLong()/100)
         println("seed = $seed")
 
-        // * generator for uniform normalized random numbers (0 mean, 1 std)
-        // * Hipparchus: Since it is a normalized random generator, it generates values
-        // * from a uniform distribution with mean equal to 0 and standard deviation equal
-        // * to 1. Generated values fall in the range [-√3, +√3].
-        val u_generator = UniformRandomGenerator( RandomDataGenerator(seed))
-        val isqrt3 = 1.0/sqrt(3.0)
-        val g_generator = GaussianRandomGenerator(RandomDataGenerator(seed))
+        val g_rng = GaussianRandomGenerator(RandomDataGenerator(seed))
 
-        values = DoubleArray(N)
+        val whiteNoise = DoubleArray(Nt) { g_rng.nextNormalizedDouble() * σ_wn }
+        val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
+        val amplitudes = fftTransformer.transform(whiteNoise, TransformType.FORWARD)
 
-        val Nω = (ω_max/ω_min).toInt()
-        println("$Nω Fourier frequencies to sum over.")
-        val σ_r = σ_w * sqrt(Nω.toDouble())
-
-        for (k in 0..Nω) {
-            if (k % (Nω/10) == 0)
-                println("$k/$Nω")
-
-            val α = π2 * 0.5*(u_generator.nextNormalizedDouble() * isqrt3 + 1) // see comment above
-            val p =      0.5*(u_generator.nextNormalizedDouble() * isqrt3 + 1) // see comment above
-            val r = sqrt(-2.0*log(1.0-p)) * σ_r
-
-            val ωk = ω_min * k
-
-            val s = sqrt(noise_type.envelope(ωk))
-//            val z = r * exp(I*α)
-            for (i in 0 until N) {
-                // ? Re[z * exp(ωk*t)] * sqrt(S(ωk))
-//                values[i] += (z.real*cos(ωk*(i*dt)) - z.imaginary*sin(ωk*(i*dt))) * s
-                values[i] += r * cos(ωk*(i*dt) + α) * s
-            }
+        for (i in amplitudes.indices) {
+            val ω = if(i <= Nt/2) TAU/time*i else -TAU/time*(Nt-i)
+            if      (ω_max != null && abs(ω) > ω_max) amplitudes[i] = 0.0.toComplex()
+            else if (ω_min != null && abs(ω) < ω_min) amplitudes[i] = 0.0.toComplex()
+            else amplitudes[i] = amplitudes[i] *  sqrt(noise_type.envelope(ω))
         }
 
-        val offset = if (ω_0 != null) g_generator.nextNormalizedDouble() * noise_type.variance(ω_0, ω_min) else 0.0
-        val sqrt2 = sqrt(2.0) // ? since we're only summing from 0 to Nω, not from -Nω to Nω; see notes from 2022-05-26 - Fehse 2022-05-26
-        for (i in 0 until Nt) {
-            values[i] = values[i]/Nω.toDouble() * sqrt2 + offset
-        }
+        val cvalues = fftTransformer.transform(amplitudes, TransformType.INVERSE)
+        values = DoubleArray(Nt) { cvalues[it].real }
 
-        println("noise generated with mean ${values.average()} and std ${values.std()}")
+        println("noise generated with Nt = $Nt, mean ${values.average()} and std ${values.std()}")
     }
 
 
