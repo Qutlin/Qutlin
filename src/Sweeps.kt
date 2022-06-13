@@ -123,8 +123,8 @@ fun sampleSweeps(
         runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
             val futures = models.mapIndexed { i_model: Int, model: Model ->
                 async {
-                    (1..samples).forEach { sample ->
-                        println("%3d / $samples : %3d / ${models.size}".format(sample, i_model+1))
+                    (0 until samples).forEach { sample ->
+                        println("%3d / $samples : %3d / ${models.size}".format(sample+1, i_model+1))
                         model.build()
 
                         val res = integrate(

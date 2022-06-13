@@ -1254,6 +1254,7 @@ fun completeSet_ChargeQubit(
                 val res = sampleSweeps(
                     models.toMutableList(),
                     samples,
+                    parallel_over_samples = false,
                 )
                 if (saveData) {
                     val filename = "_results_/$name $variable i$initial Ω%.2e γ%.2e σ%.2e tf%.2e n$samples.csv"
