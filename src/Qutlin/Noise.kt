@@ -29,7 +29,7 @@ class Noise(
     }
 
     // ? The FFT algorithms needs arrays with a size of a power of 2
-    val Nt: Int = pow(2.0, ceil(log2(time * ω_sampling/π2))).toInt()
+    val Nt: Int = pow(2.0, ceil(log2(time * ω_sampling/π2)).toInt()).toInt()
     val dt: Double = time/Nt.toDouble()
     lateinit var values: DoubleArray
 
@@ -52,6 +52,10 @@ class Noise(
 
         val g_rng = GaussianRandomGenerator(RandomDataGenerator(seed))
 
+        println("time = $time, ω_sampling = $ω_sampling")
+        println("time*ω_sampling/π2 = ${time * ω_sampling/π2}")
+        println("log2(time*ω_sampling/π2) = ${log2(time * ω_sampling/π2)}")
+        println("Nt = $Nt, log2(Nt) = ${log2(Nt.toDouble())}")
         val whiteNoise = DoubleArray(Nt) { g_rng.nextNormalizedDouble() * σ_wn }
         val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
         val amplitudes = fftTransformer.transform(whiteNoise, TransformType.FORWARD)

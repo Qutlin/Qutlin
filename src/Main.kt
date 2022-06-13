@@ -122,7 +122,7 @@ fun charge_qubit() {
         γ = 1.0 * _ns,      // ? using OU noise - Fehse, 2022-06-13
         σ = 1.0 * _μeV/ _ħ, // ? using OU noise - Fehse, 2022-06-13
         variable = "tf",
-        saveName = "2022 05 13 CQ",
+        saveName = "2022 06 13 CQ",
         useShapedPulse = true,
         useGeneralized = true,
     )

@@ -316,7 +316,7 @@ class LandauZenerModel(
             }
         }
 
-        val ω_max = max(abs(ε0), abs(ε1), Ω, noiseType.ω_sampling)
+        val ω_max = max(π2/tf ,abs(ε0), abs(ε1), Ω, noiseType.ω_sampling)
 
         val η = Noise(
             tf,
