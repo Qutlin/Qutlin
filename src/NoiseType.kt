@@ -66,7 +66,7 @@ data class OUNoise(
  * cutoff:
  */
 data class f_inv_Noise(
-    val S0: Double,
+    val A: Double,
     val ω_min: Double,
     val ω_max: Double,
 ): NoiseType() {
@@ -74,13 +74,13 @@ data class f_inv_Noise(
     override val ω_sampling: Double = ω_max
     override fun envelope(ω: Double) =
         if (abs(ω) < ω_min || abs(ω) > ω_max) 0.0
-        else S0/abs(ω)
+        else A/abs(ω)
 
     override fun variance(ω_min: Double, ω_max: Double): Double {
         return 0.0
     }
 
-    override fun toString() = "${name}[S0%.1e ω_min%.1e ω_max%.1e]".format(S0, ω_min, ω_max)
+    override fun toString() = "${name}[S0%.1e ω_min%.1e ω_max%.1e]".format(A, ω_min, ω_max)
 }
 
 
@@ -166,7 +166,7 @@ fun noiseTypesTest() {
     val σ = 1.0
 
 //    val noise_setup = OUNoise(σ = σ, γ = γ)
-    val noise_setup = f_inv_Noise(S0 = 10.0, ω_min = π2/time, ω_max = π2/dt)
+    val noise_setup = f_inv_Noise(A = 10.0, ω_min = π2/time, ω_max = π2/dt)
     println("$noise_setup")
 
     val noise = Noise(time, π2/dt)

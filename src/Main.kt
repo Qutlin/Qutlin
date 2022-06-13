@@ -110,47 +110,46 @@ fun landau_zener() {
 fun charge_qubit() {
 
     // transfer error depending on `tf`
-//    completeSet_ChargeQubit(
-//        x = concatenate(
-//            linspace(-3.0, 1.0, 10).map { 10.0.pow(it) },
-//            linspace(1.0, 3.0, 10, skipFirst = true).map { 10.0.pow(it) },
-//        ),
-//        samples = 1,
-//        Ω = 20.0 * _μeV/ _ħ,
-//        ε0 =  0.0,
-//        ε1 = 200.0 * _μeV/ _ħ,
-//        S0 = 0.273 / _ns.e2(), // Notes 2022-05-10 - Fehse, 2022-05-10
-////        ω0 = 2.0*π/(60*60*_s), // period between calibrations or experimental runs
-//        ω0 = 2.0*π * 1e-3 / _ns, // period between calibrations or experimental runs
-//        variable = "tf",
-//        saveName = "2022 05 13 CQ",
-//        useShapedPulse = true,
-//        useGeneralized = true,
-//    )
+    completeSet_ChargeQubit(
+        x = concatenate(
+            linspace(-3.0, 1.0, 10).map { 10.0.pow(it) },
+            linspace(1.0, 3.0, 10, skipFirst = true).map { 10.0.pow(it) },
+        ),
+        samples = 1,
+        Ω = 20.0 * _μeV/ _ħ,
+        ε0 =  0.0,
+        ε1 = 200.0 * _μeV/ _ħ,
+//        A = 0.273 / _ns.e2(), // Notes 2022-05-10 - Fehse, 2022-05-10
+        A = 58.01072928 / _ns.e2(), // Notes 2022-06-03 - Fehse, 2022-06-10
+        variable = "tf",
+        saveName = "2022 05 13 CQ",
+        useShapedPulse = true,
+        useGeneralized = true,
+    )
 
 
-    // transfer error depending on low-frequency cutoff ω0
-    val cuttoffs = listOf(-3,-4,-5,-6).map {10.0.pow(it)}
-//    val cuttoffs = listOf(1e-6, 1e-5, 1e-4, 1e4, 1e5, 1e6)
-//        .map{it * 2.0*π/(60*60*_s)}
-        .forEach {
-            completeSet_ChargeQubit(
-                x = concatenate(
-                    linspace(-3.0, 1.0, 4).map { 10.0.pow(it) },
-                    linspace(1.0, 3.0, 4, skipFirst = true).map { 10.0.pow(it) },
-                ),
-                samples = 10,
-                Ω = 20.0 * _μeV/ _ħ,
-                ε0 =  0.0,
-                ε1 = 200.0 * _μeV/ _ħ,
-                S0 = 0.273 / _ns.e2(), // Notes 2022-05-10 - Fehse, 2022-05-10
-                ω0 = it, // period between calibrations or experimental runs
-                variable = "tf",
-                saveName = "2022 05 15 CQ",
-                useShapedPulse = true,
-                useGeneralized = true,
-            )
-        }
+//    // transfer error depending on low-frequency cutoff ω0
+//    val cuttoffs = listOf(-3,-4,-5,-6).map {10.0.pow(it)}
+////    val cuttoffs = listOf(1e-6, 1e-5, 1e-4, 1e4, 1e5, 1e6)
+////        .map{it * 2.0*π/(60*60*_s)}
+//        .forEach {
+//            completeSet_ChargeQubit(
+//                x = concatenate(
+//                    linspace(-3.0, 1.0, 4).map { 10.0.pow(it) },
+//                    linspace(1.0, 3.0, 4, skipFirst = true).map { 10.0.pow(it) },
+//                ),
+//                samples = 10,
+//                Ω = 20.0 * _μeV/ _ħ,
+//                ε0 =  0.0,
+//                ε1 = 200.0 * _μeV/ _ħ,
+//                S0 = 0.273 / _ns.e2(), // Notes 2022-05-10 - Fehse, 2022-05-10
+//                ω0 = it, // period between calibrations or experimental runs
+//                variable = "tf",
+//                saveName = "2022 05 15 CQ",
+//                useShapedPulse = true,
+//                useGeneralized = true,
+//            )
+//        }
 }
 
 
@@ -1155,8 +1154,7 @@ fun completeSet_ChargeQubit(
     ε1: Double =  10.0 * Ω,
     tf: Double = 100.0,
 
-    S0: Double,
-    ω0: Double,
+    A: Double,
 
     saveData: Boolean = true,
     saveName: String = "2021 02 01 CQ",
@@ -1203,14 +1201,14 @@ fun completeSet_ChargeQubit(
         List(2) { initial ->
             x.map {
                 val ω_max = max(abs(ε0),abs(ε1)) * 10
+                val ω_min = 2*π/(10.0*tf) // ! might want to reduce this to 2 tf or so
                 val initialSpacing = 2 * π / ω_max
 //                if(useShapedPulse) initialSpacing *= 0.1
 
                 when (variable) {
-                    "S0" -> {
+                    "A" -> {
                         val trans = transformations(tf)
-                        val minTime = 4.0 * tf
-                        val noiseType = f_inv_Noise(it, ω0, ω_max)
+                        val noiseType = f_inv_Noise(it, ω_min, ω_max)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1225,8 +1223,7 @@ fun completeSet_ChargeQubit(
                     }
                     "ω0" -> {
                         val trans = transformations(tf)
-                        val minTime = 4.0/it
-                        val noiseType = f_inv_Noise(S0, it, ω_max)
+                        val noiseType = f_inv_Noise(A, it, ω_max)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1241,9 +1238,8 @@ fun completeSet_ChargeQubit(
                     }
                     else -> {
                         val trans = transformations(it)
-//                        val minTime = 4.0*tf
-                        val minTime = 2.0*π/ω0
-                        val noiseType = f_inv_Noise(S0, ω0, ω_max)
+                        val ω_min = 2.0*π/(10.0*it)
+                        val noiseType = f_inv_Noise(A, ω_min, ω_max)
                         LandauZenerModel(
                             initial,
                             it,
@@ -1265,10 +1261,9 @@ fun completeSet_ChargeQubit(
                     samples,
                 )
                 if (saveData) {
-                    val filename = "_results_/$name $variable i$initial Ω%.2e S%.2e ω%.2e tf%.2e n$samples.csv".format(
+                    val filename = "_results_/$name $variable i$initial Ω%.2e A%.2e tf%.2e n$samples.csv".format(
                         Ω,
-                        S0,
-                        ω0,
+                        A,
                         tf
                     )
                     saveSweep(filename, x, res)
