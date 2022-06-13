@@ -82,6 +82,7 @@ fun integrate(
 fun sampleSweeps(
     models: MutableList<Model>,
     samples: Int = 20,
+    parallel_over_samples: Boolean = false,
 ): List<List<List<Double>>> {
 
     // * prepare results storage
@@ -89,38 +90,61 @@ fun sampleSweeps(
     val p = List(samples) { MutableList(nd) { MutableList(models.size) { 0.0 } } }
 
     println("start solver...")
-//    runBlocking(Dispatchers.Default) { // ? system default parallel dispatcher
+    if (parallel_over_samples) {
 //    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded execution
-    runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
-        val futures = List(samples) { sample ->
-//        List(samples) { sample ->
-            println("sample $sample")
+        runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
+            val futures = List(samples) { sample ->
+                println("sample $sample")
 
-            async {
-                models.mapIndexed { i_model: Int, model: Model ->
-//                async {
-                    println("%3d / $samples : %3d / ${models.size}".format(sample, i_model))
-                    model.build()
+                async {
+                    models.mapIndexed { i_model: Int, model: Model ->
+                        println("%3d / $samples : %3d / ${models.size}".format(sample+1, i_model+1))
+                        model.build()
 
-                    val res = integrate(
-                        initialState = model.initial,
-                        tf = model.tf,
-                        overhang = model.overhang,
-                        H_η = model.H_η!!,
-                        H_0 = model.H_0!!,
-                        Γ = model.collapse,
-                        maxIntegrationStep = model.maxIntegrationStep,
-                        U_p = model.U_p,
-                        U_m = model.U_m,
-                    )
+                        val res = integrate(
+                            initialState = model.initial,
+                            tf = model.tf,
+                            overhang = model.overhang,
+                            H_η = model.H_η!!,
+                            H_0 = model.H_0!!,
+                            Γ = model.collapse,
+                            maxIntegrationStep = model.maxIntegrationStep,
+                            U_p = model.U_p,
+                            U_m = model.U_m,
+                        )
 
-//                    model.free() // ? new memory free method - Fehse, 2022-05-16
-//                    models.remove(model) // ? free up memory, otherwise the noise values will accumulate until ALL models are evaluated - Fehse, 2022-04-20
-                    res.forEachIndexed { i, r -> p[sample][i][i_model] = r }
-                }//.await()
+                        res.forEachIndexed { i, r -> p[sample][i][i_model] = r }
+                    }
+                }
             }
+            futures.awaitAll()//.forEach { it.awaitAll() }
         }
-        futures.awaitAll()//.forEach { it.awaitAll() }
+    } else {
+        runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
+            val futures = models.mapIndexed { i_model: Int, model: Model ->
+                async {
+                    (1..samples).forEach { sample ->
+                        println("%3d / $samples : %3d / ${models.size}".format(sample, i_model+1))
+                        model.build()
+
+                        val res = integrate(
+                            initialState = model.initial,
+                            tf = model.tf,
+                            overhang = model.overhang,
+                            H_η = model.H_η!!,
+                            H_0 = model.H_0!!,
+                            Γ = model.collapse,
+                            maxIntegrationStep = model.maxIntegrationStep,
+                            U_p = model.U_p,
+                            U_m = model.U_m,
+                        )
+
+                        res.forEachIndexed { i, r -> p[sample][i][i_model] = r }
+                    }
+                }
+            }
+            futures.awaitAll()
+        }
     }
     println("solver finished.")
     return p
