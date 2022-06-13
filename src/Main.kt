@@ -109,7 +109,7 @@ fun landau_zener() {
  */
 fun charge_qubit() {
 
-    // transfer error depending on `tf`
+    // * transfer error depending on `tf`
     completeSet_ChargeQubit(
         x = concatenate(
             linspace(-3.0, 1.0, 10).map { 10.0.pow(it) },
@@ -119,8 +119,8 @@ fun charge_qubit() {
         Ω = 20.0 * _μeV/ _ħ,
         ε0 =  0.0,
         ε1 = 200.0 * _μeV/ _ħ,
-//        A = 0.273 / _ns.e2(), // Notes 2022-05-10 - Fehse, 2022-05-10
-        A = 58.01072928 / _ns.e2(), // Notes 2022-06-03 - Fehse, 2022-06-10
+        γ = 1.0 * _ns,      // ? using OU noise - Fehse, 2022-06-13
+        σ = 1.0 * _μeV/ _ħ, // ? using OU noise - Fehse, 2022-06-13
         variable = "tf",
         saveName = "2022 05 13 CQ",
         useShapedPulse = true,
@@ -1154,7 +1154,8 @@ fun completeSet_ChargeQubit(
     ε1: Double =  10.0 * Ω,
     tf: Double = 100.0,
 
-    A: Double,
+    γ: Double = 1.0 / _ns,      // ? Using OU noise - Fehse, 2022-06-13
+    σ: Double = 1.0 * _μeV/ _ħ, // ? Using OU noise - Fehse, 2022-06-13
 
     saveData: Boolean = true,
     saveName: String = "2021 02 01 CQ",
@@ -1169,13 +1170,13 @@ fun completeSet_ChargeQubit(
 
 
 
-    // The preparation and measurement unitaries for the generalized strategy via
-    //     R(tf) U(tf) R†(0)
-    // with
-    //     R(t) = Ry(t) Rx(ϕ)^† Ry(t)^†.
-    // Therefore
-    //     R( 0)^† = ( Ry( 0) Rx(ϕ)^† Ry( 0)^† )^†,
-    //     R(tf)   =   Ry(tf) Rx(ϕ)^† Ry(tf)^† .
+    // ? The preparation and measurement unitaries for the generalized strategy via
+    // ?     R(tf) U(tf) R†(0)
+    // ? with
+    // ?     R(t) = Ry(t) Rx(ϕ)^† Ry(t)^†.
+    // ? Therefore
+    // ?     R( 0)^† = ( Ry( 0) Rx(ϕ)^† Ry( 0)^† )^†,
+    // ?     R(tf)   =   Ry(tf) Rx(ϕ)^† Ry(tf)^† .
     fun transformations(tf: Double): Pair<Operator?, Operator?> {
         if (!(useGeneralized && useShapedPulse)) return Pair(null, null);
 
@@ -1200,15 +1201,10 @@ fun completeSet_ChargeQubit(
 
         List(2) { initial ->
             x.map {
-                val ω_max = max(abs(ε0),abs(ε1)) * 10
-                val ω_min = 2*π/(10.0*tf) // ! might want to reduce this to 2 tf or so
-                val initialSpacing = 2 * π / ω_max
-//                if(useShapedPulse) initialSpacing *= 0.1
-
                 when (variable) {
-                    "A" -> {
+                    "γ" -> {
                         val trans = transformations(tf)
-                        val noiseType = f_inv_Noise(it, ω_min, ω_max)
+                        val noiseType = OUNoise(σ, it)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1221,9 +1217,9 @@ fun completeSet_ChargeQubit(
                             trans.second,
                         )
                     }
-                    "ω0" -> {
+                    "σ" -> {
                         val trans = transformations(tf)
-                        val noiseType = f_inv_Noise(A, it, ω_max)
+                        val noiseType = OUNoise(σ, γ)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1238,8 +1234,7 @@ fun completeSet_ChargeQubit(
                     }
                     else -> {
                         val trans = transformations(it)
-                        val ω_min = 2.0*π/(10.0*it)
-                        val noiseType = f_inv_Noise(A, ω_min, ω_max)
+                        val noiseType = OUNoise(σ, γ)
                         LandauZenerModel(
                             initial,
                             it,
@@ -1261,11 +1256,8 @@ fun completeSet_ChargeQubit(
                     samples,
                 )
                 if (saveData) {
-                    val filename = "_results_/$name $variable i$initial Ω%.2e A%.2e tf%.2e n$samples.csv".format(
-                        Ω,
-                        A,
-                        tf
-                    )
+                    val filename = "_results_/$name $variable i$initial Ω%.2e γ%.2e σ%.2e tf%.2e n$samples.csv"
+                        .format(Ω, γ, σ, tf)
                     saveSweep(filename, x, res)
                 }
                 if (plotData)

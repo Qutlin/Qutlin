@@ -320,9 +320,9 @@ class LandauZenerModel(
 
         val η = Noise(
             tf,
-            ω_max * 10.0 * 10.0,
-            π2/tf * 0.1,
-            ω_max * 10.0,
+            ω_max * 10.0, // ? safety factor 10.0 to have high enough time resolution - Fehse, 2022-06-13
+            π2/tf * 0.1,       // ? safety factor 10.0 to include all relevant frequencies during the evolution - Fehse, 2022-06-13
+            ω_max * 10.0,      // ? safety factor 10.0 to include all relevant frequencies during the evolution - Fehse, 2022-06-13
         )
         η.generate(noiseType)
 

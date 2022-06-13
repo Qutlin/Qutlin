@@ -6,7 +6,6 @@ abstract class NoiseType {
     abstract val name: String
     abstract val ω_sampling: Double
     abstract fun envelope(ω: Double): Double
-    abstract fun variance(ω_min: Double, ω_max: Double): Double
 }
 
 
@@ -17,8 +16,6 @@ data class WhiteNoise(
     override val name: String = "WN"
     override val ω_sampling: Double = Double.MAX_VALUE
     override fun envelope(ω: Double) = σ*σ
-
-    override fun variance(ω_min: Double, ω_max: Double): Double = 0.0 // TODO correct variance
 
     override fun toString() = name
 
@@ -44,9 +41,6 @@ data class OUNoise(
     override fun envelope(ω: Double) =
         σ*σ * 2.0 * γ / (γ*γ + ω*ω)
 
-    override fun variance(ω_min: Double, ω_max: Double): Double {
-        return 0.0
-    }
 
     override fun toString() = "${name}[γ%.1e σ%.1e]".format(γ, σ)
 
@@ -59,9 +53,9 @@ data class OUNoise(
  *
  * stores the properties of the noise:
  *
- * S0     : factor
+ * `S0`     : factor
  *
- * ω0     : low-frequency cutoff
+ * `ω0`     : low-frequency cutoff
  *
  * cutoff:
  */
@@ -76,9 +70,6 @@ data class f_inv_Noise(
         if (abs(ω) < ω_min || abs(ω) > ω_max) 0.0
         else A/abs(ω)
 
-    override fun variance(ω_min: Double, ω_max: Double): Double {
-        return 0.0
-    }
 
     override fun toString() = "${name}[S0%.1e ω_min%.1e ω_max%.1e]".format(A, ω_min, ω_max)
 }
