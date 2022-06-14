@@ -317,12 +317,13 @@ class LandauZenerModel(
         }
 
         val ω_max = max(π2/tf ,abs(ε0), abs(ε1), Ω, noiseType.ω_sampling)
+        val extended_tf = 10.0 * tf
 
         val η = Noise(
-            tf,
-            ω_max * 10.0, // ? safety factor 10.0 to have high enough time resolution - Fehse, 2022-06-13
-            π2/tf * 0.1,       // ? safety factor 10.0 to include all relevant frequencies during the evolution - Fehse, 2022-06-13
-            ω_max * 10.0,      // ? safety factor 10.0 to include all relevant frequencies during the evolution - Fehse, 2022-06-13
+            extended_tf,               // ? smallest frequency is given by 2π/tf. So to resolve low frequencies, we need to generate noise for longer times. - Fehse, 2022-06-14
+            ω_sampling = ω_max * 10.0, // ? safety factor 10.0 to have high enough time resolution - Fehse, 2022-06-13
+            ω_max = ω_max * 10.0,      // ? safety factor 10.0 to include all relevant frequencies during the evolution - Fehse, 2022-06-13
+//            π2/extended_tf,       // ? safety factor 10.0 to include all relevant frequencies during the evolution - Fehse, 2022-06-13
         )
         η.generate(noiseType)
 
