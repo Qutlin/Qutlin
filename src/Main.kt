@@ -112,17 +112,17 @@ fun charge_qubit() {
     // * transfer error depending on `tf`
     completeSet_ChargeQubit(
         x = concatenate(
-            linspace(-3.0, 1.0, 10).map { 10.0.pow(it) },
-            linspace(1.0, 3.0, 10, skipFirst = true).map { 10.0.pow(it) },
+            linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
+            linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
         ),
-        samples = 1,
+        samples = 20,
         Ω = 20.0 * _μeV/ _ħ,
         ε0 =  0.0,
         ε1 = 200.0 * _μeV/ _ħ,
         γ = 1.0 * _ns,      // ? using OU noise - Fehse, 2022-06-13
         σ = 1.0 * _μeV/ _ħ, // ? using OU noise - Fehse, 2022-06-13
         variable = "tf",
-        saveName = "2022 06 13 CQ",
+        saveName = "2022 06 14 CQ",
         useShapedPulse = true,
         useGeneralized = true,
     )
@@ -1197,7 +1197,8 @@ fun completeSet_ChargeQubit(
 
 
 //    runBlocking(Dispatchers.Default) {
-    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
+    runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
+//    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
 
         List(2) { initial ->
             x.map {

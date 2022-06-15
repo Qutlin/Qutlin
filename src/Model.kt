@@ -316,7 +316,7 @@ class LandauZenerModel(
             }
         }
 
-        val scaling = 5.0
+        val scaling = 10.0
 
         val ω_max = max(π2/tf ,abs(ε0), abs(ε1), Ω, noiseType.ω_sampling)
         val extended_tf = scaling * tf
