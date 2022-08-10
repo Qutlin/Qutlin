@@ -42,14 +42,14 @@ infix fun Double.e(b: Int) = FastMath.pow(this, b)
 fun max(vararg vals: Double) : Double {
     var res = vals[0]
     for (i in 1 until vals.size) {
-        if (vals[i] > res) res = vals[i]
+        if (!vals[i].isNaN() && vals[i] > res) res = vals[i]
     }
     return res
 }
 fun min(vararg vals: Double) : Double {
     var res = vals[0]
     for (i in 1 until vals.size) {
-        if (vals[i] < res) res = vals[i]
+        if (!vals[i].isNaN() && vals[i] < res) res = vals[i]
     }
     return res
 }

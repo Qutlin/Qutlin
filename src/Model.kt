@@ -316,10 +316,10 @@ class LandauZenerModel(
             }
         }
 
-        val scaling = 10.0
+        val scaling = 10.0  // ? the lowest frequency is ω0 = 2π/(tf*scaling)
+        val extended_tf = scaling * tf
 
         val ω_max = max(π2/tf ,abs(ε0), abs(ε1), Ω, noiseType.ω_sampling)
-        val extended_tf = scaling * tf
 
         val η = Noise(
             extended_tf,               // ? smallest frequency is given by 2π/tf. So to resolve low frequencies, we need to generate noise for longer times. - Fehse, 2022-06-14

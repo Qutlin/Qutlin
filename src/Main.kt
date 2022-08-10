@@ -119,10 +119,10 @@ fun charge_qubit() {
         Ω = 20.0 * _μeV/ _ħ,
         ε0 =  0.0,
         ε1 = 200.0 * _μeV/ _ħ,
-        γ = 1.0 * _ns,      // ? using OU noise - Fehse, 2022-06-13
-        σ = 1.0 * _μeV/ _ħ, // ? using OU noise - Fehse, 2022-06-13
+        A = 19.1 / (_ns * _ns), // ? Fehse, 2022-08-10
+        ω_min = π2/_s,          // ? Fehse, 2022-08-10
         variable = "tf",
-        saveName = "2022 06 14 CQ",
+        saveName = "2022 08 10 CQ",
         useShapedPulse = true,
         useGeneralized = true,
     )
@@ -1154,8 +1154,8 @@ fun completeSet_ChargeQubit(
     ε1: Double =  10.0 * Ω,
     tf: Double = 100.0,
 
-    γ: Double = 1.0 / _ns,      // ? Using OU noise - Fehse, 2022-06-13
-    σ: Double = 1.0 * _μeV/ _ħ, // ? Using OU noise - Fehse, 2022-06-13
+    A : Double = 19.1 / (_ns * _ns),
+    ω_min : Double = π2/_s,
 
     saveData: Boolean = true,
     saveName: String = "2021 02 01 CQ",
@@ -1203,9 +1203,9 @@ fun completeSet_ChargeQubit(
         List(2) { initial ->
             x.map {
                 when (variable) {
-                    "γ" -> {
+                    "A" -> {
                         val trans = transformations(tf)
-                        val noiseType = OUNoise(σ, it)
+                        val noiseType = f_inv_Noise(it, ω_min, Double.NaN)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1218,9 +1218,24 @@ fun completeSet_ChargeQubit(
                             trans.second,
                         )
                     }
-                    "σ" -> {
+                    "omega_min" -> {
                         val trans = transformations(tf)
-                        val noiseType = OUNoise(σ, γ)
+                        val noiseType = f_inv_Noise(A, it, Double.NaN)
+                        LandauZenerModel(
+                            initial,
+                            tf,
+                            Ω,
+                            ε0,
+                            ε1,
+                            useShapedPulse,
+                            noiseType,
+                            trans.first,
+                            trans.second,
+                        )
+                    }
+                    "omega_max" -> {
+                        val trans = transformations(tf)
+                        val noiseType = f_inv_Noise(A, ω_min, it)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1235,7 +1250,7 @@ fun completeSet_ChargeQubit(
                     }
                     else -> {
                         val trans = transformations(it)
-                        val noiseType = OUNoise(σ, γ)
+                        val noiseType = f_inv_Noise(A, ω_min, Double.NaN)
                         LandauZenerModel(
                             initial,
                             it,
@@ -1258,8 +1273,8 @@ fun completeSet_ChargeQubit(
                     parallel_over_samples = false,
                 )
                 if (saveData) {
-                    val filename = "_results_/$name $variable i$initial Ω%.2e γ%.2e σ%.2e tf%.2e n$samples.csv"
-                        .format(Ω, γ, σ, tf)
+                    val filename = "_results_/$name $variable i$initial Ω%.2e A%.2e ω_min%.2e tf%.2e n$samples.csv"
+                        .format(Ω, A, ω_min, tf)
                     saveSweep(filename, x, res)
                 }
                 if (plotData)
