@@ -1267,7 +1267,7 @@ fun completeSet_ChargeQubit(
                     }
                     else -> {
                         val trans = transformations(it)
-                        val noiseType = f_inv_Noise(A, 0.1 * π2/it, ω_max, ω_0)
+                        val noiseType = f_inv_Noise(A, 0.1 * π2/it, max(ω_max, 10.0 * π2/it), ω_0)
                         LandauZenerModel(
                             initial,
                             it,
