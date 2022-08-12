@@ -37,7 +37,7 @@ data class OUNoise(
     val γ: Double,
 ): NoiseType() {
     override val name: String = "OU"
-    override val ω_sampling: Double = π2*γ
+    override var ω_sampling: Double = π2*γ
     override fun envelope(ω: Double) =
         σ*σ * 2.0 * γ / (γ*γ + ω*ω)
 
@@ -63,11 +63,13 @@ data class f_inv_Noise(
     val A: Double,
     val ω_min: Double,
     val ω_max: Double,
+    val ω_0: Double,
 ): NoiseType() {
     override val name: String = "1_f"
-    override val ω_sampling: Double = ω_max
+    override var ω_sampling: Double = ω_max
     override fun envelope(ω: Double) =
-        if (abs(ω) < ω_min || abs(ω) > ω_max) 0.0
+        if (abs(ω) < 1e-12) A * log(ω_min / ω_0)
+        else if (abs(ω) < ω_min || abs(ω) > ω_max) 0.0
         else A/abs(ω)
 
 
@@ -157,10 +159,11 @@ fun noiseTypesTest() {
     val σ = 1.0
 
 //    val noise_setup = OUNoise(σ = σ, γ = γ)
-    val noise_setup = f_inv_Noise(A = 10.0, ω_min = π2/time, ω_max = π2/dt)
+//    noise_setup.ω_sampling = π2/dt
+    val noise_setup = f_inv_Noise(A = 10.0, ω_min = π2/time, ω_max = π2/dt, ω_0 = π2/(10*time))
     println("$noise_setup")
 
-    val noise = Noise(time, π2/dt)
+    val noise = Noise(time)//, π2/dt)
     noise.generate(noise_setup)
 
     plotNoise(noise)

@@ -153,14 +153,14 @@ open class DonorDotModel(
 
 
         // * the highest frequency is given by max(|ε_max|, |ε_min|) !
-        val ω_max = max(abs(ε_max), abs(ε_min), Ω, noiseType.ω_sampling)
+//        val ω_max = max(abs(ε_max), abs(ε_min), Ω, noiseType.ω_sampling)
         val t_total = if(useShapedPulse) tf+6*τ else tf
 
         val η = Noise(
             t_total,
-            ω_max * 10.0 * 10.0,
-            π2/t_total * 0.1,
-            ω_max * 10.0,
+//            ω_max * 10.0 * 10.0,
+//            π2/t_total * 0.1,
+//            ω_max * 10.0,
         )
         η.generate(noiseType)
 
@@ -247,13 +247,13 @@ class ConstantGapModel(
         // width of the Lorenzian governing the Ornstein-Uhlenbeck noise
         //     S(ω) = 2σ²γ/(γ²+ω²)
 
-        val ω_max = max(gap, noiseType.ω_sampling)
+//        val ω_max = max(gap, noiseType.ω_sampling)
 
         val η = Noise(
             tf,
-            ω_max * 10.0 * 10.0,
-            π2/tf * 0.1,
-            ω_max * 10,
+//            ω_max * 10.0 * 10.0,
+//            π2/tf * 0.1,
+//            ω_max * 10,
         )
         η.generate(noiseType)
 
@@ -319,12 +319,12 @@ class LandauZenerModel(
         val scaling = 10.0  // ? the lowest frequency is ω0 = 2π/(tf*scaling)
         val extended_tf = scaling * tf
 
-        val ω_max = max(π2/tf ,abs(ε0), abs(ε1), Ω, noiseType.ω_sampling)
+//        val ω_max = max(π2/tf ,abs(ε0), abs(ε1), Ω, noiseType.ω_sampling)
 
         val η = Noise(
             extended_tf,               // ? smallest frequency is given by 2π/tf. So to resolve low frequencies, we need to generate noise for longer times. - Fehse, 2022-06-14
-            ω_sampling = ω_max * scaling * scaling, // ? safety factor `scaling` to have high enough time resolution over `ω_max` - Fehse, 2022-06-13
-            ω_max = ω_max * scaling,      // ? safety factor `scaling` to include all relevant frequencies during the evolution - Fehse, 2022-06-13
+//            ω_sampling = ω_max * scaling * scaling, // ? safety factor `scaling` to have high enough time resolution over `ω_max` - Fehse, 2022-06-13
+//            ω_max = ω_max * scaling,      // ? safety factor `scaling` to include all relevant frequencies during the evolution - Fehse, 2022-06-13
 //            π2/extended_tf,       // ? safety factor 10.0 to include all relevant frequencies during the evolution - Fehse, 2022-06-13
         )
         η.generate(noiseType)

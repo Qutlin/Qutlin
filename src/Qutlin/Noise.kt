@@ -19,9 +19,9 @@ import kotlin.math.log2
  */
 class Noise(
     val time: Double,
-    val ω_sampling: Double,
-    val ω_min: Double? = null,
-    val ω_max: Double? = null,
+//    val ω_sampling: Double,
+//    val ω_min: Double? = null,
+//    val ω_max: Double? = null,
 ) {
     companion object {
         // * make sure the seed is new in every run
@@ -29,8 +29,8 @@ class Noise(
     }
 
     // ? The FFT algorithms needs arrays with a size of a power of 2
-    val Nt: Int = pow(2.0, ceil(log2(time * ω_sampling/π2)).toInt()).toInt()
-    val dt: Double = time/Nt.toDouble()
+    var Nt: Int = 0// = pow(2.0, ceil(log2(time * ω_sampling/π2)).toInt()).toInt()
+    var dt: Double = 0.0// = time/Nt.toDouble()
     lateinit var values: DoubleArray
 
     /**
@@ -46,15 +46,19 @@ class Noise(
      *
      * @param envelope function in radian frequencies (`ω`)
      * */
-    fun generate(noise_type: NoiseType, σ_wn: Double = sqrt(1.0/dt)) {
+    fun generate(noise_type: NoiseType) {
+        Nt = pow(2.0, ceil(log2(time * noise_type.ω_sampling/π2)).toInt()).toInt()
+        dt = time/Nt.toDouble()
+        val σ_wn = sqrt(1.0/dt)
+
         val seed = seed.addAndGet(LocalDateTime.now().nano.toLong()/100)
         println("seed = $seed")
 
         val g_rng = GaussianRandomGenerator(RandomDataGenerator(seed))
 
-        println("time = $time, ω_sampling = $ω_sampling")
-        println("time*ω_sampling/π2 = ${time * ω_sampling/π2}")
-        println("log2(time*ω_sampling/π2) = ${log2(time * ω_sampling/π2)}")
+        println("time = $time, ω_sampling = $noise_type.ω_sampling")
+        println("time*ω_sampling/π2 = ${time * noise_type.ω_sampling/π2}")
+        println("log2(time*ω_sampling/π2) = ${log2(time * noise_type.ω_sampling/π2)}")
         println("Nt = $Nt, log2(Nt) = ${log2(Nt.toDouble())}")
         val whiteNoise = DoubleArray(Nt) { g_rng.nextNormalizedDouble() * σ_wn }
         val fftTransformer = FastFourierTransformer(DftNormalization.STANDARD)
@@ -62,9 +66,10 @@ class Noise(
 
         for (i in amplitudes.indices) {
             val ω = if(i <= Nt/2) TAU/time*i else -TAU/time*(Nt-i)
-            if      (ω_max != null && abs(ω) > ω_max) amplitudes[i] = 0.0.toComplex()
-            else if (ω_min != null && abs(ω) < ω_min) amplitudes[i] = 0.0.toComplex()
-            else amplitudes[i] = amplitudes[i] *  sqrt(noise_type.envelope(ω))
+//            if      (ω_max != null && abs(ω) > ω_max) amplitudes[i] = 0.0.toComplex()
+//            else if (ω_min != null && abs(ω) < ω_min) amplitudes[i] = 0.0.toComplex()
+//            else amplitudes[i] = amplitudes[i] *  sqrt(noise_type.envelope(ω))
+            amplitudes[i] = amplitudes[i] * sqrt(noise_type.envelope(ω))
         }
 
         val cvalues = fftTransformer.transform(amplitudes, TransformType.INVERSE)
