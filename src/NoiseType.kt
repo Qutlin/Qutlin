@@ -64,13 +64,15 @@ data class f_inv_Noise(
     val ω_low: Double,
     val ω_high: Double,
     val ω_0: Double,
+    val constant: Boolean = false,
 ): NoiseType() {
     override val name: String = "1_f"
     override var ω_sampling: Double = ω_high
     override fun envelope(ω: Double) =
         if (abs(ω) == 0.0) 2*π * A/π * log(ω_low / ω_0)
         else if (abs(ω) < ω_low || abs(ω) > ω_high) 0.0
-        else A/abs(ω)
+        else if(!constant) A/abs(ω)
+        else 0.0
 
 
     override fun toString() = "${name}[S0%.1e ω_min%.1e ω_max%.1e]".format(A, ω_low, ω_high)
