@@ -122,6 +122,10 @@ fun charge_qubit() {
         A = 19.1 / (_ns * _ns), // ? Fehse, 2022-08-10
         ω_0 = π2/_s,          // ? Fehse, 2022-08-10
         constant = true,
+
+        ω_min = 0.1 * π2/ (1000.0), // ? Given by longest tf - Fehse, 2022-08-26
+        fixed_ω_min = true,
+
         variable = "tf",
         saveName = "2022 08 10 CQ",
         useShapedPulse = true,
@@ -1160,6 +1164,7 @@ fun completeSet_ChargeQubit(
     ω_min : Double = 0.1 * π2/tf,
     ω_max : Double = 10.0 * max(ε0, ε1, Ω),
     constant : Boolean = false,
+    fixed_ω_min : Boolean = false,
 
     saveData: Boolean = true,
     saveName: String = "2021 02 01 CQ",
@@ -1269,7 +1274,8 @@ fun completeSet_ChargeQubit(
                     }
                     else -> {
                         val trans = transformations(it)
-                        val noiseType = f_inv_Noise(A, 0.1 * π2/it, max(ω_max, 10.0 * π2/it), ω_0, constant)
+                        val om_min = if(fixed_ω_min) ω_min else 0.1 * π2/it
+                        val noiseType = f_inv_Noise(A, om_min, max(ω_max, 10.0 * π2/it), ω_0, constant)
                         LandauZenerModel(
                             initial,
                             it,
