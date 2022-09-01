@@ -119,7 +119,7 @@ fun charge_qubit() {
         Ω = 20.0 * _μeV/ _ħ,
         ε0 =  0.0,
         ε1 = 200.0 * _μeV/ _ħ,
-        A = 19.1 / (_ns * _ns), // ? Fehse, 2022-08-10
+        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10
         ω_0 = π2/_s,          // ? Fehse, 2022-08-10
         constant = true,
 
@@ -128,8 +128,7 @@ fun charge_qubit() {
         ω_min_forced = 0.1 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
 
         variable = "tf",
-
-        saveName = "2022 08 10 CQ",
+        saveName = "2022 08 26 CQ",
         useShapedPulse = true,
         useGeneralized = true,
     )
