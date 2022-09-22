@@ -121,14 +121,15 @@ fun charge_qubit() {
         ε1 = 200.0 * _μeV/ _ħ,
         A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10
         ω_0 = π2/_s,          // ? Fehse, 2022-08-10
-        constant = true,
+        constant = false,  // ? only quasi-static noise?
 
-        fixed_ω_min = true,
-        ω_min = 0.1 * π2/ (1000.0), // ? Given by longest tf - Fehse, 2022-08-26
-        ω_min_forced = 0.1 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
+        fixed_ω_min = true,  // ? use the same falue for all tf?
+        fixed_ω_max = true,  // ? use the same falue for all tf?
+        ω_min          = 0.1 * π2 / (1e3 * _ns), // ? Given by longest tf - Fehse, 2022-08-26
+        ω_min_sampling = 0.1 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
 
         variable = "tf",
-        saveName = "2022 08 26 CQ",
+        saveName = "2022 09 19 CQ",
         useShapedPulse = true,
         useGeneralized = true,
     )
@@ -1164,9 +1165,10 @@ fun completeSet_ChargeQubit(
     ω_0 : Double = π2/_s,
     ω_min : Double = 0.1 * π2/tf,
     ω_max : Double = 10.0 * max(ε0, ε1, Ω),
-    constant : Boolean = false,
+    constant : Boolean = false,  // ? only quasi-static noise
     fixed_ω_min : Boolean = false,
-    ω_min_forced : Double? = null,
+    fixed_ω_max : Boolean = false,
+    ω_min_sampling : Double? = null,
 
     saveData: Boolean = true,
     saveName: String = "2021 02 01 CQ",
@@ -1216,7 +1218,7 @@ fun completeSet_ChargeQubit(
                 when (variable) {
                     "A" -> {
                         val trans = transformations(tf)
-                        val noiseType = f_inv_Noise(it, ω_min, ω_max, ω_0, constant, ω_min_forced)
+                        val noiseType = f_inv_Noise(it, ω_min, ω_max, ω_0, constant, ω_min_sampling)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1231,7 +1233,7 @@ fun completeSet_ChargeQubit(
                     }
                     "omega_min" -> {
                         val trans = transformations(tf)
-                        val noiseType = f_inv_Noise(A, it, ω_max, ω_0, constant, ω_min_forced)
+                        val noiseType = f_inv_Noise(A, it, ω_max, ω_0, constant, ω_min_sampling)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1246,7 +1248,7 @@ fun completeSet_ChargeQubit(
                     }
                     "omega_max" -> {
                         val trans = transformations(tf)
-                        val noiseType = f_inv_Noise(A, ω_min, it, ω_0, constant, ω_min_forced)
+                        val noiseType = f_inv_Noise(A, ω_min, it, ω_0, constant, ω_min_sampling)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1261,7 +1263,7 @@ fun completeSet_ChargeQubit(
                     }
                     "omega_0" -> {
                         val trans = transformations(tf)
-                        val noiseType = f_inv_Noise(A, ω_min, ω_max, it, constant, ω_min_forced)
+                        val noiseType = f_inv_Noise(A, ω_min, ω_max, it, constant, ω_min_sampling)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1277,7 +1279,8 @@ fun completeSet_ChargeQubit(
                     else -> {
                         val trans = transformations(it)
                         val om_min = if(fixed_ω_min) ω_min else 0.1 * π2/it
-                        val noiseType = f_inv_Noise(A, om_min, max(ω_max, 10.0 * π2/it), ω_0, constant, ω_min_forced)
+                        val om_max = if(fixed_ω_max) ω_max else max(ω_max, 10.0 * π2/it)
+                        val noiseType = f_inv_Noise(A, om_min, om_max, ω_0, constant, ω_min_sampling)
                         LandauZenerModel(
                             initial,
                             it,

@@ -47,9 +47,9 @@ class Noise(
      * @param envelope function in radian frequencies (`ω`)
      * */
     fun generate(noise_type: NoiseType) {
-        val T = if(noise_type.ω_min_forced != null) π2/ noise_type.ω_min_forced!! else  time
+        val T = if(noise_type.ω_min_sampling != null) π2/ noise_type.ω_min_sampling!! else  time
         Nt = pow(2.0, ceil(log2(T * noise_type.ω_sampling / π2)).toInt()).toInt()
-        dt = time/Nt.toDouble()
+        dt = T/Nt.toDouble()
         val σ_wn = sqrt(1.0/dt)
 
         val seed = seed.addAndGet(LocalDateTime.now().nano.toLong()/100)

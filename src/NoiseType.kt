@@ -5,7 +5,7 @@ import org.hipparchus.util.FastMath.*
 abstract class NoiseType {
     abstract val name: String
     abstract val ω_sampling: Double
-    abstract val ω_min_forced: Double?
+    abstract val ω_min_sampling: Double?
     abstract fun envelope(ω: Double): Double
 }
 
@@ -16,7 +16,7 @@ data class WhiteNoise(
 ) : NoiseType() {
     override val name: String = "WN"
     override val ω_sampling: Double = Double.MAX_VALUE
-    override val ω_min_forced: Double? = null
+    override val ω_min_sampling: Double? = null
     override fun envelope(ω: Double) = σ*σ
 
     override fun toString() = name
@@ -37,7 +37,7 @@ data class WhiteNoise(
 data class OUNoise(
     val σ: Double,
     val γ: Double,
-    override val ω_min_forced: Double? = null,
+    override val ω_min_sampling: Double? = null,
 ): NoiseType() {
     override val name: String = "OU"
     override var ω_sampling: Double = π2*γ
@@ -68,7 +68,7 @@ data class f_inv_Noise(
     val ω_high: Double,
     val ω_0: Double,
     val constant: Boolean = false,
-    override val ω_min_forced: Double? = null,
+    override val ω_min_sampling: Double? = null,
 ): NoiseType() {
     override val name: String = "1_f"
     override var ω_sampling: Double = ω_high
@@ -79,7 +79,7 @@ data class f_inv_Noise(
         else 0.0
 
 
-    override fun toString() = "${name}[S0%.1e ω_min%.1e ω_max%.1e]".format(A, ω_low, ω_high)
+    override fun toString() = "${name}[A%.1e ω_low%.1e ω_high%.1e]".format(A, ω_low, ω_high)
 }
 
 

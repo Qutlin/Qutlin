@@ -92,7 +92,7 @@ fun sampleSweeps(
     println("start solver...")
     if (parallel_over_samples) {
 //    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded execution
-        runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
+        runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) {
             val futures = List(samples) { sample ->
                 println("sample $sample")
 
@@ -120,7 +120,8 @@ fun sampleSweeps(
             futures.awaitAll()//.forEach { it.awaitAll() }
         }
     } else {
-        runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
+//        runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
+        runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) {
             val futures = models.mapIndexed { i_model: Int, model: Model ->
                 async {
                     (0 until samples).forEach { sample ->
