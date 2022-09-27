@@ -48,7 +48,7 @@ class Noise(
      * */
     fun generate(noise_type: NoiseType) {
         val T = if(noise_type.ω_min_sampling != null) π2/ noise_type.ω_min_sampling!! else  time
-        Nt = pow(2.0, ceil(log2(T * noise_type.ω_sampling / π2)).toInt()).toInt()
+        Nt = pow(2.0, ceil(log2(T * noise_type.ω_sampling / π2)).toInt() + 1.0).toInt()
         dt = T/Nt.toDouble()
         val σ_wn = sqrt(1.0/dt)
 
