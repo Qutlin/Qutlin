@@ -89,10 +89,12 @@ fun sampleSweeps(
     val nd = models[0].dimensions
     val p = List(samples) { MutableList(nd) { MutableList(models.size) { 0.0 } } }
 
+    val N_THREADS = 14
+
     println("start solver...")
     if (parallel_over_samples) {
 //    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded execution
-        runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) {
+        runBlocking(Executors.newFixedThreadPool(N_THREADS).asCoroutineDispatcher()) {
             val futures = List(samples) { sample ->
                 println("sample $sample")
 
@@ -121,7 +123,7 @@ fun sampleSweeps(
         }
     } else {
 //        runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
-        runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) {
+        runBlocking(Executors.newFixedThreadPool(N_THREADS).asCoroutineDispatcher()) {
             val futures = models.mapIndexed { i_model: Int, model: Model ->
                 async {
                     (0 until samples).forEach { sample ->

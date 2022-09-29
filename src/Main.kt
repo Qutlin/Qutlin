@@ -123,13 +123,13 @@ fun charge_qubit() {
         ω_0 = π2/_s,          // ? Fehse, 2022-08-10
         constant = false,  // ? only quasi-static noise?
 
-        fixed_ω_min = true,  // ? use the same falue for all tf?
-        fixed_ω_max = true,  // ? use the same falue for all tf?
-        ω_min          = 0.1 * π2 / (1e3 * _ns), // ? Given by longest tf - Fehse, 2022-08-26
-        ω_min_sampling = 0.1 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
+        fixed_ω_min = true,  // ? use the same value for all tf?
+        fixed_ω_max = true,  // ? use the same value for all tf?
+        ω_min          = 1.0 * π2 / (1e3 * _ns), // ? Given by longest tf - Fehse, 2022-08-26
+        ω_min_sampling = 0.1*1.0 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
 
         variable = "tf",
-        saveName = "2022 09 19 CQ",
+        saveName = "2022 09 27 CQ",
         useShapedPulse = true,
         useGeneralized = true,
     )
@@ -1180,6 +1180,7 @@ fun completeSet_ChargeQubit(
 ) {
     var name = if (!useGeneralized) saveName else "$saveName generalized"
     name = if (!useShapedPulse) name else "$name shaped"
+    name = if(!constant) name else "$name constant"
 
 
 
@@ -1210,8 +1211,8 @@ fun completeSet_ChargeQubit(
 
 
 //    runBlocking(Dispatchers.Default) {
-    runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
-//    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
+//    runBlocking(Executors.newFixedThreadPool(12).asCoroutineDispatcher()) {
+    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
 
         List(2) { initial ->
             x.map {
@@ -1303,8 +1304,8 @@ fun completeSet_ChargeQubit(
                     parallel_over_samples = false,
                 )
                 if (saveData) {
-                    val filename = "_results_/$name $variable i$initial Ω%.2e A%.2e ω_min%.2e tf%.2e n$samples.csv"
-                        .format(Ω, A, ω_0, tf)
+                    val filename = "_results_/$name $variable i$initial Ω%.2e A%.2e ω0%.2e ωmin%.2e ωminsamp%.2e tf%.2e n$samples.csv"
+                        .format(Ω, A, ω_0, ω_min, ω_min_sampling, tf)
                     saveSweep(filename, x, res)
                 }
                 if (plotData)
