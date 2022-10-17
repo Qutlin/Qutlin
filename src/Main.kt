@@ -8,11 +8,11 @@ import kotlin.math.pow
 
 
 fun main() {
-     constant_gap()
+//     constant_gap()
 //      landau_zener()
 //     charge_qubit()
     // donor_dot()
-//    double_quantum_dot()
+    double_quantum_dot()
 }
 
 
@@ -400,7 +400,7 @@ fun double_quantum_dot() {
     val setup = DqdSetup(
         δbz = 0.1 * _μeV / _ħ // very close to the donor_dot value, rounded to next full μeV
     )
-    val saveName = "2022 04 26 DQD"
+    val saveName = "2022 10 17 DQD"
 
 
     // transfer error depending on `tf` for the following list of values
@@ -494,46 +494,46 @@ fun double_quantum_dot() {
 
     // ! the following block should be evaluated AFTER the optimal time constant τ has been determined
     // transfer error depending on `tf` for the linear pulse
-//    completeSet_DQD(
-//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
-//        variable = "tf",
-//        setup = setup,
-//
-//        useShapedPulse = false,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
-//
-//    // transfer error depending on `tf` for the fast-QUAD pulse
-//    completeSet_DQD(
-//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
-//        variable = "tf",
-//        setup = setup,
-//
-//        useShapedPulse = true,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
-//
-    // transfer error depending on relaxation rate `Γ` for the linear pulse
     completeSet_DQD(
-        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
-//        x = linspace(-4.0, -1.0, 15).map { 10.0.pow(it) / _ns },
-
-        variable = "Γ",
-//        setup = setup.copy(samples=100),
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+        variable = "tf",
         setup = setup,
 
+        useShapedPulse = false,
         useSmoothPulse = true,
-        useShapedPulse = true,
 
         saveData = true,
         saveName = saveName,
     )
+
+    // transfer error depending on `tf` for the fast-QUAD pulse
+    completeSet_DQD(
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+        variable = "tf",
+        setup = setup,
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
+//
+    // transfer error depending on relaxation rate `Γ` for the linear pulse
+//    completeSet_DQD(
+//        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
+////        x = linspace(-4.0, -1.0, 15).map { 10.0.pow(it) / _ns },
+//
+//        variable = "Γ",
+////        setup = setup.copy(samples=100),
+//        setup = setup,
+//
+//        useSmoothPulse = true,
+//        useShapedPulse = true,
+//
+//        saveData = true,
+//        saveName = saveName,
+//    )
 
 //    // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
 //    completeSet_DQD(
@@ -583,7 +583,7 @@ fun double_quantum_dot() {
 data class DqdSetup(
     val samples: Int = 20,
 
-    // system parameters
+    // ? system parameters
     val tf: Double = 18.0 * _ns,
     val Ω: Double = 20.0 * _μeV / _ħ,
     val δbz: Double = 2.0 * _μeV / _ħ,
@@ -591,12 +591,15 @@ data class DqdSetup(
     val ε_min: Double = -200.0 * _μeV / _ħ,
     val τ: Double = 4.0 * _ns,
 
-    //  detuning noise
+    //  ? detuning noise
     val σ: Double = 1.0 * _μeV / _ħ,
     val τ_c: Double = 1.0 * _ns,
 
-    // relaxation
+    // ? relaxation
     val Γ: Double = 0.0 / _ns,
+
+    // ? maximal/minimal values to calculate frequency cutoff from
+    val τ_min: Double = τ_c,
 )
 
 
@@ -619,8 +622,8 @@ fun completeSet_DQD(
     plotData: Boolean = true,
 ) {
 
-    val (samples, tf, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ) = setup // deconstruct the variables
-    val ω_high = 10.0 * max(ε_max, ε_min, 1.0/τ_c, Ω, δbz)
+    val (samples, tf, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ, τ_min) = setup // deconstruct the variables
+    val ω_high = 10.0 * max(ε_max, ε_min, 1.0/τ_min, Ω, δbz)
 
     val γ = 1.0 / τ_c
     runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
