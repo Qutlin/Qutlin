@@ -89,7 +89,7 @@ fun sampleSweeps(
     val nd = models[0].dimensions
     val p = List(samples) { MutableList(nd) { MutableList(models.size) { 0.0 } } }
 
-    val N_THREADS = 14
+    val N_THREADS = 8
 
     println("start solver...")
     if (parallel_over_samples) {

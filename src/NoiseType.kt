@@ -39,13 +39,15 @@ data class WhiteNoise(
 data class OUNoise(
     val σ: Double,
     val γ: Double,
+    val ω_high: Double,
     override val ω_min_sampling: Double? = null,
     override val constant: Boolean = false,
 ): NoiseType() {
     override val name: String = "OU"
-    override var ω_sampling: Double = π2*γ
+    override var ω_sampling: Double = ω_high// π2*γ
     override fun envelope(ω: Double) =
-        σ*σ * 2.0 * γ / (γ*γ + ω*ω)
+        if (abs(ω) > ω_high) 0.0
+        else σ*σ * 2.0 * γ / (γ*γ + ω*ω)
 
 
     override fun toString() = "${name}[γ%.1e σ%.1e]".format(γ, σ)

@@ -8,9 +8,9 @@ import kotlin.math.pow
 
 
 fun main() {
-//     constant_gap()
+     constant_gap()
 //      landau_zener()
-     charge_qubit()
+//     charge_qubit()
     // donor_dot()
 //    double_quantum_dot()
 }
@@ -25,36 +25,47 @@ fun constant_gap() {
 
 //    // transfer error depending on variance `σ`
 //    completeSet_ConstantGap(
-//        x = linspace(-4.0, 1.0, 100).map { 10.0.pow(it) },
+//        x0 = linspace(-4.0, 1.0, 100).map { 10.0.pow(it) },
 //        samples = 20,
 //        gap = 10.0,
 //        γ = 1.0,
 //        σ = 0.1,
 //        tf = 100.0,
+//        ω_min_sampling = 0.1 * π2 / 1e3,
 //        variable = "σ",
-//        saveName = "2021 05 04",
+//        saveName = "2022 09 29",
 //        useGeneralized = false,
 //    )
 
     // transfer error depending on `tf`
     completeSet_ConstantGap(
-        x = linspace(-2.0, 3.0, 25).map { 10.0.pow(it) },
-        samples = 5,
+        x0 = concatenate(
+            linspace(-2.0, -1.0, 25, skipLast = true).map { 10.0.pow(it) },
+            linspace(-1.0, 1.0, 100, skipLast = true).map { 10.0.pow(it) },
+            linspace(1.0, 3.0, 25).map { 10.0.pow(it) },
+        ),
+        samples = 20,
         gap = 10.0,
         γ = 1.0,
         σ = 0.1,
-        tf = 100.0,
+        tf = 1000.0,
+        ω_min_sampling = 0.1 * π2 / 1e3,
         variable = "tf",
-        saveName = "2022 04 29",
-        useGeneralized = true,
+        saveName = "2022 10 01",
+        useGeneralized = false,
     )
 
 //    // transfer error depending on rate `γ`
 //    completeSet_ConstantGap(
 //        x = linspace(-3.0, 4.0, 50).map { 10.0.pow(it) },
 //        samples = 20,
+//        gap = 10.0,
+//        σ = 0.1,
+//        tf = 100.0,
+//        ω_min_sampling = 0.1 * π2 / 1e3,
 //        variable = "γ",
-//        saveName = "2021 02 09"
+//        saveName = "2022 09 29",
+//        useGeneralized = false,
 //    )
 }
 
@@ -67,39 +78,43 @@ fun constant_gap() {
 fun landau_zener() {
 
     // transfer error depending on `tf`
-    completeSet_LandauZener(
-        x = concatenate(
-            linspace(-3.0, 0.0, 50).map { 10.0.pow(it) },
-            linspace(0.0, 1.5,50, skipFirst = true).map { 10.0.pow(it) },
-            linspace(1.5, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
-        ),
-        samples = 1,
-        σ = 0.1,
-        γ = 1.0,
-        Ω = 1.0,
-        ε0 = -10.0,
-        ε1 =  10.0,
-        variable = "tf",
-        saveName = "2022 05 11 LZ",
-        useShapedPulse = true,
-        useGeneralized = true,
-    )
+//    completeSet_LandauZener(
+//        x = concatenate(
+//            linspace(-3.0, 0.0, 50).map { 10.0.pow(it) },
+//            linspace(0.0, 1.5,50, skipFirst = true).map { 10.0.pow(it) },
+//            linspace(1.5, 3.0, 50, skipFirst = true).map { 10.0.pow(it) },
+//        ),
+//        samples = 20,
+//        σ = 0.1,
+//        γ = 1.0,
+//        Ω = 1.0,
+//        ε0 = -10.0,
+//        ε1 =  10.0,
+//        ω_min_sampling = 0.1 * π2 / 1e3,
+//        variable = "tf",
+//        saveName = "2022 09 29 LZ",
+//        useShapedPulse = false,
+//        useGeneralized = false,
+//    )
 
-    // // transfer error depending on noise variance `σ`
-    // completeSet_LandauZener(
-    //     x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
-    //     samples = 20,
-    //     variable = "σ",
-    //     saveName = "2021 05 04 LZ",
-    // )
+     // transfer error depending on noise variance `σ`
+//     completeSet_LandauZener(
+//         x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
+//         samples = 20,
+//         ω_min_sampling = 0.1 * π2 / 1e3,
+//         variable = "σ",
+//         saveName = "2022 09 29 LZ",
+//     )
 
-    // // transfer error depending on rate `γ`
-    // completeSet_LandauZener(
-    //     x = linspace(-4.0, 4.0, 100).map { 10.0.pow(it) },
-    //     samples = 20,
-    //     variable = "γ",
-    //     saveName = "2021 05 04 LZ",
-    // )
+     // transfer error depending on rate `γ`
+     completeSet_LandauZener(
+         x = linspace(-4.0, 4.0, 100).map { 10.0.pow(it) },
+         samples = 20,
+         ω_min_sampling = 0.1 * π2 / 1e3,
+         γ = 1e3,
+         variable = "γ",
+         saveName = "2022 09 29 LZ",
+     )
 }
 
 
@@ -605,6 +620,7 @@ fun completeSet_DQD(
 ) {
 
     val (samples, tf, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ) = setup // deconstruct the variables
+    val ω_high = 10.0 * max(ε_max, ε_min, 1.0/τ_c, Ω, δbz)
 
     val γ = 1.0 / τ_c
     runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
@@ -628,7 +644,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         it,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                     "τ_c" -> DoubleQuantumDotModel(
                         initial,
@@ -641,7 +657,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/it),
+                        OUNoise(σ, 1.0/it, ω_high),
                     )
                     "noiseVariance" -> DoubleQuantumDotModel(
                         initial,
@@ -654,7 +670,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(it, 1.0/τ_c),
+                        OUNoise(it, 1.0/τ_c, ω_high),
                     )
                     "tf" -> DoubleQuantumDotModel(
                         initial,
@@ -667,7 +683,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                     "smooth" -> DoubleQuantumDotModel(
                         initial,
@@ -680,7 +696,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                     "δbz" -> DoubleQuantumDotModel(
                         initial,
@@ -693,7 +709,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                     else -> DoubleQuantumDotModel(
                         initial,
@@ -706,7 +722,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                 }
             }
@@ -759,6 +775,8 @@ fun completeSet_DonorDot(
     τ_c: Double = 1.0 * _ns,
     Γ: Double = 0.0,
 
+    ω_high: Double = 10.0 * max(ε_max, ε_min, Ω, a, 1.0/τ_c),
+
     useSmoothPulse: Boolean = true,
     useShapedPulse: Boolean = false,
     saveData: Boolean = true,
@@ -787,7 +805,7 @@ fun completeSet_DonorDot(
                         ε_max,
                         ε_min,
                         it,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                     "τ_c" -> DonorDotModel(
                         initial,
@@ -800,7 +818,7 @@ fun completeSet_DonorDot(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/it),
+                        OUNoise(σ, 1.0/it, ω_high),
                     )
                     "noiseVariance" -> DonorDotModel(
                         initial,
@@ -813,7 +831,7 @@ fun completeSet_DonorDot(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(it, 1.0/τ_c),
+                        OUNoise(it, 1.0/τ_c, ω_high),
                     )
                     "tf" -> DonorDotModel(
                         initial,
@@ -826,7 +844,7 @@ fun completeSet_DonorDot(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                     "smooth" -> DonorDotModel(
                         initial,
@@ -839,7 +857,7 @@ fun completeSet_DonorDot(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                     else -> DonorDotModel(
                         initial,
@@ -852,7 +870,7 @@ fun completeSet_DonorDot(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c),
+                        OUNoise(σ, 1.0/τ_c, ω_high),
                     )
                 }
             }
@@ -890,7 +908,7 @@ fun completeSet_DonorDot(
  */
 fun completeSet_ConstantGap(
     samples: Int = 20,
-    x: List<Double> = linspace(-1.0, 3.0, 100).map { 10.0.pow(it) },
+    x0: List<Double> = linspace(-1.0, 3.0, 100).map { 10.0.pow(it) },
     variable: String = "tf",
 
     gap: Double = 10.0,
@@ -898,12 +916,18 @@ fun completeSet_ConstantGap(
     σ: Double = 0.1,
     tf: Double = 100.0,
 
+    ω_high: Double = 10.0 * max(gap, γ),
+    ω_min_sampling: Double = 0.1 * π2 / x0.last(),
+
     useGeneralized: Boolean = false,
 
     saveData: Boolean = true,
     saveName: String = "2021 02 01",
     plotData: Boolean = true,
 ) {
+    val x = concatenate(x0,
+        List(20){π/gap * sqrt(4.0*(it+1)*(it+1)-1)}.toList()
+    ).sorted()
 
     // The preparation and measurement unitaries for the generalized strategy via
     //     R(tf) U(tf) R†(0)
@@ -926,8 +950,8 @@ fun completeSet_ConstantGap(
 
 
 
-
-    runBlocking(Dispatchers.Default) { // ? multi-threaded
+    runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
+//    runBlocking(Dispatchers.Default) { // ? multi-threaded
 //    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
 
         List(2) { initial ->
@@ -942,7 +966,7 @@ fun completeSet_ConstantGap(
                             initial,
                             tf,
                             gap,
-                            OUNoise(it, γ),
+                            OUNoise(it, γ, ω_high, ω_min_sampling),
                             trans.first,
                             trans.second,
                         )
@@ -953,7 +977,7 @@ fun completeSet_ConstantGap(
                             initial,
                             tf,
                             gap,
-                            OUNoise(σ, it),
+                            OUNoise(σ, it, ω_high, ω_min_sampling),
                             trans.first,
                             trans.second,
                         )
@@ -964,7 +988,7 @@ fun completeSet_ConstantGap(
                             initial,
                             it,
                             gap,
-                            OUNoise(σ, γ),
+                            OUNoise(σ, γ, ω_high, ω_min_sampling),
                             trans.first,
                             trans.second,
                         )
@@ -1016,6 +1040,8 @@ fun completeSet_LandauZener(
     ε0: Double = -10.0 * Ω,
     ε1: Double =  10.0 * Ω,
     tf: Double = 100.0,
+    ω_min_sampling: Double?,
+    ω_max : Double = 10.0 * max(ε0, ε1, Ω, γ),
     saveData: Boolean = true,
     saveName: String = "2021 02 01 LZ",
     useShapedPulse: Boolean = false,
@@ -1055,7 +1081,8 @@ fun completeSet_LandauZener(
 
 
 //    runBlocking(Dispatchers.Default) {
-    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
+    runBlocking(Executors.newFixedThreadPool(2).asCoroutineDispatcher()) {
+//    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) {
 
         List(2) { initial ->
             x.map {
@@ -1066,7 +1093,7 @@ fun completeSet_LandauZener(
                 when (variable) {
                     "σ" -> {
                         val trans = transformations(tf)
-                        val noiseType = OUNoise(it, γ)
+                        val noiseType = OUNoise(it, γ, ω_max)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1083,7 +1110,7 @@ fun completeSet_LandauZener(
                     }
                     "γ" -> {
                         val trans = transformations(tf)
-                        val noiseType = OUNoise(σ, it)
+                        val noiseType = OUNoise(σ, it, ω_max)
                         LandauZenerModel(
                             initial,
                             tf,
@@ -1100,13 +1127,11 @@ fun completeSet_LandauZener(
                     }
                     else -> {
                         val trans = transformations(it)
-                        val noiseType = OUNoise(σ, γ)
+                        val noiseType = OUNoise(σ, γ, ω_max, ω_min_sampling)
                         LandauZenerModel(
                             initial,
                             it,
                             Ω,
-                            // σ,
-                            // γ,
                             ε0,
                             ε1,
                             useShapedPulse,
