@@ -494,8 +494,10 @@ fun double_quantum_dot() {
 
     // ! the following block should be evaluated AFTER the optimal time constant τ has been determined
     // transfer error depending on `tf` for the linear pulse
+    setup.tf     = 10.0*10.0 * _ns
+    setup.tf_min = 1.0 * _ns
     completeSet_DQD(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
         variable = "tf",
         setup = setup,
 
@@ -508,7 +510,7 @@ fun double_quantum_dot() {
 
     // transfer error depending on `tf` for the fast-QUAD pulse
     completeSet_DQD(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
         variable = "tf",
         setup = setup,
 
@@ -584,7 +586,8 @@ data class DqdSetup(
     val samples: Int = 20,
 
     // ? system parameters
-    val tf: Double = 18.0 * _ns,
+    var tf_min: Double = 0.1 * _ns,
+    var tf: Double = 18.0 * _ns,
     val Ω: Double = 20.0 * _μeV / _ħ,
     val δbz: Double = 2.0 * _μeV / _ħ,
     val ε_max: Double = 2000.0 * _μeV / _ħ,
@@ -622,19 +625,16 @@ fun completeSet_DQD(
     plotData: Boolean = true,
 ) {
 
-    val (samples, tf, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ, τ_min) = setup // deconstruct the variables
-    val ω_high = 10.0 * max(ε_max, ε_min, 1.0/τ_min, Ω, δbz)
+    val (samples, tf_min, tf, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ, τ_min) = setup // deconstruct the variables
+    val ω_high = 10.0 * max(ε_max, ε_min, 1.0/τ_min, Ω, δbz, π2/tf_min)
+    val ω_min_sampling = 0.1 * π2/tf
 
-    val γ = 1.0 / τ_c
-    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
-//    runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) { // ? 8 threads
+//    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
+    runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) { // ? 8 threads
 //    runBlocking(Dispatchers.Default) { // ? system default (as many as possible usually)
         // ? only interested in initializing the lowest two eigenstates, not the excited hybridized singlet state
         List(2) { initial ->
             x.map {
-                val cutoff = max(2.0 * π * ε_max, γ) * 10.0
-                val initialSpacing = 2 * π / (cutoff * 2)
-
                 when (variable) {
                     "Γ" -> DoubleQuantumDotModel(
                         initial,
@@ -647,7 +647,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         it,
-                        OUNoise(σ, 1.0/τ_c, ω_high),
+                        OUNoise(σ, 1.0/τ_c, ω_high, ω_min_sampling),
                     )
                     "τ_c" -> DoubleQuantumDotModel(
                         initial,
@@ -660,7 +660,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/it, ω_high),
+                        OUNoise(σ, 1.0/it, ω_high, ω_min_sampling),
                     )
                     "noiseVariance" -> DoubleQuantumDotModel(
                         initial,
@@ -673,7 +673,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(it, 1.0/τ_c, ω_high),
+                        OUNoise(it, 1.0/τ_c, ω_high, ω_min_sampling),
                     )
                     "tf" -> DoubleQuantumDotModel(
                         initial,
@@ -686,7 +686,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c, ω_high),
+                        OUNoise(σ, 1.0/τ_c, ω_high, ω_min_sampling),
                     )
                     "smooth" -> DoubleQuantumDotModel(
                         initial,
@@ -699,7 +699,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c, ω_high),
+                        OUNoise(σ, 1.0/τ_c, ω_high, ω_min_sampling),
                     )
                     "δbz" -> DoubleQuantumDotModel(
                         initial,
@@ -712,7 +712,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c, ω_high),
+                        OUNoise(σ, 1.0/τ_c, ω_high, ω_min_sampling),
                     )
                     else -> DoubleQuantumDotModel(
                         initial,
@@ -725,7 +725,7 @@ fun completeSet_DQD(
                         ε_max,
                         ε_min,
                         Γ,
-                        OUNoise(σ, 1.0/τ_c, ω_high),
+                        OUNoise(σ, 1.0/τ_c, ω_high, ω_min_sampling),
                     )
                 }
             }
