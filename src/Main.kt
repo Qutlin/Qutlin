@@ -10,9 +10,9 @@ import kotlin.math.pow
 fun main() {
 //     constant_gap()
 //      landau_zener()
-//     charge_qubit()
+     charge_qubit()
     // donor_dot()
-    double_quantum_dot()
+//    double_quantum_dot()
 }
 
 
@@ -134,7 +134,8 @@ fun charge_qubit() {
         Ω = 20.0 * _μeV/ _ħ,
         ε0 =  0.0,
         ε1 = 200.0 * _μeV/ _ħ,
-        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10
+//        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
+        A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
         ω_0 = π2/_s,          // ? Fehse, 2022-08-10
         constant = false,  // ? only quasi-static noise?
 
@@ -144,9 +145,59 @@ fun charge_qubit() {
         ω_min_sampling = 0.1*1.0 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
 
         variable = "tf",
-        saveName = "2022 09 27 CQ",
+        saveName = "2022 12 11 CQ",
         useShapedPulse = true,
         useGeneralized = true,
+    )
+
+    completeSet_ChargeQubit(
+        x = concatenate(
+            linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
+            linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
+        ),
+        samples = 20,
+        Ω = 20.0 * _μeV/ _ħ,
+        ε0 =  0.0,
+        ε1 = 200.0 * _μeV/ _ħ,
+//        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
+        A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
+        ω_0 = π2/_s,          // ? Fehse, 2022-08-10
+        constant = false,  // ? only quasi-static noise?
+
+        fixed_ω_min = true,  // ? use the same value for all tf?
+        fixed_ω_max = true,  // ? use the same value for all tf?
+        ω_min          = 1.0 * π2 / (1e3 * _ns), // ? Given by longest tf - Fehse, 2022-08-26
+        ω_min_sampling = 0.1*1.0 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
+
+        variable = "tf",
+        saveName = "2022 12 11 CQ",
+        useShapedPulse = true,
+        useGeneralized = false,
+    )
+
+    completeSet_ChargeQubit(
+        x = concatenate(
+            linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
+            linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
+        ),
+        samples = 20,
+        Ω = 20.0 * _μeV/ _ħ,
+        ε0 =  0.0,
+        ε1 = 200.0 * _μeV/ _ħ,
+//        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
+        A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
+        ω_0 = π2/_s,          // ? Fehse, 2022-08-10
+        constant = false,  // ? only quasi-static noise?
+
+        fixed_ω_min = true,  // ? use the same value for all tf?
+        fixed_ω_max = true,  // ? use the same value for all tf?
+        ω_min          = 1.0 * π2 / (1e3 * _ns), // ? Given by longest tf - Fehse, 2022-08-26
+        ω_min_sampling = 0.1*1.0 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
+
+        variable = "tf",
+        saveName = "2022 12 11 CQ",
+        useShapedPulse = false,
+        useGeneralized = false,
     )
 
 
@@ -400,18 +451,18 @@ fun double_quantum_dot() {
     val setup = DqdSetup(
         δbz = 0.1 * _μeV / _ħ // very close to the donor_dot value, rounded to next full μeV
     )
-    val saveName = "2022 10 17 DQD"
+    val saveName = "2022 10 31 DQD"
 
 
     // transfer error depending on `tf` for the following list of values
     // for the time constant `τ` of the pulse-smoothing Gaussian.
     // ! This should be the FIRST run of calculation you do, before settling on a time constant τ
-////    val time_constant_τ = concatenate(
-////        listOf(0.1, 0.25, 0.5, 0.75),
-////        linsteps(1.0, 1.0, 10.0).map { it * _ns }
-//////         linsteps(3.0, 1.0, 10.0).map { it * _ns }
-////    )
-//    val time_constant_τ = linsteps(6.0,1.0,10.0).map{it*_ns} // missing calculations after reboot - Fehse 2022-04-13
+//    val time_constant_τ = concatenate(
+//        listOf(0.1, 0.25, 0.5, 0.75),
+//        linsteps(1.0, 1.0, 10.0).map { it * _ns }
+////         linsteps(3.0, 1.0, 10.0).map { it * _ns }
+//    )
+////    val time_constant_τ = linsteps(6.0,1.0,10.0).map{it*_ns} // missing calculations after reboot - Fehse 2022-04-13
 //
 //
 ////    val x = linsteps(0.7, 0.025, 1.7).map { 10.0.pow(it) }
@@ -421,6 +472,9 @@ fun double_quantum_dot() {
 //        linsteps(6.0, 1.0, 20.0).map { it * _ns },
 //        linsteps(20.0, 5.0, 60.0).map { it * _ns },
 //    )
+//
+//    setup.tf     = 10.0*10.0 * _ns
+//    setup.tf_min = 1.0 * _ns
 //
 //    time_constant_τ.forEach { smooth ->
 //        println("smooth = $smooth")
@@ -494,48 +548,48 @@ fun double_quantum_dot() {
 
     // ! the following block should be evaluated AFTER the optimal time constant τ has been determined
     // transfer error depending on `tf` for the linear pulse
-    setup.tf     = 10.0*10.0 * _ns
-    setup.tf_min = 1.0 * _ns
-    completeSet_DQD(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
-        variable = "tf",
-        setup = setup,
-
-        useShapedPulse = false,
-        useSmoothPulse = true,
-
-        saveData = true,
-        saveName = saveName,
-    )
-
-    // transfer error depending on `tf` for the fast-QUAD pulse
-    completeSet_DQD(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
-        variable = "tf",
-        setup = setup,
-
-        useShapedPulse = true,
-        useSmoothPulse = true,
-
-        saveData = true,
-        saveName = saveName,
-    )
-//
-    // transfer error depending on relaxation rate `Γ` for the linear pulse
+//    setup.tf     = 10.0*10.0 * _ns
+//    setup.tf_min = 1.0 * _ns
 //    completeSet_DQD(
-//        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
-////        x = linspace(-4.0, -1.0, 15).map { 10.0.pow(it) / _ns },
-//
-//        variable = "Γ",
-////        setup = setup.copy(samples=100),
+//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
+//        variable = "tf",
 //        setup = setup,
 //
+//        useShapedPulse = false,
 //        useSmoothPulse = true,
-//        useShapedPulse = true,
 //
 //        saveData = true,
 //        saveName = saveName,
 //    )
+//
+//    // transfer error depending on `tf` for the fast-QUAD pulse
+//    completeSet_DQD(
+//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
+//        variable = "tf",
+//        setup = setup,
+//
+//        useShapedPulse = true,
+//        useSmoothPulse = true,
+//
+//        saveData = true,
+//        saveName = saveName,
+//    )
+//
+    // ? transfer error depending on relaxation rate `Γ` for the linear pulse
+    completeSet_DQD(
+//        x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
+        x = linspace(-4.0, -1.0, 15).map { 10.0.pow(it) / _ns },
+
+        variable = "Γ",
+        setup = setup.copy(samples=100),
+//        setup = setup,
+
+        useSmoothPulse = true,
+        useShapedPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
 
 //    // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
 //    completeSet_DQD(
@@ -588,6 +642,7 @@ data class DqdSetup(
     // ? system parameters
     var tf_min: Double = 0.1 * _ns,
     var tf: Double = 18.0 * _ns,
+    var tf_max: Double = 10.0 * 10.0 * _ns,
     val Ω: Double = 20.0 * _μeV / _ħ,
     val δbz: Double = 2.0 * _μeV / _ħ,
     val ε_max: Double = 2000.0 * _μeV / _ħ,
@@ -625,9 +680,9 @@ fun completeSet_DQD(
     plotData: Boolean = true,
 ) {
 
-    val (samples, tf_min, tf, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ, τ_min) = setup // deconstruct the variables
+    val (samples, tf_min, tf, tf_max, Ω, δbz, ε_max, ε_min, τ, σ, τ_c, Γ, τ_min) = setup // deconstruct the variables
     val ω_high = 10.0 * max(ε_max, ε_min, 1.0/τ_min, Ω, δbz, π2/tf_min)
-    val ω_min_sampling = 0.1 * π2/tf
+    val ω_min_sampling = 0.1 * π2/tf_max
 
 //    runBlocking(Executors.newSingleThreadExecutor().asCoroutineDispatcher()) { // ? single threaded
     runBlocking(Executors.newFixedThreadPool(8).asCoroutineDispatcher()) { // ? 8 threads
