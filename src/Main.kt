@@ -131,11 +131,12 @@ fun charge_qubit() {
             linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
         ),
         samples = 20,
-        Ω = 20.0 * _μeV/ _ħ,
+        Ω = 8.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
         ε0 =  0.0,
-        ε1 = 200.0 * _μeV/ _ħ,
+        ε1 = 80.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
 //        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
-        A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
+//        A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
+        A = 4.959181942 / (_ns * _ns), // ? Fehse, 2023-03-08 for T2* = 0.25 ns
         ω_0 = π2/_s,          // ? Fehse, 2022-08-10
         constant = false,  // ? only quasi-static noise?
 
@@ -145,7 +146,7 @@ fun charge_qubit() {
         ω_min_sampling = 0.1*1.0 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
 
         variable = "tf",
-        saveName = "2022 12 11 CQ",
+        saveName = "2023 02 13 CQ",
         useShapedPulse = true,
         useGeneralized = true,
     )
@@ -156,9 +157,9 @@ fun charge_qubit() {
             linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
         ),
         samples = 20,
-        Ω = 20.0 * _μeV/ _ħ,
+        Ω = 8.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
         ε0 =  0.0,
-        ε1 = 200.0 * _μeV/ _ħ,
+        ε1 = 80.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
 //        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
         A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
         ω_0 = π2/_s,          // ? Fehse, 2022-08-10
@@ -170,7 +171,7 @@ fun charge_qubit() {
         ω_min_sampling = 0.1*1.0 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
 
         variable = "tf",
-        saveName = "2022 12 11 CQ",
+        saveName = "2023 02 13 CQ",
         useShapedPulse = true,
         useGeneralized = false,
     )
@@ -181,9 +182,9 @@ fun charge_qubit() {
             linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
         ),
         samples = 20,
-        Ω = 20.0 * _μeV/ _ħ,
+        Ω = 8.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
         ε0 =  0.0,
-        ε1 = 200.0 * _μeV/ _ħ,
+        ε1 = 80.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
 //        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
         A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
         ω_0 = π2/_s,          // ? Fehse, 2022-08-10
@@ -195,7 +196,7 @@ fun charge_qubit() {
         ω_min_sampling = 0.1*1.0 * π2 / (1e3 * _ns), // ? given by longest tf - Fehse, 2022-09-01
 
         variable = "tf",
-        saveName = "2022 12 11 CQ",
+        saveName = "2023 02 13 CQ",
         useShapedPulse = false,
         useGeneralized = false,
     )
