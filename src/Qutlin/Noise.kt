@@ -17,20 +17,15 @@ import kotlin.math.log2
  * Noise Class to generate Gaussian noise with a given envelope of the spectrum.
  * Use objects as functions, e.g. `val noise = Noise(...)` used as `noise(t)`.
  */
-class Noise(
-    val time: Double,
-//    val ω_sampling: Double,
-//    val ω_min: Double? = null,
-//    val ω_max: Double? = null,
-) {
+class Noise(val time: Double) {
     companion object {
         // * make sure the seed is new in every run
         var seed = atomic(LocalDateTime.now().nano.toLong()/100)
     }
 
     // ? The FFT algorithms needs arrays with a size of a power of 2
-    var Nt: Int = 0// = pow(2.0, ceil(log2(time * ω_sampling/π2)).toInt()).toInt()
-    var dt: Double = 0.0// = time/Nt.toDouble()
+    var Nt: Int = 0
+    var dt: Double = 0.0
     lateinit var values: DoubleArray
 
     /**
@@ -67,9 +62,6 @@ class Noise(
 
         for (i in amplitudes.indices) {
             val ω = if(i <= Nt/2) TAU/T*i else -TAU/T*(Nt-i)
-//            if      (ω_max != null && abs(ω) > ω_max) amplitudes[i] = 0.0.toComplex()
-//            else if (ω_min != null && abs(ω) < ω_min) amplitudes[i] = 0.0.toComplex()
-//            else amplitudes[i] = amplitudes[i] *  sqrt(noise_type.envelope(ω))
             amplitudes[i] = amplitudes[i] * sqrt(noise_type.envelope(ω))
         }
 

@@ -8,6 +8,7 @@ import kotlin.math.pow
 
 
 fun main() {
+    // * Choose which one to run or not by un-commenting or commenting
 //     constant_gap()
 //      landau_zener()
      charge_qubit()
@@ -131,13 +132,11 @@ fun charge_qubit() {
             linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
         ),
         samples = 20,
-        Ω = 8.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
+        Ω = 8.0 * _μeV/ _ħ,
         ε0 =  0.0,
-        ε1 = 80.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
-//        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
-//        A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
-        A = 4.959181942 / (_ns * _ns), // ? Fehse, 2023-03-08 for T2* = 0.25 ns
-        ω_0 = π2/_s,          // ? Fehse, 2022-08-10
+        ε1 = 80.0 * _μeV/ _ħ,
+        A = 5.0 / (_ns * _ns),
+        ω_0 = π2/_s,
         constant = false,  // ? only quasi-static noise?
 
         fixed_ω_min = true,  // ? use the same value for all tf?
@@ -157,12 +156,11 @@ fun charge_qubit() {
             linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
         ),
         samples = 20,
-        Ω = 8.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
+        Ω = 8.0 * _μeV/ _ħ,
         ε0 =  0.0,
-        ε1 = 80.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
-//        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
-        A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
-        ω_0 = π2/_s,          // ? Fehse, 2022-08-10
+        ε1 = 80.0 * _μeV/ _ħ,
+        A = 5.0 / (_ns * _ns),
+        ω_0 = π2/_s,
         constant = false,  // ? only quasi-static noise?
 
         fixed_ω_min = true,  // ? use the same value for all tf?
@@ -182,12 +180,11 @@ fun charge_qubit() {
             linspace(1.0, 3.0, 25, skipFirst = true).map { 10.0.pow(it) },
         ),
         samples = 20,
-        Ω = 8.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
+        Ω = 8.0 * _μeV/ _ħ,
         ε0 =  0.0,
-        ε1 = 80.0 * _μeV/ _ħ,  // ? Fehse, 2023-02-10
-//        A = 0.342 / (_ns * _ns), // ? Fehse, 2022-08-10 for T2* = 1.0 ns
-        A = 5.103015807 / (_ns * _ns), // ? Fehse, 2022-12-11 for T2* = 0.25 ns
-        ω_0 = π2/_s,          // ? Fehse, 2022-08-10
+        ε1 = 80.0 * _μeV/ _ħ,
+        A = 5.0 / (_ns * _ns),
+        ω_0 = π2/_s,
         constant = false,  // ? only quasi-static noise?
 
         fixed_ω_min = true,  // ? use the same value for all tf?
@@ -235,7 +232,7 @@ fun charge_qubit() {
  */
 fun donor_dot() {
 
-    // transfer error depending on `tf` for the linear pulse
+    // * transfer error depending on `tf` for the linear pulse
     completeSet_DonorDot(
         x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
         variable = "tf",
@@ -258,7 +255,7 @@ fun donor_dot() {
         saveName = "2021 09 26 DonorDot",
     )
 
-    // transfer error depending on `tf` for the fast-QUAD pulse
+    // * transfer error depending on `tf` for the fast-QUAD pulse
     completeSet_DonorDot(
         x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) / _ns },
         variable = "tf",
@@ -281,7 +278,7 @@ fun donor_dot() {
         saveName = "2021 09 26 DonorDot",
     )
 
-    // transfer error depending on relaxation rate `Γ` for the linear pulse
+    // * transfer error depending on relaxation rate `Γ` for the linear pulse
     completeSet_DonorDot(
         x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
         variable = "Γ",
@@ -305,7 +302,7 @@ fun donor_dot() {
         saveName = "2021 09 28 DonorDot",
     )
 
-    // transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
+    // * transfer error depending on relaxation rate `Γ` for the fast-QUAD pulse
     completeSet_DonorDot(
         x = linspace(-3.0, 4.0, 25).map { 10.0.pow(it) / _ns },
         variable = "Γ",
@@ -329,7 +326,7 @@ fun donor_dot() {
         saveName = "2021 09 28 DonorDot",
     )
 
-    // transfer error depending on noise correlation time `τ_c = 1/γ` for the fast-QUAD pulse
+    // * transfer error depending on noise correlation time `τ_c = 1/γ` for the fast-QUAD pulse
     completeSet_DonorDot(
         x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
         variable = "τ_c",
@@ -352,7 +349,7 @@ fun donor_dot() {
         saveName = "2021 09 28 DonorDot",
     )
 
-    // transfer error depending on noise correlation time `τ_c = 1/γ` for the linear pulse
+    // * transfer error depending on noise correlation time `τ_c = 1/γ` for the linear pulse
     completeSet_DonorDot(
         x = linspace(-3.0, 1.0, 25).map { 10.0.pow(it) * _ns },
         variable = "τ_c",
@@ -376,8 +373,8 @@ fun donor_dot() {
     )
 
 
-    // transfer error depending on `tf` for the following list of values
-    // for the time constant `τ` of the pulse-smoothing Gaussian.
+    // * transfer error depending on `tf` for the following list of values
+    // * for the time constant `τ` of the pulse-smoothing Gaussian.
     val time_constant_τ = concatenate(
         listOf(0.1, 0.25, 0.5, 0.75),
         linsteps(1.0, 1.0, 10.0).map { it * _ns }
@@ -408,7 +405,7 @@ fun donor_dot() {
 
             Γ = 0.0 / _ns,
 
-            useShapedPulse = true, // fast-QUAD pulse
+            useShapedPulse = true, // * fast-QUAD pulse
             useSmoothPulse = true,
 
             saveData = true,
@@ -434,7 +431,7 @@ fun donor_dot() {
 
             Γ = 0.0 / _ns,
 
-            useShapedPulse = false, // linear pulse
+            useShapedPulse = false, // * linear pulse
             useSmoothPulse = true,
 
             saveData = true,
@@ -450,7 +447,7 @@ fun donor_dot() {
 fun double_quantum_dot() {
 
     val setup = DqdSetup(
-        δbz = 0.1 * _μeV / _ħ // very close to the donor_dot value, rounded to next full μeV
+        δbz = 0.1 * _μeV / _ħ
     )
     val saveName = "2022 10 31 DQD"
 
@@ -583,7 +580,6 @@ fun double_quantum_dot() {
 
         variable = "Γ",
         setup = setup.copy(samples=100),
-//        setup = setup,
 
         useSmoothPulse = true,
         useShapedPulse = true,
@@ -640,7 +636,7 @@ fun double_quantum_dot() {
 data class DqdSetup(
     val samples: Int = 20,
 
-    // ? system parameters
+    // * system parameters
     var tf_min: Double = 0.1 * _ns,
     var tf: Double = 18.0 * _ns,
     var tf_max: Double = 10.0 * 10.0 * _ns,
@@ -650,14 +646,14 @@ data class DqdSetup(
     val ε_min: Double = -200.0 * _μeV / _ħ,
     val τ: Double = 4.0 * _ns,
 
-    //  ? detuning noise
+    // * detuning noise
     val σ: Double = 1.0 * _μeV / _ħ,
     val τ_c: Double = 1.0 * _ns,
 
-    // ? relaxation
+    // * relaxation
     val Γ: Double = 0.0 / _ns,
 
-    // ? maximal/minimal values to calculate frequency cutoff from
+    // * maximal/minimal values to calculate frequency cutoff from
     val τ_min: Double = τ_c,
 )
 

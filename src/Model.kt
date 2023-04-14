@@ -55,8 +55,6 @@ class DoubleQuantumDotModel(
     τ: Double = 5.0 * _ns,
     ε_max: Double = 1700 * _μeV / _ħ,
     ε_min: Double = -200 * _μeV / _ħ,
-//    σ: Double = 1.0 * _μeV / _ħ,
-//    τ_c: Double = 1.0 * _ns,
     Γ: Double = 0.0 / _ns,
     noiseType: NoiseType,
 ) : DonorDotModel(
@@ -69,8 +67,6 @@ class DoubleQuantumDotModel(
     τ,
     ε_max,
     ε_min,
-//    σ,
-//    τ_c,
     Γ,
     noiseType,
 ) {}
@@ -153,15 +149,9 @@ open class DonorDotModel(
 
 
         // * the highest frequency is given by max(|ε_max|, |ε_min|) !
-//        val ω_max = max(abs(ε_max), abs(ε_min), Ω, noiseType.ω_sampling)
         val t_total = if(useShapedPulse) tf+6*τ else tf
 
-        val η = Noise(
-            t_total,
-//            ω_max * 10.0 * 10.0,
-//            π2/t_total * 0.1,
-//            ω_max * 10.0,
-        )
+        val η = Noise(t_total)
         η.generate(noiseType)
 
 
@@ -232,29 +222,23 @@ class ConstantGapModel(
         val Ω = fun(t: Double) = gap * sin(π * clamp(0.0, t, tf) / tf)
 
 
-        // The purpose of the cutoff frequency is to generate a "smooth" signal η.
-        // If there is no cutoff frequency, the high frequency components lead to
-        // "jaggy" lines of η(t) and the integrator will be slowed down unnecessarily.
-        // By choosing a cutoff frequency that is much higher than the relevant
-        // frequency (in this case, the energy gap between the states), we cover
-        // the relevant physical aspects, and we can neglect higher frequencies.
-        // Since E=ħω, the cutoff frequency is given by
-        //     ω_max = gap / ħ
-        // Using h=1 and ħ=h/2π, we get
-        //     ω_max = 2π gap
-        //
-        // On the other hand, we want to sample frequencies much higher than the
-        // width of the Lorenzian governing the Ornstein-Uhlenbeck noise
-        //     S(ω) = 2σ²γ/(γ²+ω²)
+        // * The purpose of the cutoff frequency is to generate a "smooth" signal η.
+        // * If there is no cutoff frequency, the high frequency components lead to
+        // * "jaggy" lines of η(t) and the integrator will be slowed down unnecessarily.
+        // * By choosing a cutoff frequency that is much higher than the relevant
+        // * frequency (in this case, the energy gap between the states), we cover
+        // * the relevant physical aspects, and we can neglect higher frequencies.
+        // * Since E=ħω, the cutoff frequency is given by
+        // *     ω_max = gap / ħ
+        // * Using h=1 and ħ=h/2π, we get
+        // *     ω_max = 2π gap
+        //*
+        // * On the other hand, we want to sample frequencies much higher than the
+        // * width of the Lorenzian governing the Ornstein-Uhlenbeck noise
+        // *     S(ω) = 2σ²γ/(γ²+ω²)
 
-//        val ω_max = max(gap, noiseType.ω_sampling)
 
-        val η = Noise(
-            tf,
-//            ω_max * 10.0 * 10.0,
-//            π2/tf * 0.1,
-//            ω_max * 10,
-        )
+        val η = Noise(tf)
         η.generate(noiseType)
 
         H_η = fun(t: Double) = Operator(
