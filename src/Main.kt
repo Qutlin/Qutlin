@@ -10,9 +10,9 @@ import kotlin.math.pow
 fun main() {
 //     constant_gap()
 //      landau_zener()
-     charge_qubit()
+//     charge_qubit()
     // donor_dot()
-//    double_quantum_dot()
+    double_quantum_dot()
 }
 
 
@@ -98,22 +98,31 @@ fun landau_zener() {
 //    )
 
      // transfer error depending on noise variance `σ`
-//     completeSet_LandauZener(
-//         x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
-//         samples = 20,
-//         ω_min_sampling = 0.1 * π2 / 1e3,
-//         variable = "σ",
-//         saveName = "2022 09 29 LZ",
-//     )
+     completeSet_LandauZener(
+         x = linspace(-3.0, 1.0, 100).map { 10.0.pow(it) },
+         samples = 20,
+         ω_min_sampling = 0.1 * π2 / 1e3,
+         σ = 0.1,
+         γ = 1.0,
+         Ω = 1.0,
+         ε0 = -10.0,
+         ε1 =  10.0,
+         variable = "σ",
+         saveName = "2023 04 21 LZ",
+     )
 
      // transfer error depending on rate `γ`
      completeSet_LandauZener(
          x = linspace(-4.0, 4.0, 100).map { 10.0.pow(it) },
          samples = 20,
          ω_min_sampling = 0.1 * π2 / 1e3,
-         γ = 1e3,
+         σ = 0.1,
+         γ = 1.0,
+         Ω = 1.0,
+         ε0 = -10.0,
+         ε1 =  10.0,
          variable = "γ",
-         saveName = "2022 09 29 LZ",
+         saveName = "2023 04 21 LZ",
      )
 }
 
@@ -549,32 +558,32 @@ fun double_quantum_dot() {
 
     // ! the following block should be evaluated AFTER the optimal time constant τ has been determined
     // transfer error depending on `tf` for the linear pulse
-//    setup.tf     = 10.0*10.0 * _ns
-//    setup.tf_min = 1.0 * _ns
-//    completeSet_DQD(
-//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
-//        variable = "tf",
-//        setup = setup,
-//
-//        useShapedPulse = false,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
-//
-//    // transfer error depending on `tf` for the fast-QUAD pulse
-//    completeSet_DQD(
-//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
-//        variable = "tf",
-//        setup = setup,
-//
-//        useShapedPulse = true,
-//        useSmoothPulse = true,
-//
-//        saveData = true,
-//        saveName = saveName,
-//    )
+    setup.tf     = 10.0*10.0 * _ns
+    setup.tf_min = 1.0 * _ns
+    completeSet_DQD(
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
+        variable = "tf",
+        setup = setup,
+
+        useShapedPulse = false,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
+
+    // transfer error depending on `tf` for the fast-QUAD pulse
+    completeSet_DQD(
+        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
+        variable = "tf",
+        setup = setup,
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
 //
     // ? transfer error depending on relaxation rate `Γ` for the linear pulse
     completeSet_DQD(
