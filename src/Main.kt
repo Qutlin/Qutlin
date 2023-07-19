@@ -459,13 +459,22 @@ fun donor_dot() {
 fun double_quantum_dot() {
 
     val setup = DqdSetup(
-        δbz = 0.1 * _μeV / _ħ, // very close to the donor_dot value, rounded to next full μeV,
-        A = 5.0 / (_ns * _ns),
+//        samples = 1,
+        Ω = 20.0 * _μeV / _ħ,
+        δbz = 0.1 * _μeV / _ħ, // * What we used so far - Fehse, 2023-05-05
+//        δbz = 0.2 * _μeV / _ħ, // * Same value as in text - Fehse, 2023-05-05
+
+        use_f_noise = true,
+//        A = 5.0 / (_ns * _ns),
+        A = 0.38 / (_ns * _ns),  // * This would result from the same T2* that corresponds to the values of σ and γ as chosen in the text
         ω_0 = π2/_s,
+
         ω_min = 1.0 * π2 / (1e2 * _ns), // ? Given by longest tf
         ω_min_sampling = 0.1 * 1.0 * π2 / (1e2 * _ns), // ? Given by longest tf
+        fixed_ω_max = true,
+        fixed_ω_min = true,
     )
-    val saveName = "2022 10 31 DQD"
+    val saveName = "2023 07 19 DQD"
 
 
     // transfer error depending on `tf` for the following list of values
@@ -562,32 +571,32 @@ fun double_quantum_dot() {
 
     // ! the following block should be evaluated AFTER the optimal time constant τ has been determined
     // transfer error depending on `tf` for the linear pulse
-    setup.tf     = 10.0*10.0 * _ns
-    setup.tf_min = 1.0 * _ns
-    completeSet_DQD(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
-        variable = "tf",
-        setup = setup,
-
-        useShapedPulse = false,
-        useSmoothPulse = true,
-
-        saveData = true,
-        saveName = saveName,
-    )
-
-    // transfer error depending on `tf` for the fast-QUAD pulse
-    completeSet_DQD(
-        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
-        variable = "tf",
-        setup = setup,
-
-        useShapedPulse = true,
-        useSmoothPulse = true,
-
-        saveData = true,
-        saveName = saveName,
-    )
+//    setup.tf     = 10.0*10.0 * _ns
+//    setup.tf_min = 1.0 * _ns
+//    completeSet_DQD(
+//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
+//        variable = "tf",
+//        setup = setup,
+//
+//        useShapedPulse = false,
+//        useSmoothPulse = true,
+//
+//        saveData = true,
+//        saveName = saveName,
+//    )
+//
+//    // transfer error depending on `tf` for the fast-QUAD pulse
+//    completeSet_DQD(
+//        x = linspace(0.0, 2.0, 100).map { 10.0.pow(it) * _ns },
+//        variable = "tf",
+//        setup = setup,
+//
+//        useShapedPulse = true,
+//        useSmoothPulse = true,
+//
+//        saveData = true,
+//        saveName = saveName,
+//    )
 //
     // ? transfer error depending on relaxation rate `Γ` for the linear pulse
 //    completeSet_DQD(
@@ -644,6 +653,33 @@ fun double_quantum_dot() {
 //        saveData = true,
 //        saveName = saveName,
 //    )
+
+    // transfer error depending on the noise amplitude for the fast-QUAD pulse
+    setup.tf     = 18.0 * _ns
+    setup.tf_min = 1.0 * _ns
+    completeSet_DQD(
+        x = linspace(-2.0, 1.0, 100).map { 10.0.pow(it) / _ns / _ns },
+        variable = "noiseVariance",
+        setup = setup,
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
+
+    completeSet_DQD(
+        x = linspace(-2.0, 1.0, 100).map { 10.0.pow(it) * _μeV/ _ħ },
+        variable = "noiseVariance",
+        setup = setup.copy(use_f_noise = false),
+
+        useShapedPulse = true,
+        useSmoothPulse = true,
+
+        saveData = true,
+        saveName = saveName,
+    )
 }
 
 
@@ -741,32 +777,60 @@ fun completeSet_DQD(
                         setup.Γ,
                         OUNoise(setup.σ, 1.0/it, ω_high, ω_min_sampling),
                     )
-                    "noiseVariance" -> DoubleQuantumDotModel(
-                        initial,
-                        setup.tf,
-                        setup.δbz,
-                        setup.Ω,
-                        useShapedPulse,
-                        useSmoothPulse,
-                        setup.τ,
-                        setup.ε_max,
-                        setup.ε_min,
-                        setup.Γ,
-                        OUNoise(it, 1.0/setup.τ_c, ω_high, ω_min_sampling),
-                    )
-                    "tf" -> DoubleQuantumDotModel(
-                        initial,
-                        it,
-                        setup.δbz,
-                        setup.Ω,
-                        useShapedPulse,
-                        useSmoothPulse,
-                        setup.τ,
-                        setup.ε_max,
-                        setup.ε_min,
-                        setup.Γ,
-                        OUNoise(setup.σ, 1.0/setup.τ_c, ω_high, ω_min_sampling),
-                    )
+                    "noiseVariance" -> {
+//                        DoubleQuantumDotModel(
+//                            initial,
+//                            setup.tf,
+//                            setup.δbz,
+//                            setup.Ω,
+//                            useShapedPulse,
+//                            useSmoothPulse,
+//                            setup.τ,
+//                            setup.ε_max,
+//                            setup.ε_min,
+//                            setup.Γ,
+//                            OUNoise(it, 1.0/setup.τ_c, ω_high, ω_min_sampling),
+//                        )
+                        DoubleQuantumDotModel(
+                            initial,
+                            setup.tf,
+                            setup.δbz,
+                            setup.Ω,
+                            useShapedPulse,
+                            useSmoothPulse,
+                            setup.τ,
+                            setup.ε_max,
+                            setup.ε_min,
+                            setup.Γ,
+                            if (setup.use_f_noise) {
+                                val om_min = if(setup.fixed_ω_min) setup.ω_min else 0.1 * π2/setup.tf
+                                val om_max = if(setup.fixed_ω_max) setup.ω_max else max(setup.ω_max, 10.0 * π2/setup.tf)
+
+                                f_inv_Noise(it, om_min, om_max, setup.ω_0, setup.constant, ω_min_sampling)
+                            } else
+                                OUNoise(it, 1.0/setup.τ_c, ω_high, ω_min_sampling),
+                        )
+                    }
+                    "tf" -> {
+                        val om_min = if(setup.fixed_ω_min) setup.ω_min else 0.1 * π2/it
+                        val om_max = if(setup.fixed_ω_max) setup.ω_max else max(setup.ω_max, 10.0 * π2/it)
+                        DoubleQuantumDotModel(
+                            initial,
+                            it,
+                            setup.δbz,
+                            setup.Ω,
+                            useShapedPulse,
+                            useSmoothPulse,
+                            setup.τ,
+                            setup.ε_max,
+                            setup.ε_min,
+                            setup.Γ,
+                            if (setup.use_f_noise)
+                                f_inv_Noise(setup.A, om_min, om_max, setup.ω_0, setup.constant, ω_min_sampling)
+                            else
+                                OUNoise(setup.σ, 1.0/setup.τ_c, ω_high, ω_min_sampling),
+                        )
+                    }
                     "smooth" -> DoubleQuantumDotModel(
                         initial,
                         setup.tf,
@@ -824,7 +888,7 @@ fun completeSet_DQD(
                 if (saveData) {
                     val smooth = if (useSmoothPulse) "smooth(%.2e) ".format(setup.τ) else ""
                     val shaped = if (useShapedPulse) "shaped " else ""
-                    val filename = if (setup.use_f_noise)
+                    val filename = if (!setup.use_f_noise)
                         "_results_/$saveName $variable ${smooth}${shaped}i$initial Ω%.2e s%.2e tc%.2e coll%.2e tf%.2e n${setup.samples}.csv"
                             .format(setup.Ω, setup.σ, setup.τ_c, setup.Γ, setup.tf)
                     else
